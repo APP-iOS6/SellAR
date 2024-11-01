@@ -25,7 +25,7 @@ class LoginViewModel {
                 changeRequest.displayName = self.user.username
                 changeRequest.commitChanges() { error in
                     if let error = error {
-                        print("닉네임 설정 실패")
+                        print("닉네임 설정 실패\(error.localizedDescription)")
                     }   else {
                         print("회원가입 성공")
                         
@@ -34,4 +34,19 @@ class LoginViewModel {
             }
         }
     }
+    // 로그인 메서드
+    func loginWithEmailPassword(email: String, password: String) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                print("로그인 실패 \(error.localizedDescription)")
+                return
+            }
+            
+            if let firebaseUser = authResult?.user {
+                self.user = User(id: firebaseUser.uid, email: email, username: firebaseUser.displayName ?? "", profileImageUrl: nil)
+                print("로그인 성공")
+            }
+        }
+    }
+    
 }
