@@ -60,7 +60,7 @@ struct ItemRowView: View {
     }
 }
 
-struct ItemManagementView: View {
+struct ItemListView: View {
     
     @State private var searchText: String = ""
     @FocusState private var isSearchTextFocused: Bool
