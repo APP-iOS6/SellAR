@@ -1,0 +1,37 @@
+//
+//  LoginViewModel.swift
+//  SellAR
+//
+//  Created by Mac on 11/1/24.
+//
+
+import FirebaseAuth
+import FirebaseCore
+import SwiftUI
+
+class LoginViewModel {
+    @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
+    
+    // 이메일과 비밀번호로 가입하는 회원가입 메서드
+    func registerWithEmailPassword(password: String) {
+        Auth.auth().createUser(withEmail: user.id, password: password) { authResult, error in
+            if let error = error {
+                print("회원가입 실패 \(error.localizedDescription)")
+                return
+            }
+            // 가입 후 닉네임 설정 메서드
+            if let user = authResult?.user {
+                let changeRequest = user.createProfileChangeRequest()
+                changeRequest.displayName = self.user.username
+                changeRequest.commitChanges() { error in
+                    if let error = error {
+                        print("닉네임 설정 실패")
+                    }   else {
+                        print("회원가입 성공")
+                        
+                    }
+                }
+            }
+        }
+    }
+}
