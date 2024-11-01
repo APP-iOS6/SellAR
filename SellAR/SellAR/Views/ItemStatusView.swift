@@ -20,6 +20,7 @@ struct ItemStatusView: View {
         
         VStack {
             Button(action: {
+                dismiss()
                 print("상품 수정으로 들어가기")
             }) {
                 Text("상품 수정")
