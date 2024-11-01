@@ -9,12 +9,11 @@ import FirebaseAuth
 import FirebaseCore
 import SwiftUI
 
-@Observable
-class LoginViewModel {
-    var user = User(id: "", email: "", username: "", profileImageUrl: nil)
+class LoginViewModel: ObservableObject {
+    @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
     
     // 이메일과 비밀번호로 가입하는 회원가입 메서드
-    func registerWithEmailPassword(password: String) {
+    func registerWithEmailPassword(email :String, password: String) {
         Auth.auth().createUser(withEmail: user.id, password: password) { authResult, error in
             if let error = error {
                 print("회원가입 실패 \(error.localizedDescription)")
