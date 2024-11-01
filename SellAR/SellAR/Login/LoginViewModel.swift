@@ -9,8 +9,9 @@ import FirebaseAuth
 import FirebaseCore
 import SwiftUI
 
+@Observable
 class LoginViewModel {
-    @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
+    var user = User(id: "", email: "", username: "", profileImageUrl: nil)
     
     // 이메일과 비밀번호로 가입하는 회원가입 메서드
     func registerWithEmailPassword(password: String) {
