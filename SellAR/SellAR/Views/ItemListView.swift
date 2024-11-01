@@ -137,7 +137,7 @@ struct ItemListView: View {
             }
         }
         .sheet(isPresented: $showDetailSheet) {
-            DetailView(showDetail: $showDetailSheet)
+            ItemStatusView(showDetail: $showDetailSheet)
                 .presentationDetents([.fraction(0.25)])
         }
     }
