@@ -8,9 +8,9 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct Item: Identifiable {
+struct Items: Identifiable, Codable, Equatable {
     var id = UUID().uuidString
-    var userId: String
+    var userId: String // 작성자 아이디
     @ServerTimestamp var createdAt: Date?
     @ServerTimestamp var updatedAT: Date?
     var itemName: String
@@ -27,10 +27,10 @@ struct Item: Identifiable {
     }
     
     var description: String
-    var price: Double
-    var images: [String]
-    var category: String
+    var price: String
+   // var images: [String]
+   // var category: String
     var location: String
-    var isSold: Bool
+   // var isSold: Bool
 }
 
