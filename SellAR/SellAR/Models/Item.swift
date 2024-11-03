@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct Item: Identifiable {
+struct Items: Identifiable, Codable, Equatable {
     var id = UUID().uuidString
     var userId: String
     @ServerTimestamp var createdAt: Date?

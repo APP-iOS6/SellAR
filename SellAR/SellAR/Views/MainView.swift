@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct MainView: View {
+    
+    @StateObject var vm = ItemList()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List {
+            ForEach(vm.items) { item in
+                Text(item.itemName)
+            }
+        }
+        .navigationTitle("상품 목록")
     }
 }
 
 #Preview {
-    MainView()
+    NavigationStack {
+        MainView()
+    }
+    
 }
