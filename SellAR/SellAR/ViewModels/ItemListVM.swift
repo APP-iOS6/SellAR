@@ -9,14 +9,14 @@ import Foundation
 import SwiftUI
 import FirebaseFirestore
 
-class ItemList: ObservableObject {
+class ItemListVM: ObservableObject {
     
     @Published var items = [Items]()
     
     @MainActor
     func listenToItems() {
         Firestore.firestore().collection("items")
-            .order(by: "name")
+            .order(by: "createdAt", descending: true)
             .limit(toLast: 100)
             .addSnapshotListener{ snapshot, error in
                 guard let snapshot else {
@@ -33,4 +33,15 @@ class ItemList: ObservableObject {
                 }
             }
     }
+    
+//    func upload() {
+//        Task {
+//            do {
+//                let itemEncode = try Firestore.Encoder().encode(item)
+//                Firestore.firestore().collection("items").addDocument(data: itemEncode)
+//            } catch {
+//                print( error.localizedDescription )
+//            }
+//        }
+//    }
 }
