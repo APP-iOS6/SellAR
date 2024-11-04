@@ -13,6 +13,7 @@ struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     @State private var email = ""
     @State private var password = ""
+    @State private var isNavigation = false
     
     var body: some View {
         NavigationStack {
@@ -66,7 +67,12 @@ struct LoginView: View {
                             }
                         }
                         
-                        Button(action: { viewModel.loginWithGoogle()
+                        Button(action: { viewModel.loginWithGoogle
+                            { success in
+                            if success {
+                                isNavigation = true
+                            }
+                        }
                         }) {
                             Text("Google로 로그인")
                                 .frame(width: geometry.size.width * 0.7, height: geometry.size.height / 50)
@@ -76,7 +82,12 @@ struct LoginView: View {
                                 .cornerRadius(10)
                         }
                         .padding(.top, 20)
-                        }
+                        
+                    NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
+                        EmptyView() // 네비게이션 링크 안보이게
+                    }
+                    }
+                    
                     }
                 }
             }

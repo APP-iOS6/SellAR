@@ -51,7 +51,7 @@ class LoginViewModel: ObservableObject {
         }
     }
     // 구글 로그인 메서드
-    func loginWithGoogle() {
+    func loginWithGoogle(completion: @escaping (Bool) -> Void) {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         let config = GIDConfiguration(clientID: clientID)
         GIDSignIn.sharedInstance.configuration = config
@@ -62,6 +62,7 @@ class LoginViewModel: ObservableObject {
             .flatMap({ $0.windows })
             .first(where: { $0.isKeyWindow })?.rootViewController else {
             print("Root View Controller를 찾을 수 없습니다.")
+            completion(false)
             return
         }
         
@@ -69,12 +70,14 @@ class LoginViewModel: ObservableObject {
             signInResult, error in
             if let error = error {
                 print ("구글 로그인 실패 \(error.localizedDescription)")
+                completion(false)
                 return
             }
             // 사용자 인증 정보 가져오기
             guard let idToken = signInResult?.user.idToken?.tokenString,
                   let accessToken = signInResult?.user.accessToken.tokenString else {
                 print("ID 토큰 또는 액세스 토큰을 가져올 수 없습니다.")
+                completion(false)
                 return
             }
             
@@ -85,9 +88,11 @@ class LoginViewModel: ObservableObject {
             Auth.auth().signIn(with: credential) { authResult, error in
                 if let error = error {
                     print ("Firebase Google 인증 실패 \(error.localizedDescription)")
+                    completion(false)
                 } else if let firebaseUser = authResult?.user {
                     self.user = User(id: firebaseUser.uid, email: firebaseUser.email ?? "" , username: firebaseUser.displayName ?? "", profileImageUrl: nil)
                     print("Google 로그인 성공!")
+                    completion(true)
                 }
             }
         }

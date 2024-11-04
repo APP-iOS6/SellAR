@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NicknameEntryView: View {
-    @StateObject private var viewModel: LoginViewModel
+    @ObservedObject var viewModel: LoginViewModel
     @State private var nickname = ""
 
     var body: some View {
