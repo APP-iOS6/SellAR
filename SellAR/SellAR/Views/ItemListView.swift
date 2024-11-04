@@ -11,24 +11,46 @@ struct ItemRowView: View {
     var item: Item
     @Environment(\.colorScheme) var colorScheme
     @Binding var showDetailSheet: Bool
-    
+
     var body: some View {
         HStack {
             VStack {
-                Image(item.images.first ?? "placeholder")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 150, height: 150)
-                    .clipped()
-                    .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray, lineWidth: 2)
-                    )
-                    .padding(.leading, 10)
-                    .padding(.vertical, 10)
+                // AsyncImage를 사용하여 URL에서 이미지를 로드
+                AsyncImage(url: URL(string: item.thumbnailLink)) { phase in
+                    switch phase {
+                    case .empty:
+                        // 로딩 중일 때 표시할 뷰
+                        ProgressView()
+                            .frame(width: 150, height: 150)
+                    case .success(let image):
+                        // 성공적으로 로드되면 이미지를 표시
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .clipped()
+                            .cornerRadius(10)
+                    case .failure:
+                        // 로드 실패 시 기본 이미지를 표시
+                        Image("placeholder")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .clipped()
+                            .cornerRadius(10)
+                    @unknown default:
+                        // 기타 예외 처리
+                        EmptyView()
+                    }
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.gray, lineWidth: 2)
+                )
+                .padding(.leading, 10)
+                .padding(.vertical, 10)
             }
-            
+
             VStack(alignment: .leading, spacing: 10) {
                 Text("\(Int(item.price)) 원")
                     .font(.system(size: 16, weight: .bold))
@@ -41,9 +63,9 @@ struct ItemRowView: View {
                     .foregroundColor(item.isSold ? .gray : .red)
             }
             .padding(.leading, 8)
-            
+
             Spacer()
-            
+
             VStack {
                 Button(action: {
                     print("아이템 선택됨")
@@ -67,23 +89,18 @@ struct ItemRowView: View {
 }
 
 struct ItemListView: View {
-    
     @State private var searchText: String = ""
     @FocusState private var isSearchTextFocused: Bool
     @Environment(\.colorScheme) var colorScheme
     @State private var showDetailSheet = false
-
-    let items: [Item] = [
-        Item(id: UUID().uuidString, userId: "user1", title: "Airpods4", description: "아이템 1 설명", price: 999999999, images: ["airpods4"], category: "생활용품", location: "서울시 강남", isSold: false, createdAt: Date()),
-        Item(id: UUID().uuidString, userId: "user2", title: "AppleTrackpad", description: "아이템 2 설명", price: 500000, images: ["applemagic"], category: "의류", location: "부산시 해운대", isSold: false, createdAt: Date()),
-        Item(id: UUID().uuidString, userId: "user3", title: "MacBookAir", description: "아이템 3 설명", price: 300000, images: ["macbook"], category: "향수/디퓨저", location: "대구시 수성구", isSold: false, createdAt: Date())
-    ]
     
+    @ObservedObject var itemStore = ItemStore()
+
     var filteredItems: [Item] {
         if searchText.isEmpty {
-            return items
+            return itemStore.items
         } else {
-            return items.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+            return itemStore.items.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
         }
     }
 
@@ -127,6 +144,9 @@ struct ItemListView: View {
                 
                 Spacer()
             }
+        }
+        .onAppear {
+            itemStore.fetchItems()
         }
         .contentShape(Rectangle())
         .onTapGesture {
