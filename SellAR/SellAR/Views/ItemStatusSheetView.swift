@@ -17,38 +17,42 @@ struct ItemStatusSheetView: View {
     @State private var showSalesStatusSheet = false
     
     var body: some View {
-        
-        VStack {
-            Button(action: {
-                dismiss()
-                print("상품 수정으로 들어가기")
-            }) {
-                Text("상품 수정")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+        NavigationStack {
+            VStack {
+                Button(action: {
+                    
+                    //                NavigationLink(destination: ItemEditView(
+                    //                    titleTextField: "기존 제목",
+                    //                    textEditor: "기존 내용",
+                    //                    priceTextField: "기존 가격"
+                }) {
+                    Text("상품 수정")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                }
+                .padding()
+                
+                Divider()
+                
+                Button(action: {
+                    showSalesStatusSheet = true
+                    print("상태 변경하기")
+                }) {
+                    Text("상태 변경")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                }
+                .padding()
+                
+                Divider()
+                
+                Button(action: {
+                    showAlert = true
+                    print("상품 삭제하기")
+                }) {
+                    Text("상품 삭제")
+                        .foregroundStyle(Color.red)
+                }
+                .padding(.top, 10)
             }
-            .padding()
-            
-            Divider()
-            
-            Button(action: {
-                showSalesStatusSheet = true
-                print("상태 변경하기")
-            }) {
-                Text("상태 변경")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-            }
-            .padding()
-            
-            Divider()
-            
-            Button(action: {
-                showAlert = true
-                print("상품 삭제하기")
-            }) {
-                Text("상품 삭제")
-                    .foregroundStyle(Color.red)
-            }
-            .padding(.top, 10)
         }
         .alert(isPresented: $showAlert) {
             Alert(
@@ -57,7 +61,6 @@ struct ItemStatusSheetView: View {
                 primaryButton: .destructive(Text("삭제")) {
                     print("상품이 삭제되었습니다.")
                     dismiss()
-                    
                 },
                 secondaryButton: .cancel(Text("취소"))
             )
@@ -66,7 +69,5 @@ struct ItemStatusSheetView: View {
             SalesStatusSheetView(showSalesStatusSheet: $showSalesStatusSheet, showDetail: $showDetail)
                 .presentationDetents([.fraction(0.25)])
         }
-        
     }
-    
 }
