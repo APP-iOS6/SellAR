@@ -98,6 +98,12 @@ class LoginViewModel: ObservableObject {
         }
     }
     
+    // 애플 로그인 메서드
+    
+    func loginWithApple(completion: @escaping (Bool) -> Void) {
+        let 
+    }
+    
     
     // 닉네임 저장 메서드
     func saveNickname(_ nickname: String) {
