@@ -14,14 +14,16 @@ struct ItemRowView: View {
     
     var body: some View {
         HStack {
-            Image(item.images.first ?? "placeholder")
-                .resizable()
-                .scaledToFill()
-                .frame(maxWidth: 150, maxHeight: 150)
-                .clipped()
-                .cornerRadius(10)
-                .padding(.leading, 10)
-                .padding(.vertical, 10)
+            VStack {
+                Image(item.images.first ?? "placeholder")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 150, height: 150)
+                    .clipped()
+                    .cornerRadius(10)
+                    .padding(.leading, 10)
+                    .padding(.vertical, 10)
+            }
             
             VStack(alignment: .leading, spacing: 10) {
                 Text("\(Int(item.price)) 원")
@@ -68,9 +70,9 @@ struct ItemListView: View {
     @State private var showDetailSheet = false
 
     let items: [Item] = [
-        Item(id: UUID().uuidString, userId: "user1", title: "Tumbler", description: "아이템 1 설명", price: 999999999, images: ["tumbler"], category: "생활용품", location: "서울시 강남", isSold: false, createdAt: Date()),
-        Item(id: UUID().uuidString, userId: "user2", title: "Humanmade", description: "아이템 2 설명", price: 500000, images: ["humanmade"], category: "의류", location: "부산시 해운대", isSold: false, createdAt: Date()),
-        Item(id: UUID().uuidString, userId: "user3", title: "Diffuser", description: "아이템 3 설명", price: 300000, images: ["diffuser"], category: "향수/디퓨저", location: "대구시 수성구", isSold: false, createdAt: Date())
+        Item(id: UUID().uuidString, userId: "user1", title: "Airpods4", description: "아이템 1 설명", price: 999999999, images: ["airpods4"], category: "생활용품", location: "서울시 강남", isSold: false, createdAt: Date()),
+        Item(id: UUID().uuidString, userId: "user2", title: "AppleTrackpad", description: "아이템 2 설명", price: 500000, images: ["applemagic"], category: "의류", location: "부산시 해운대", isSold: false, createdAt: Date()),
+        Item(id: UUID().uuidString, userId: "user3", title: "MacBookAir", description: "아이템 3 설명", price: 300000, images: ["macbook"], category: "향수/디퓨저", location: "대구시 수성구", isSold: false, createdAt: Date())
     ]
     
     var filteredItems: [Item] {
