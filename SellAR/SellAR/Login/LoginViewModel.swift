@@ -14,7 +14,7 @@ class LoginViewModel: ObservableObject {
     
     // 이메일과 비밀번호로 가입하는 회원가입 메서드
     func registerWithEmailPassword(email :String, password: String) {
-        Auth.auth().createUser(withEmail: user.id, password: password) { authResult, error in
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 print("회원가입 실패 \(error.localizedDescription)")
                 return
@@ -48,5 +48,4 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
-    
 }

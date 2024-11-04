@@ -1,5 +1,5 @@
 //
-//  LoginView.swift
+//  RegisterView.swift
 //  SellAR
 //
 //  Created by Mac on 11/1/24.
@@ -9,10 +9,12 @@ import FirebaseAuth
 import FirebaseCore
 import SwiftUI
 
-struct LoginView: View {
+struct RegisterView: View {
     @StateObject private var viewModel = LoginViewModel()
     @State private var email = ""
     @State private var password = ""
+    @State private var confinPassword = ""
+    @State private var userName = ""
     
     var body: some View {
         NavigationStack {
@@ -42,30 +44,39 @@ struct LoginView: View {
                             .background(.white)
                             .cornerRadius(10)
                             .padding(.horizontal, 20)
-                            .padding(.bottom, 20)
+                        Text("비밀번호 확인")
+                            .padding()
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        SecureField("비밀번호를 똑같이 입력해 주세요", text: $password)
+                            .padding()
+                            .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
+                            .background(.white)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 20)
+                        Text("닉네임")
+                            .padding()
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        TextField("닉네임을 입력해 주세요", text: $userName)
+                            .padding()
+                            .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
+                            .background(.white)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom,20 )
                         
                         // 로그인 회원가입 버튼
-                        HStack (spacing: 20) {
                             Button(action: {
-                                viewModel.loginWithEmailPassword(email: email, password: password)
+                                viewModel.registerWithEmailPassword(email: email, password: password)
                             }){
-                                Text("로그인")
-                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height / 50)
-                                    .padding()
-                                    .background(.white)
-                                    .foregroundColor(.black)
-                                    .cornerRadius(10)
+                                Text("가입완료")
                             }
-                            NavigationLink(destination: RegisterView()){
-                                Text ("회원가입")
-                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height / 50)
-                                    .padding()
-                                    .foregroundColor(.white)
-                                    .background(.gray)
-                                    .cornerRadius(10)
-                            }
-                            
-                        }
+                            .frame(width: geometry.size.width * 0.3, height: geometry.size.height / 50)
+                            .padding()
+                            .foregroundColor(.white)
+                            .background(.gray)
+                            .cornerRadius(10)
                     }
                 }
             }
@@ -74,5 +85,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
+    RegisterView()
 }
