@@ -9,10 +9,13 @@ import SwiftUI
 
 struct ItemEditView: View {
     @Environment(\.colorScheme) var colorScheme
+    @FocusState private var textFocused: Bool
+    
+    var item: Item
     @State var titleTextField: String
     @State var textEditor: String
     @State var priceTextField: String
-    @FocusState private var textFocused: Bool
+    
     
     let placeholder: String = "글을 입력해 주세요."
 
@@ -24,16 +27,34 @@ struct ItemEditView: View {
                     .bold()
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 
-                
-                Image("macbook")
-                    .resizable()
-                    .clipped()
-                    .frame(width: 250, height: 220)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 2)
-                    )
-                    .padding(.top, 10)
+                AsyncImage(url: URL(string: item.thumbnailLink)) { phase in
+                    switch phase {
+                    case .empty:
+                        // 로딩 중일 때 표시할 뷰
+                        ProgressView()
+                            .frame(width: 150, height: 150)
+                    case .success(let image):
+                        // 성공적으로 로드되면 이미지를 표시
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .clipped()
+                            .cornerRadius(10)
+                    case .failure:
+                        // 로드 실패 시 기본 이미지를 표시
+                        Image("placeholder")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 150, height: 150)
+                            .clipped()
+                            .cornerRadius(10)
+                    @unknown default:
+                        // 기타 예외 처리
+                        EmptyView()
+                    }
+                }
+                .padding(.top, 10)
                 
                 HStack {
                     Button(action: {
@@ -102,6 +123,9 @@ struct ItemEditView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.gray, lineWidth: 2)
                         )
+                        .onAppear {
+                            titleTextField = item.title
+                        }
                     
                     Spacer()
                     
@@ -134,6 +158,9 @@ struct ItemEditView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.black, lineWidth: 2)
                     }
+                    .onAppear {
+                        textEditor = item.description
+                    }
                     .padding(.top, 10)
                 
                 
@@ -150,6 +177,9 @@ struct ItemEditView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.gray, lineWidth: 2)
                         )
+                        .onAppear {
+                            priceTextField = String(item.price)
+                        }
                         .keyboardType(.numberPad)
                     
                     Button(action: {
