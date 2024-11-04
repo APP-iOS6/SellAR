@@ -64,14 +64,24 @@ struct LoginView: View {
                                     .background(.gray)
                                     .cornerRadius(10)
                             }
-                            
+                        }
+                        
+                        Button(action: { viewModel.loginWithGoogle()
+                        }) {
+                            Text("Google로 로그인")
+                                .frame(width: geometry.size.width * 0.7, height: geometry.size.height / 50)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(.blue)
+                                .cornerRadius(10)
+                        }
+                        .padding(.top, 20)
                         }
                     }
                 }
             }
         }
     }
-}
 
 #Preview {
     LoginView()
