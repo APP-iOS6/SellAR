@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SalesStatusView: View {
+struct SalesStatusSheetView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     

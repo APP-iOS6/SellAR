@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ItemStatusView: View {
+struct ItemStatusSheetView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     
@@ -63,7 +63,7 @@ struct ItemStatusView: View {
             )
         }
         .sheet(isPresented: $showSalesStatusSheet) {
-            SalesStatusView(showSalesStatusSheet: $showSalesStatusSheet, showDetail: $showDetail)
+            SalesStatusSheetView(showSalesStatusSheet: $showSalesStatusSheet, showDetail: $showDetail)
                 .presentationDetents([.fraction(0.25)])
         }
         
