@@ -21,6 +21,10 @@ struct ItemRowView: View {
                     .frame(width: 150, height: 150)
                     .clipped()
                     .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray, lineWidth: 2)
+                    )
                     .padding(.leading, 10)
                     .padding(.vertical, 10)
             }

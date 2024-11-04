@@ -43,7 +43,7 @@ struct SalesStatusSheetView: View {
                 print("예약 중")
             }) {
                 Text("예약 중")
-                    .foregroundStyle(Color.red)
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             }
             .padding(.top, 10)
         }
