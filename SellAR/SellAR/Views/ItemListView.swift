@@ -11,6 +11,7 @@ struct ItemRowView: View {
     var item: Item
     @Environment(\.colorScheme) var colorScheme
     @Binding var showDetailSheet: Bool
+    @Binding var selectedItem: Item?
 
     var body: some View {
         HStack {
@@ -68,6 +69,7 @@ struct ItemRowView: View {
 
             VStack {
                 Button(action: {
+                    selectedItem = item
                     print("아이템 선택됨")
                     showDetailSheet = true
                 }) {
@@ -95,6 +97,8 @@ struct ItemListView: View {
     @State private var showDetailSheet = false
     
     @ObservedObject var itemStore = ItemStore()
+    
+    @State private var selectedItem: Item?
 
     var filteredItems: [Item] {
         if searchText.isEmpty {
@@ -139,7 +143,7 @@ struct ItemListView: View {
                 .padding(.horizontal, 16)
                 
                 ForEach(filteredItems) { item in
-                    ItemRowView(item: item, showDetailSheet: $showDetailSheet)
+                    ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
                 }
                 
                 Spacer()
@@ -163,7 +167,7 @@ struct ItemListView: View {
             }
         }
         .sheet(isPresented: $showDetailSheet) {
-            ItemStatusSheetView(showDetail: $showDetailSheet)
+            ItemStatusSheetView(showDetail: $showDetailSheet, selectedItem: $selectedItem)
                 .presentationDetents([.fraction(0.25)])
         }
     }

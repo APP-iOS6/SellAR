@@ -12,6 +12,7 @@ struct ItemStatusSheetView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @Binding var showDetail: Bool
+    @Binding var selectedItem: Item?
     
     @State private var showAlert = false
     @State private var showSalesStatusSheet = false
@@ -19,17 +20,18 @@ struct ItemStatusSheetView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Button(action: {
-                    
-                    //                NavigationLink(destination: ItemEditView(
-                    //                    titleTextField: "기존 제목",
-                    //                    textEditor: "기존 내용",
-                    //                    priceTextField: "기존 가격"
-                }) {
-                    Text("상품 수정")
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                if let item = selectedItem {
+                    NavigationLink(destination: ItemEditView (
+                        item: item,
+                        titleTextField: item.title,
+                        textEditor: item.description,
+                        priceTextField: String(item.price)
+                    )) {
+                        Text("상품 수정")
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    }
                 }
-                .padding()
+                
                 
                 Divider()
                 
