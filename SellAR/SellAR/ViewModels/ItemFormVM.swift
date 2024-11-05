@@ -141,14 +141,15 @@ class ItemFormVM: ObservableObject {
     }
     
     @MainActor
-    func uploadUSDZ(fileURL: URL) async {
-        let gotAccess = fileURL.startAccessingSecurityScopedResource()
-        guard gotAccess, let data = try? Data(contentsOf: fileURL) else {
-            error = "파일에 접근할 수 없습니다."
+    func uploadUSDZ(fileURL: URL, isSecurityScopedResource: Bool = false) async {
+        if isSecurityScopedResource, !fileURL.startAccessingSecurityScopedResource() {
             return
         }
-        fileURL.stopAccessingSecurityScopedResource()
-        
+//        let gotAccess = fileURL.startAccessingSecurityScopedResource()
+        guard let data = try? Data(contentsOf: fileURL) else { return }
+        if isSecurityScopedResource {
+            fileURL.stopAccessingSecurityScopedResource()
+        }
         // 업로드 진행 상태 초기화
         uploadProgress = .init(fractionCompleted: 0, totalUnitCount: 0, completedUnitCount: 0)
         loadingState = .uploading(.usdz)
