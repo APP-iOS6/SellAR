@@ -4,7 +4,7 @@
 //
 //  Created by Min on 11/1/24.
 //
-
+// 게시물 마다 오른쪽 위의 버튼을 클릭하면 보여주는 시트뷰
 import SwiftUI
 
 struct ItemStatusSheetView: View {

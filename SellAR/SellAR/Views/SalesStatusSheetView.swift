@@ -4,7 +4,7 @@
 //
 //  Created by Min on 11/1/24.
 //
-
+// 상품의 판매상태를 고를 수 있는 시트 뷰
 import SwiftUI
 
 struct SalesStatusSheetView: View {

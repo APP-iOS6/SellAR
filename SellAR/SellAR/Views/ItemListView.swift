@@ -4,7 +4,7 @@
 //
 //  Created by Min on 11/1/24.
 //
-
+// 내 상품 게시물 보여주는 뷰
 import SwiftUI
 
 struct ItemRowView: View {
