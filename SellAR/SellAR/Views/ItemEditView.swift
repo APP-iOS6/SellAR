@@ -13,11 +13,13 @@ struct ItemEditView: View {
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var textFocused: Bool
     @State private var description: String = ""
-
     
     let placeholder: String = "글을 입력해 주세요."
     
     let db = Firestore.firestore()
+    
+    @Environment(\.presentationMode) var presentationMode
+    
     
     var body: some View {
         ScrollView {
@@ -26,6 +28,18 @@ struct ItemEditView: View {
                     .font(.title3)
                     .bold()
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                HStack {
+                    Button(action: {
+                        // Dismiss the view
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName: "xmark")
+                            .bold()
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    }
+                    Spacer()
+                }
+                .padding(.top, 10)
                 
                 // 아이템의 썸네일 이미지 표시
                 if let item = selectedItem {
@@ -159,19 +173,19 @@ struct ItemEditView: View {
                         .onChange(of: description) { newValue in
                             selectedItem?.description = newValue
                         }
-                    .frame(width: .infinity, height: 220)
-                    .padding(.leading, 5)
-                    .cornerRadius(10)
-                    .focused($textFocused)
-                    .overlay {
-                        if description.isEmpty {
-                            Text(placeholder)
-                                .foregroundColor(Color(.systemGray4))
+                        .frame(width: .infinity, height: 220)
+                        .padding(.leading, 5)
+                        .cornerRadius(10)
+                        .focused($textFocused)
+                        .overlay {
+                            if description.isEmpty {
+                                Text(placeholder)
+                                    .foregroundColor(Color(.systemGray4))
+                            }
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.gray, lineWidth: 2)
                         }
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray, lineWidth: 2)
-                    }
-                    .padding(.top, 10)
+                        .padding(.top, 10)
                     HStack {
                         HStack {
                             TextField("가격을 입력해 주세요", text: Binding(

@@ -13,7 +13,8 @@ struct ItemStatusSheetView: View {
     
     @Binding var showDetail: Bool
     @Binding var selectedItem: Item?
-    
+    @State private var isEditing = false
+
     @State private var showAlert = false
     @State private var showSalesStatusSheet = false
     
@@ -22,15 +23,20 @@ struct ItemStatusSheetView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                if selectedItem != nil {
-                    NavigationLink(destination: ItemEditView(
-                        selectedItem: $selectedItem // 바인딩으로 전달
-                    )) {
-                        Text("상품 수정")
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                    }
-                    .padding()
+                Button(action: {
+                    isEditing = true
+                    print("상품 수정")
+                }) {
+                    Text("상품 수정")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 }
+                .padding()
+                .fullScreenCover(isPresented: $isEditing) {
+                    if let selectedItem = selectedItem {
+                        ItemEditView(selectedItem: $selectedItem) // 바인딩으로 전달
+                    }
+                }
+
                 
                 Divider()
                 
