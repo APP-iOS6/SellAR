@@ -13,9 +13,9 @@ struct OnboardingView: View {
     @State private var navigateToNext = false
     
     let onboardingData = [
-        (image: "house.fill", text: "다양한 물건을 거래하는 AR 중고거래"),
-        (image: "paintbrush.fill", text: "실제 사이즈를 놓아보는 AR 인테리어"),
-        (image: "camera.fill", text: "실제 모습처럼 만드는 AR 3D 스캔")
+        (image: "onboarding1", text: "다양한 물건을 거래하는 AR 중고거래"),
+        (image: "onboarding2", text: "실제 사이즈를 놓아보는 AR 인테리어"),
+        (image: "onboarding3", text: "실제 모습처럼 만드는 AR 3D 스캔")
     ]
     
     var body: some View {
@@ -23,11 +23,13 @@ struct OnboardingView: View {
             ZStack {
                 Color.black
                     .edgesIgnoringSafeArea(.all)
+            
                 GeometryReader{ geometry in
                     TabView(selection: $currentPage) {
                         ForEach(0..<onboardingData.count, id: \.self) { index in
                             VStack (spacing: 20) {
-                                Image(systemName: onboardingData[index].image)
+                                Spacer()
+                                Image(onboardingData[index].image)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(height: 300)
@@ -38,9 +40,9 @@ struct OnboardingView: View {
                                     .bold()
                                     .multilineTextAlignment(.center)
                                     .padding()
-                                    .padding(.top, 30)
                                     .foregroundColor(.white)
                                     .lineSpacing(8)
+                                Spacer()
                             }
                             .tag(index)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)

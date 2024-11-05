@@ -21,8 +21,9 @@ struct LoginView: View {
                 Color.black
                     .edgesIgnoringSafeArea(.all)
                 GeometryReader{ geometry in
+                    
                     VStack (spacing: 20) {
-                        Image(systemName: "person.fill")
+                        Image("sellarlogo")
                             .resizable()
                             .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.16)
                             .foregroundColor(.white)
