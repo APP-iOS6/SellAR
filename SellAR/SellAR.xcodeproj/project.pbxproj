@@ -16,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+
 		04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B8482C5C2CD1F1CB009DDA02 /* SellAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 
@@ -157,7 +158,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+
 				04DF4A382CD85DF100B5B637 /* GoogleService-Info.plist in Resources */,
+
 
 			);
 			runOnlyForDeploymentPostprocessing = 0;
