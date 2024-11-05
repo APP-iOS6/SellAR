@@ -70,7 +70,7 @@ struct ItemRowView: View {
             VStack {
                 Button(action: {
                     selectedItem = item
-                    print("아이템 선택됨")
+                    print("아이템 선택됨: \(item.title)")
                     showDetailSheet = true
                 }) {
                     Image(systemName: "ellipsis")
@@ -134,7 +134,7 @@ struct ItemListView: View {
                         }
                     }
                 }
-                .background(Color(.systemGray5))
+                .background(colorScheme == .dark ? Color(.systemGray5) : Color.white) // 배경색을 다르게 설정
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)

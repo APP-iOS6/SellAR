@@ -20,18 +20,15 @@ struct ItemStatusSheetView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                if let item = selectedItem {
-                    NavigationLink(destination: ItemEditView (
-                        item: item,
-                        titleTextField: item.title,
-                        textEditor: item.description,
-                        priceTextField: String(item.price)
+                if selectedItem != nil {
+                    NavigationLink(destination: ItemEditView(
+                        selectedItem: $selectedItem // 바인딩으로 전달
                     )) {
                         Text("상품 수정")
                             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                     }
+                    .padding()
                 }
-                
                 
                 Divider()
                 
