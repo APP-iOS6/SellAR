@@ -22,7 +22,7 @@ struct ItemEditView: View {
     
     
     var body: some View {
-        ScrollView {
+        
             VStack {
                 Text("게시글 수정")
                     .font(.title3)
@@ -263,6 +263,6 @@ struct ItemEditView: View {
                     }
                 }
             }
-        }
+        
     }
 }
