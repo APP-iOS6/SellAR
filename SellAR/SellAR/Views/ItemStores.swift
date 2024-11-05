@@ -54,7 +54,17 @@ class ItemStore: ObservableObject {
             }
         }
     }
-
+    
+    func deldeItem(itemId: String) {
+        let db = Firestore.firestore()
+        db.collection("items").document(itemId).delete() { error in
+            if let error = error {
+                print("문서 삭제 중 오류 발생: \(error)")
+            } else {
+                print("정상적으로 삭제됨!")
+            }
+        }
+    }
     deinit {
         // ItemStore가 해제될 때 리스너를 제거합니다.
         listener?.remove()

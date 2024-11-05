@@ -66,8 +66,11 @@ struct ItemStatusSheetView: View {
                 title: Text("상품 삭제"),
                 message: Text("정말로 상품을 삭제하시겠습니까?"),
                 primaryButton: .destructive(Text("삭제")) {
+                    if let itemId = selectedItem?.id {
+                        itemStore.deldeItem(itemId: itemId)
+                        dismiss()
+                    }
                     print("상품이 삭제되었습니다.")
-                    dismiss()
                 },
                 secondaryButton: .cancel(Text("취소"))
             )
