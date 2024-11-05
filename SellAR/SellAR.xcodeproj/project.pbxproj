@@ -7,17 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022B2CD8506200C3CF8E /* GoogleSignIn */; };
+		0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022D2CD8506200C3CF8E /* GoogleSignInSwift */; };
+		049CC3512CD48C7400C331E7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 049CC3502CD48C7400C331E7 /* FirebaseAuth */; };
+		04DF4A382CD85DF100B5B637 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */; };
 		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B8482C5C2CD1F1CB009DDA02 /* SellAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		04DF4A3A2CD85FC200B5B637 /* Exceptions for "SellAR" folder in "SellAR" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B8482C5B2CD1F1CB009DDA02 /* SellAR */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B8482C5E2CD1F1CB009DDA02 /* SellAR */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				04DF4A3A2CD85FC200B5B637 /* Exceptions for "SellAR" folder in "SellAR" target */,
+			);
 			path = SellAR;
 			sourceTree = "<group>";
 		};
@@ -28,7 +46,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */,
 				B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */,
+				0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */,
+				049CC3512CD48C7400C331E7 /* FirebaseAuth in Frameworks */,
 				B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -39,6 +60,7 @@
 		B8482C532CD1F1CB009DDA02 = {
 			isa = PBXGroup;
 			children = (
+				04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */,
 				B8482C5E2CD1F1CB009DDA02 /* SellAR */,
 				B8482C6E2CD213DC009DDA02 /* Frameworks */,
 				B8482C5D2CD1F1CB009DDA02 /* Products */,
@@ -82,6 +104,9 @@
 			packageProductDependencies = (
 				B8482C6F2CD213DC009DDA02 /* FirebaseStorage */,
 				B8482C712CD213F0009DDA02 /* FirebaseFirestore */,
+				049CC3502CD48C7400C331E7 /* FirebaseAuth */,
+				0484022B2CD8506200C3CF8E /* GoogleSignIn */,
+				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
 			);
 			productName = SellAR;
 			productReference = B8482C5C2CD1F1CB009DDA02 /* SellAR.app */;
@@ -113,6 +138,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B8482C5D2CD1F1CB009DDA02 /* Products */;
@@ -129,6 +155,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04DF4A382CD85DF100B5B637 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +303,7 @@
 				DEVELOPMENT_TEAM = 6R3M7VGRP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SellAR/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -307,6 +335,7 @@
 				DEVELOPMENT_TEAM = 6R3M7VGRP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SellAR/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -350,6 +379,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 		B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -361,6 +398,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0484022B2CD8506200C3CF8E /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		0484022D2CD8506200C3CF8E /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		049CC3502CD48C7400C331E7 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
 		B8482C6F2CD213DC009DDA02 /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
