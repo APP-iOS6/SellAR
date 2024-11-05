@@ -17,6 +17,8 @@ struct ItemStatusSheetView: View {
     @State private var showAlert = false
     @State private var showSalesStatusSheet = false
     
+    @ObservedObject var itemStore: ItemStore
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -65,8 +67,12 @@ struct ItemStatusSheetView: View {
             )
         }
         .sheet(isPresented: $showSalesStatusSheet) {
-            SalesStatusSheetView(showSalesStatusSheet: $showSalesStatusSheet, showDetail: $showDetail)
+            SalesStatusSheetView(showSalesStatusSheet: $showSalesStatusSheet,
+                                 showDetail: $showDetail,
+                                 selectedItem: $selectedItem,  // 선택된 아이템을 바인딩으로 전달
+                                 itemStore: itemStore)          // 아이템 저장소도 전달
                 .presentationDetents([.fraction(0.25)])
         }
+
     }
 }

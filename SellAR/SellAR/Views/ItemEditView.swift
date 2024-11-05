@@ -29,7 +29,7 @@ struct ItemEditView: View {
                 
                 // 아이템의 썸네일 이미지 표시
                 if let item = selectedItem {
-                    AsyncImage(url: URL(string: item.thumbnailLink)) { phase in
+                    AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
                         switch phase {
                         case .empty:
                             ProgressView()
@@ -166,7 +166,7 @@ struct ItemEditView: View {
                     .overlay {
                         if description.isEmpty {
                             Text(placeholder)
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                .foregroundColor(Color(.systemGray4))
                         }
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.gray, lineWidth: 2)
@@ -176,7 +176,7 @@ struct ItemEditView: View {
                     HStack {
                         TextField("가격을 입력해 주세요", text: Binding(
                             get: { String(item.price) },
-                            set: { selectedItem?.price = Double($0) ?? item.price }
+                            set: { selectedItem?.price = ($0) }
                         ))
                         .frame(maxWidth: .infinity, maxHeight: 25)
                         .focused($textFocused)
@@ -222,7 +222,7 @@ struct ItemEditView: View {
                     }
                     .padding(.top, 10)
                     .onAppear {
-                        description = item.description ?? ""
+                        description = item.description
                     }
                 }
                 
