@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NicknameEntryView: View {
+    @ObservedObject var chatViewModel: ChatViewModel
     @ObservedObject var viewModel: LoginViewModel
     @State private var nickname = ""
     @State private var isNicknameSaved = false
@@ -51,7 +52,7 @@ struct NicknameEntryView: View {
                                 .foregroundColor(.white)
                         }
                         .padding(.top, 20)
-                        NavigationLink(destination: EmptyView(), isActive: $isNicknameSaved) {
+                        NavigationLink(destination: StartMessageView(chatViewModel), isActive: $isNicknameSaved) {
                             EmptyView()
                         }
                     }
