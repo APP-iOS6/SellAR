@@ -8,29 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var viewModel: LoginViewModel
+
+    let userdata = UserData(
+        id: "12345",
+        email: "aaaaaa@gmail.com",
+        username: "가나다",
+        profileImageUrl: nil,
+        userLocation: "서울시 강남구",
+        intro: "자신을 소개해주세요"
+    )
+
     var body: some View {
-        
         TabView {
-              Text("The First Tab")
+            MainView()
                 .tabItem {
-                  Image(systemName: "1.square.fill")
-                  Text("First")
+                    Image(systemName: "1.square.fill")
+                    Text("홈")
                 }
-              Text("Another Tab")
+            StartMessageView(loginViewModel: viewModel)
                 .tabItem {
-                  Image(systemName: "2.square.fill")
-                  Text("Second")
+                    Image(systemName: "2.square.fill")
+                    Text("채팅")
                 }
-              Text("The Last Tab")
+            MyPageView(userdata: userdata) 
                 .tabItem {
-                  Image(systemName: "3.square.fill")
-                  Text("Third")
+                    Image(systemName: "3.square.fill")
+                    Text("마이페이지")
                 }
                 .font(.headline)
-            }
+        }
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(viewModel: LoginViewModel())
 }
