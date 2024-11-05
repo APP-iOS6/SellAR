@@ -172,12 +172,17 @@ struct ItemEditView: View {
                             .stroke(Color.gray, lineWidth: 2)
                     }
                     .padding(.top, 10)
-                    
                     HStack {
-                        TextField("가격을 입력해 주세요", text: Binding(
-                            get: { String(item.price) },
-                            set: { selectedItem?.price = ($0) }
-                        ))
+                        HStack {
+                            TextField("가격을 입력해 주세요", text: Binding(
+                                get: { String(item.price) },
+                                set: { selectedItem?.price = ($0) }
+                            ))
+                            
+                            
+                            Text("원")
+                                .padding(.trailing, 5)
+                        }
                         .frame(maxWidth: .infinity, maxHeight: 25)
                         .focused($textFocused)
                         .textFieldStyle(.plain)
@@ -189,7 +194,6 @@ struct ItemEditView: View {
                                 .stroke(Color.gray, lineWidth: 2)
                         )
                         .keyboardType(.numberPad)
-                        
                         
                         Button(action: {
                             if let item = selectedItem {
