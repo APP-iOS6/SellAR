@@ -15,6 +15,7 @@ struct RegisterView: View {
     @State private var password = ""
     @State private var confinPassword = ""
     @State private var userName = ""
+    @State private var profileImage: UIImage? = nil
     
     var body: some View {
         NavigationStack {
@@ -68,7 +69,7 @@ struct RegisterView: View {
                         
                         // 로그인 회원가입 버튼
                             Button(action: {
-                                viewModel.registerWithEmailPassword(email: email, password: password)
+                                viewModel.registerWithEmailPassword(email: email, password: password, username: userName, profileImage: profileImage)
                             }){
                                 Text("가입완료")
                             }

@@ -5,37 +5,87 @@
 //  Created by Mac on 11/1/24.
 //
 
+import AuthenticationServices
 import FirebaseAuth
 import FirebaseCore
+import FirebaseFirestore
+import FirebaseStorage
 import GoogleSignIn
-
 import SwiftUI
 
-class LoginViewModel: ObservableObject {
+@objcMembers
+class LoginViewModel: NSObject, ObservableObject {
     @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
+    var completionHandler: ((Bool) -> Void)?
     
-    // 이메일과 비밀번호로 가입하는 회원가입 메서드
-    func registerWithEmailPassword(email :String, password: String) {
+    private var db = Firestore.firestore()
+    private var storage = Storage.storage().reference()
+    
+    
+    // MARK: Firestore에 사용자 데이터를 저장하는 공통 메서드
+    func saveUserToFirestore(uid: String, email: String, username: String, profileImageUrl: String?) {
+        let userData: [String:Any]  = [
+            "id": uid,
+            "email": email,
+            "username": username,
+            "profileImageUrl": profileImageUrl ?? ""
+        ]
+        
+        db.collection("users").document(uid).setData(userData) { error in
+             if let error = error {
+                 print("Firestore에 사용자 데이터 저장 실패 \(error.localizedDescription)")
+            } else {
+                 print("회원가입 성공, Firestore에 사용자 데이터 저장됨")
+                 self.user = User(id: uid, email: email, username: username, profileImageUrl: profileImageUrl)
+            }
+        }
+        
+    }
+    
+    // MARK: 이메일과 비밀번호로 가입하는 회원가입 메서드
+    func registerWithEmailPassword(email: String, password: String, username: String, profileImage: UIImage?) {
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 print("회원가입 실패 \(error.localizedDescription)")
                 return
             }
-            // 가입 후 닉네임 설정 메서드
             if let user = authResult?.user {
-                let changeRequest = user.createProfileChangeRequest()
-                changeRequest.displayName = self.user.username
-                changeRequest.commitChanges() { error in
-                    if let error = error {
-                        print("닉네임 설정 실패\(error.localizedDescription)")
-                    }   else {
-                        print("회원가입 성공")
-                        
-                    }
+                self.uploadProfileImage(profileImage) { url in
+                    self.saveUserToFirestore(uid: user.uid, email: email, username: username, profileImageUrl: url?.absoluteString)
                 }
             }
         }
     }
+    // MARK: - Firebase Storage에 이미지 업로드 메서드
+    
+    private func uploadProfileImage(_ image: UIImage?, completion: @escaping (URL?)-> Void) {
+        guard let image = image,
+              let imageData = image.jpegData(compressionQuality: 0.5) else {
+            completion(nil)
+            return
+        }
+        
+        let fileName = UUID().uuidString
+        let imageRef = storage.child("profileImages/\(fileName).jpg")
+        
+        imageRef.putData(imageData, metadata: nil) { _, error in
+            if let error = error {
+                print("이미지 업로드 실패: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            imageRef.downloadURL() { url, error in
+                if let error = error {
+                    print("이미지 가져오기 실패: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    completion(url)
+                }
+            }
+        }
+    }
+    
     // 로그인 메서드
     func loginWithEmailPassword(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
@@ -50,7 +100,7 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
-    // 구글 로그인 메서드
+    // MARK: 구글 로그인 메서드
     func loginWithGoogle(completion: @escaping (Bool) -> Void) {
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         let config = GIDConfiguration(clientID: clientID)
@@ -90,20 +140,27 @@ class LoginViewModel: ObservableObject {
                     print ("Firebase Google 인증 실패 \(error.localizedDescription)")
                     completion(false)
                 } else if let firebaseUser = authResult?.user {
-                    self.user = User(id: firebaseUser.uid, email: firebaseUser.email ?? "" , username: firebaseUser.displayName ?? "", profileImageUrl: nil)
-                    print("Google 로그인 성공!")
+                    self.saveUserToFirestore(uid: firebaseUser.uid, email: firebaseUser.email ?? "", username: firebaseUser.displayName ?? "", profileImageUrl: nil)
+                    print("Google 로그인 및 데이터 저장 성공!")
                     completion(true)
                 }
             }
         }
     }
     
-    // 애플 로그인 메서드
+    // MARK: 애플 로그인 메서드 세부 코드는 AppleExtention.swift에서 구현
     
     func loginWithApple(completion: @escaping (Bool) -> Void) {
-        let 
+        self.completionHandler = completion
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.performRequests()
+        
+        controller.delegate = self
+        controller.presentationContextProvider = self
     }
-    
     
     // 닉네임 저장 메서드
     func saveNickname(_ nickname: String) {

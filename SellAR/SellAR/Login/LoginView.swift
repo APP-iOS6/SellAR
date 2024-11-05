@@ -23,6 +23,13 @@ struct LoginView: View {
                 GeometryReader{ geometry in
                     /// 이메일 비밀번호 로그인
                     VStack (spacing: 20) {
+                        
+                        Image(systemName: "Photo")
+                            .resizable()
+                            .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.3)
+                            .foregroundColor(.white)
+                            .padding(.bottom, 20)
+                        
                         Text("이메일")
                             .padding()
                             .foregroundColor(.white)
@@ -86,13 +93,31 @@ struct LoginView: View {
                     NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
                         EmptyView() // 네비게이션 링크 안보이게
                     }
-                    }
-                    
+                        
+                        Button(action: {
+                            viewModel.loginWithApple { success in
+                                if success {
+                                    isNavigation = true
+                                }
+                            }
+                        }) {
+                            Text("Apple로 로그인")
+                                .frame(width: geometry.size.width * 0.7, height: geometry.size.height / 50)
+                                .padding()
+                                .foregroundColor(.white)
+                                .background(.gray)
+                                .cornerRadius(10)
+                        }
+
+                        NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
+                            EmptyView() // 네비게이션 링크 안보이게
+                        }
                     }
                 }
             }
         }
     }
+}
 
 #Preview {
     LoginView()
