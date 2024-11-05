@@ -13,10 +13,16 @@ struct SalesStatusSheetView: View {
     
     @Binding var showSalesStatusSheet: Bool
     @Binding var showDetail: Bool
+    @Binding var selectedItem: Item?
     
+    @ObservedObject var itemStore: ItemStore
+
     var body: some View {
         VStack {
             Button(action: {
+                if let itemId = selectedItem?.id {
+                    itemStore.updateItemStatus(itemId: itemId, isSold: false) // 판매 중으로 설정
+                }
                 showDetail = false
                 print("판매 중")
             }) {
@@ -28,6 +34,9 @@ struct SalesStatusSheetView: View {
             Divider()
             
             Button(action: {
+                if let itemId = selectedItem?.id {
+                    itemStore.updateItemStatus(itemId: itemId, isSold: true) // 판매 완료로 설정
+                }
                 showDetail = false
                 print("판매 완료")
             }) {
@@ -36,16 +45,20 @@ struct SalesStatusSheetView: View {
             }
             .padding()
             
-            Divider()
-            
-            Button(action: {
-                showDetail = false
-                print("예약 중")
-            }) {
-                Text("예약 중")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-            }
-            .padding(.top, 10)
+//            Divider()
+//            
+//            Button(action: {
+//                // 예약 중 상태 업데이트 기능 추가
+//                if let itemId = selectedItem?.id {
+//                    itemStore.updateItemStatus(itemId: itemId, isSold: false) // 예약 중 상태로 설정
+//                }
+//                showDetail = false
+//                print("예약 중")
+//            }) {
+//                Text("예약 중")
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+//            }
+//            .padding(.top, 10)
         }
     }
 }

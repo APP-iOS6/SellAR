@@ -17,7 +17,7 @@ struct ItemRowView: View {
         HStack {
             VStack {
                 // AsyncImage를 사용하여 URL에서 이미지를 로드
-                AsyncImage(url: URL(string: item.thumbnailLink)) { phase in
+                AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
                     switch phase {
                     case .empty:
                         // 로딩 중일 때 표시할 뷰
@@ -53,7 +53,7 @@ struct ItemRowView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("\(Int(item.price)) 원")
+                Text("\(item.price) 원")
                     .font(.system(size: 16, weight: .bold))
                 Text(item.title)
                     .font(.headline)
@@ -167,7 +167,7 @@ struct ItemListView: View {
             }
         }
         .sheet(isPresented: $showDetailSheet) {
-            ItemStatusSheetView(showDetail: $showDetailSheet, selectedItem: $selectedItem)
+            ItemStatusSheetView(showDetail: $showDetailSheet, selectedItem: $selectedItem, itemStore: itemStore)
                 .presentationDetents([.fraction(0.25)])
         }
     }
