@@ -33,15 +33,4 @@ class ItemListVM: ObservableObject {
                 }
             }
     }
-    
-//    func upload() {
-//        Task {
-//            do {
-//                let itemEncode = try Firestore.Encoder().encode(item)
-//                Firestore.firestore().collection("items").addDocument(data: itemEncode)
-//            } catch {
-//                print( error.localizedDescription )
-//            }
-//        }
-//    }
 }
