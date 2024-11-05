@@ -39,6 +39,21 @@ class ItemStore: ObservableObject {
             print("Items loaded: \(String(describing: self?.items))")  // 로드된 items를 확인
         }
     }
+    
+    func updateItemStatus(itemId: String, isSold: Bool) {
+        let db = Firestore.firestore()
+        let itemRef = db.collection("items").document(itemId)
+        
+        itemRef.updateData([
+            "isSold": isSold
+        ]) { error in
+            if let error = error {
+                print("문서 업데이트 중 오류 발생: \(error)")
+            } else {
+                print("문서가 성공적으로 업데이트되었습니다.")
+            }
+        }
+    }
 
     deinit {
         // ItemStore가 해제될 때 리스너를 제거합니다.
