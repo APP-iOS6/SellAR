@@ -22,7 +22,7 @@ struct ItemEditView: View {
     
     
     var body: some View {
-        
+        ScrollView {
             VStack {
                 Text("게시글 수정")
                     .font(.title3)
@@ -83,7 +83,7 @@ struct ItemEditView: View {
                     
                     HStack {
                         Button(action: {
-                            
+                            textFocused = false
                         }) {
                             Text("촬영하기")
                             Image(systemName: "camera")
@@ -100,7 +100,7 @@ struct ItemEditView: View {
                         Spacer()
                         
                         Button(action: {
-                            
+                            textFocused = false
                         }) {
                             Text("올리기")
                             Image(systemName: "square.and.arrow.up")
@@ -117,7 +117,7 @@ struct ItemEditView: View {
                         Spacer()
                         
                         Button(action: {
-                            
+                            textFocused = false
                         }) {
                             Text("이미지")
                             Image(systemName: "photo")
@@ -263,6 +263,6 @@ struct ItemEditView: View {
                     }
                 }
             }
-        
+        }
     }
 }
