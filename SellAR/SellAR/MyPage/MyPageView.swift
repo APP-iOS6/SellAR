@@ -125,7 +125,7 @@ struct MyPageView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        NavigationLink(destination: ItemListView(itemStore: itemStore) {
+                        NavigationLink(destination: ItemListView(itemStore: itemStore)) {
                             HStack {
                                 Image(systemName: "list.bullet")
                                 Text("내 글 목록")
