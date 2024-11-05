@@ -18,7 +18,8 @@ struct MyPageView: View {
 //    @State private var intro: String = "자신을 소개해주세요."
 //    @State private var userlocation: String = "서울시 강남구"
 //    @State private var isLoggedIn: Bool = false //로그인상태 확인변수
-    
+    @ObservedObject var itemStore = ItemStore()
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -124,7 +125,7 @@ struct MyPageView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        NavigationLink(destination: PostListView()) {
+                        NavigationLink(destination: ItemListView(itemStore: itemStore) {
                             HStack {
                                 Image(systemName: "list.bullet")
                                 Text("내 글 목록")
