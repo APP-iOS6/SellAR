@@ -9,19 +9,21 @@ import SwiftUI
 
 struct MyPageView: View {
     
+    let userdata: UserData
     //추후 데이터 연결 공간
-    
-    @State private var id: String = "aaaaaa@gmail.com"
-    @State private var name: String = "가나다"
-    @State private var image: String = "image"
-    @State private var intro: String = "자신을 소개해주세요."
-    @State private var userlocation: String = "서울시 강남구"
+//    @State private var id: String = UUID().uuidString
+//    @State private var email: String = "aaaaaa@gmail.com"
+//    @State private var username: String = "가나다"
+//    @State private var profileImageUrl: String = "image"
+//    @State private var intro: String = "자신을 소개해주세요."
+//    @State private var userlocation: String = "서울시 강남구"
+//    @State private var isLoggedIn: Bool = false //로그인상태 확인변수
     
     var body: some View {
         NavigationView {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
-                VStack(spacing: 10) {
+                VStack(spacing: 0) {
                     HStack {
                         Button(action: {
                             //버튼기능 추가예정
@@ -31,8 +33,9 @@ struct MyPageView: View {
                                 .frame(width: 11, height: 22)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .foregroundColor(.gray)
-                            
                         }
+                        .buttonStyle(PlainButtonStyle())
+                        
                         //프로필 수정버튼
                         NavigationLink(destination: ProfileFixView()) {
                             Image(systemName: "square.and.pencil" )
@@ -41,10 +44,13 @@ struct MyPageView: View {
                                 .foregroundColor(.gray)
                         }
                     }
+                    Spacer()
+                        .frame(height: 50)
                     // 프로필 사진과 닉네임/이메일을 병렬 배치
                     HStack(alignment: .center, spacing: 20) {
                         // 프로필 사진
                         Image(systemName: "camera.fill")
+                        //Image("userdata.profileImageUrl")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .padding(30)
@@ -60,7 +66,7 @@ struct MyPageView: View {
                                     .font(.system(size: 15))
                                     .foregroundColor(.white)
                                 Spacer()
-                                Text(name)  // 닉네임 표시
+                                Text(userdata.username)  // 닉네임 표시
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .lineLimit(1)
@@ -74,7 +80,7 @@ struct MyPageView: View {
                                 Text("이메일")
                                     .font(.system(size: 15))
                                     .foregroundColor(.white)
-                                Text(id)  // 이메일 표시
+                                Text(userdata.email)  // 이메일 표시
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .lineLimit(1)
@@ -89,7 +95,7 @@ struct MyPageView: View {
                     
                     VStack {
                         HStack {
-                            Text(userlocation)
+                            Text(userdata.userLocation)
                                 .frame(width: 100, alignment: .leading)
                                 .foregroundColor(.white)
                             Image(systemName: "location.fill")
@@ -101,7 +107,7 @@ struct MyPageView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 10)
                         // 자기소개 구문 (텍스트만 출력하는 형태로 변경)
-                        Text(intro)
+                        Text(userdata.intro)
                             .frame(maxWidth: .infinity, maxHeight: 150, alignment: .topLeading)  // 좌측 정렬
                             .padding()
                             .background(Color.gray.opacity(0.2))
@@ -167,28 +173,28 @@ struct MyPageView: View {
                         }
                     }
                 }
-                .padding()
-                .navigationTitle("마이페이지")
+                .padding(10)
+                .navigationTitle("")
                 .navigationBarHidden(true) // 상단여백제거
             }
         }
     }
 }
 
-struct PostListView: View {
-    var body: some View {
-        Text("내 글 목록 화면")
-            .navigationTitle("내 글 목록")
-    }
-}
+//struct PostListView: View {
+//    var body: some View {
+//        Text("내 글 목록 화면")
+//            .navigationTitle("내 글 목록")
+//    }
+//}
 
-struct ProfileFixView: View {
-    var body: some View {
-        Text("프로필 수정 화면")
-            .navigationTitle("프로필 수정")
-    }
-}
+//struct ProfileFixView: View {
+//    var body: some View {
+//        Text("프로필 수정 화면")
+//            .navigationTitle("프로필 수정")
+//    }
+//}
 
 #Preview {
-    MyPageView()
+    MyPageView(userdata: UserData(id: "12345", email: "aaaaaa@gmail.com", username: "가나다", profileImageUrl:nil, userLocation: "서울시 강남구", intro: "자신을 소개해주세요"))
 }
