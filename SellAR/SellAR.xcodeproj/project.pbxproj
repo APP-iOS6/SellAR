@@ -13,11 +13,13 @@
 		04DF4A382CD85DF100B5B637 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */; };
 		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
+		B86F45F52CD7EADA0076BE39 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B86F45F42CD7EADA0076BE39 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B8482C5C2CD1F1CB009DDA02 /* SellAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,13 +66,14 @@
 				B8482C5E2CD1F1CB009DDA02 /* SellAR */,
 				B8482C6E2CD213DC009DDA02 /* Frameworks */,
 				B8482C5D2CD1F1CB009DDA02 /* Products */,
+				B86F45F42CD7EADA0076BE39 /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
 		B8482C5D2CD1F1CB009DDA02 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B8482C5C2CD1F1CB009DDA02 /* SellAR.app */,
+				B86F46342CD7F85C0076BE39 /* SellAR.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,7 +112,7 @@
 				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
 			);
 			productName = SellAR;
-			productReference = B8482C5C2CD1F1CB009DDA02 /* SellAR.app */;
+			productReference = B86F46342CD7F85C0076BE39 /* SellAR.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -156,6 +159,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04DF4A382CD85DF100B5B637 /* GoogleService-Info.plist in Resources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,7 +303,7 @@
 				CODE_SIGN_ENTITLEMENTS = SellAR/SellAR.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"SellAR/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 6R3M7VGRP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -331,7 +335,7 @@
 				CODE_SIGN_ENTITLEMENTS = SellAR/SellAR.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"SellAR/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 6R3M7VGRP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
