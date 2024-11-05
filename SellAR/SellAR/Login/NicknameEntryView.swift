@@ -51,7 +51,12 @@ struct NicknameEntryView: View {
                                 .foregroundColor(.white)
                         }
                         .padding(.top, 20)
-                        NavigationLink(destination: EmptyView(), isActive: $isNicknameSaved) {
+                        
+                        // 수정된 NavigationLink
+                        NavigationLink(
+                                destination: StartMessageView(loginViewModel: viewModel),
+                            isActive: $isNicknameSaved
+                        ) {
                             EmptyView()
                         }
                     }
