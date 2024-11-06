@@ -56,7 +56,7 @@ struct NicknameEntryView: View {
                                 .foregroundColor(.white)
                         }
                         .padding(.top, 20)
-                        NavigationLink(destination: EmptyView(), isActive: $isNicknameSaved) {
+                        NavigationLink(destination: MainView(), isActive: $isNicknameSaved) {
                             EmptyView()
                         }
                     }
