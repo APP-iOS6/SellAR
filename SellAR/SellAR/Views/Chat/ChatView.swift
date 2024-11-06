@@ -154,13 +154,16 @@ struct ChatContentView: View {
 struct ChatInputView: View {
     @Binding var messageContent: String
     let onSend: (String) -> Void
+//    @FocusState var textFocus: Bool // TextField의 포커스를 잡을 변수
     
     var body: some View {
         HStack {
             TextField("메시지를 입력하세요", text: $messageContent)
+//                .focused($textFocus) // 해당 TextField에 포커스 맞춤
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
                 .foregroundColor(.black)
+                
             
             Button(action: {
                 guard !messageContent.isEmpty else { return }
@@ -174,5 +177,17 @@ struct ChatInputView: View {
         }
         .padding(.vertical, 8)
         .background(Color.black.opacity(0.9))
+        
+        // 키보드 위에 완료버튼 클릭 시 키보드 내리는 툴바 추가
+//        .toolbar {
+//            ToolbarItemGroup(placement: .keyboard) {
+//                HStack {
+//                    Spacer()
+//                    Button("완료") {
+//                        textFocus = false
+//                    }
+//                }
+//            }
+//        }
     }
 }
