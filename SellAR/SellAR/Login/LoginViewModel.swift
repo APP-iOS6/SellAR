@@ -16,6 +16,7 @@ import SwiftUI
 @objcMembers
 class LoginViewModel: NSObject, ObservableObject {
     @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
+    @ObservedObject private var errorViewModel = LoginErrorViewModel()
     var completionHandler: ((Bool) -> Void)?
     
     private var db = Firestore.firestore()
@@ -91,14 +92,28 @@ class LoginViewModel: NSObject, ObservableObject {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 print("로그인 실패 \(error.localizedDescription)")
+                if (error as NSError).code == AuthErrorCode.invalidEmail.rawValue {
+                    self.errorViewModel.handleLoginError(.invalidEmail)
+                } else if (error as NSError).code == AuthErrorCode.userNotFound.rawValue {
+                    self.errorViewModel.handleLoginError(.emailNotFound)
+                } else if (error as NSError).code == AuthErrorCode.wrongPassword.rawValue {
+                    self.errorViewModel.handleLoginError(.incorrectPassword)
+                } else {
+                    self.errorViewModel.handleLoginError(nil)
+                }
                 return
             }
-            
-            if let firebaseUser = authResult?.user {
-                self.user = User(id: firebaseUser.uid, email: email, username: firebaseUser.displayName ?? "", profileImageUrl: nil)
-                print("로그인 성공")
+            self.errorViewModel.handleLoginError(nil)
+                
+                if let firebaseUser = authResult?.user {
+                    self.user = User(id: firebaseUser.uid, email: email, username: firebaseUser.displayName ?? "", profileImageUrl: nil)
+                    print("로그인 성공")
+                }
             }
         }
+    // 이메일 유효성 검사
+    private func isValidEmail(_ email: String) -> Bool {
+        return email.contains("@")
     }
     // MARK: 구글 로그인 메서드
     func loginWithGoogle(completion: @escaping (Bool) -> Void) {
