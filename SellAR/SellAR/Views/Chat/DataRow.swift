@@ -22,7 +22,7 @@ struct DataRow: View {
     }
     
     private var messageBackgroundColor: Color {
-        isCurrentUser ? Color.blue.opacity(0.8) : Color.gray.opacity(0.3)
+        isCurrentUser ? Color.blue.opacity(0.8) : Color.green.opacity(0.6)
     }
     
     var body: some View {
@@ -37,8 +37,9 @@ struct DataRow: View {
             
             HStack(alignment: .bottom, spacing: 8) {
                 if !isCurrentUser {
+                    // 상대방 프로필 이미지 및 닉네임 표시
                     if let user = chatViewModel.chatUsers[data.userID] {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .center, spacing: 4) {
                             Text(user.username)
                                 .font(.caption)
                                 .foregroundColor(.gray)
@@ -54,26 +55,32 @@ struct DataRow: View {
                     }
                 }
                 
-                VStack(alignment: isCurrentUser ? .trailing : .leading) {
-                    Text(data.content)
-                        .padding(10)
-                        .background(messageBackgroundColor)
-                        .foregroundColor(isCurrentUser ? .white : .black)
-                        .cornerRadius(15)
-                    
-                    Text(data.formattedTime)
-                        .font(.caption2)
-                        .foregroundColor(.gray)
+                VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 4) {
+                    // 메시지 내용과 시간
+                    HStack(alignment: .bottom, spacing: 4) {
+                        Text(data.content)
+                            .padding(10)
+                            .background(messageBackgroundColor)
+                            .foregroundColor(.white)
+                            .cornerRadius(15)
+                        
+                        Text(data.formattedTime)
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                    }
                 }
                 
                 if isCurrentUser {
-                    AsyncImage(url: URL(string: chatViewModel.chatUsers[chatViewModel.senderID]?.profileImageUrl ?? "")) { image in
-                        image.resizable()
-                    } placeholder: {
-                        Circle().fill(Color.gray)
+                    // 현재 사용자 프로필 이미지
+                    VStack(alignment: .center, spacing: 4) {
+                        AsyncImage(url: URL(string: chatViewModel.chatUsers[chatViewModel.senderID]?.profileImageUrl ?? "")) { image in
+                            image.resizable()
+                        } placeholder: {
+                            Circle().fill(Color.gray)
+                        }
+                        .frame(width: 30, height: 30)
+                        .clipShape(Circle())
                     }
-                    .frame(width: 30, height: 30)
-                    .clipShape(Circle())
                 }
             }
             .padding(.horizontal, 8)

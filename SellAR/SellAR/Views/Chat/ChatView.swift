@@ -132,7 +132,7 @@ struct ChatContentView: View {
                 }
             }
             
-            // 구분선
+          
             Divider()
                 .background(Color.gray)
             
