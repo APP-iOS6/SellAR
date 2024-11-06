@@ -26,16 +26,17 @@ struct MyPageView: View {
                 Color.black.edgesIgnoringSafeArea(.all)
                 VStack(spacing: 0) {
                     HStack {
-                        Button(action: {
-                            //버튼기능 추가예정
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .resizable()
-                                .frame(width: 11, height: 22)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
-                        }
-                        .buttonStyle(PlainButtonStyle())
+//                        Button(action: {
+//                            //버튼기능 추가예정
+//                        }) {
+//                            Image(systemName: "chevron.left")
+//                                .resizable()
+//                                .frame(width: 11, height: 22)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                                .foregroundColor(.gray)
+//                        }
+//                        .buttonStyle(PlainButtonStyle())
+                        Spacer()
                         
                         //프로필 수정버튼
                         NavigationLink(destination: ProfileFixView()) {
@@ -45,8 +46,8 @@ struct MyPageView: View {
                                 .foregroundColor(.gray)
                         }
                     }
-                    Spacer()
-                        .frame(height: 50)
+//                    Spacer()
+//                        .frame(height: 50)
                     // 프로필 사진과 닉네임/이메일을 병렬 배치
                     HStack(alignment: .center, spacing: 20) {
                         // 프로필 사진
