@@ -4,7 +4,7 @@
 //
 //  Created by Min on 11/4/24.
 //
-
+// 내 상품 게시글을 수정하는 뷰
 import SwiftUI
 import FirebaseFirestore
 
