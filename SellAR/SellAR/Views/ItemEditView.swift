@@ -9,9 +9,13 @@ import SwiftUI
 import FirebaseFirestore
 
 struct ItemEditView: View {
+    enum KeyboardDone: Hashable {
+        case text
+    }
+    
     @Binding var selectedItem: Item?
     @Environment(\.colorScheme) var colorScheme
-    @FocusState private var textFocused: Bool
+    @FocusState private var textFocused: KeyboardDone?
     @State private var description: String = ""
     
     let placeholder: String = "글을 입력해 주세요."
@@ -34,7 +38,7 @@ struct ItemEditView: View {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Image(systemName: "xmark")
-                            .bold()
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                     }
                     Spacer()
@@ -83,7 +87,7 @@ struct ItemEditView: View {
                     
                     HStack {
                         Button(action: {
-                            textFocused = false
+                            textFocused = nil
                         }) {
                             Text("촬영하기")
                             Image(systemName: "camera")
@@ -100,7 +104,7 @@ struct ItemEditView: View {
                         Spacer()
                         
                         Button(action: {
-                            textFocused = false
+                            textFocused = nil
                         }) {
                             Text("올리기")
                             Image(systemName: "square.and.arrow.up")
@@ -117,7 +121,7 @@ struct ItemEditView: View {
                         Spacer()
                         
                         Button(action: {
-                            textFocused = false
+                            textFocused = nil
                         }) {
                             Text("이미지")
                             Image(systemName: "photo")
@@ -142,7 +146,7 @@ struct ItemEditView: View {
                         ))
                         .frame(maxWidth: .infinity, maxHeight: 25)
                         .textFieldStyle(.plain)
-                        .focused($textFocused)
+                        .focused($textFocused, equals: .text)
                         .padding(.vertical, 10)
                         .padding(.leading, 10)
                         .cornerRadius(10)
@@ -176,7 +180,7 @@ struct ItemEditView: View {
                         .frame(width: .infinity, height: 220)
                         .padding(.leading, 5)
                         .cornerRadius(10)
-                        .focused($textFocused)
+                        .focused($textFocused, equals: .text)
                         .overlay {
                             if description.isEmpty {
                                 Text(placeholder)
@@ -198,7 +202,7 @@ struct ItemEditView: View {
                                 .padding(.trailing, 5)
                         }
                         .frame(maxWidth: .infinity, maxHeight: 25)
-                        .focused($textFocused)
+                        .focused($textFocused, equals: .text)
                         .textFieldStyle(.plain)
                         .padding(.vertical, 10)
                         .padding(.leading, 10)
@@ -251,14 +255,14 @@ struct ItemEditView: View {
             .padding(.horizontal, 16)
             .contentShape(Rectangle())
             .onTapGesture {
-                textFocused = false
+                textFocused = nil
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     HStack {
                         Spacer()
                         Button("완료") {
-                            textFocused = false
+                            textFocused = nil
                         }
                     }
                 }

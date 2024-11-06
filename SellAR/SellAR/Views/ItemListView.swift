@@ -111,10 +111,6 @@ struct ItemListView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("내 상품 관리")
-                    .font(.title3)
-                    .bold()
-                
                 HStack {
                     TextField("상품 이름을 입력해주세요.", text: $searchText)
                         .frame(maxWidth: .infinity, maxHeight: 25)
@@ -141,6 +137,7 @@ struct ItemListView: View {
                         .stroke(Color.gray, lineWidth: 2)
                 )
                 .padding(.horizontal, 16)
+                .padding(.top, 10)
                 
                 ForEach(filteredItems) { item in
                     ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
@@ -149,6 +146,7 @@ struct ItemListView: View {
                 Spacer()
             }
         }
+        .navigationTitle("내 상품 관리")
         .onAppear {
             itemStore.fetchItems()
         }
