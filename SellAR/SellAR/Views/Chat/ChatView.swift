@@ -146,7 +146,7 @@ struct ChatContentView: View {
         }
         .navigationTitle("채팅방")
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(Color.primary.edgesIgnoringSafeArea(.all))
     }
 }
 
@@ -162,8 +162,7 @@ struct ChatInputView: View {
                 .focused($textFocus) // 해당 TextField에 포커스 맞춤
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
-                .foregroundColor(.black)
-                
+                .foregroundColor(Color.primary)
             
             Button(action: {
                 guard !messageContent.isEmpty else { return }
@@ -176,18 +175,6 @@ struct ChatInputView: View {
             }
         }
         .padding(.vertical, 8)
-        .background(Color.black.opacity(0.9))
-        
-        // 키보드 위에 완료버튼 클릭 시 키보드 내리는 툴바 추가
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                HStack {
-                    Spacer()
-                    Button("완료") {
-                        textFocus = false
-                    }
-                }
-            }
-        }
+        .background(Color.primary.opacity(0.9))
     }
 }

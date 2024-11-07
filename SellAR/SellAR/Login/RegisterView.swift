@@ -11,6 +11,7 @@ import SwiftUI
 
 struct RegisterView: View {
     @StateObject private var viewModel = LoginViewModel()
+    @StateObject private var keyboardViewModel = KeyboardViewModel()
     @State private var email = ""
     @State private var password = ""
     @State private var confinPassword = ""
@@ -18,20 +19,18 @@ struct RegisterView: View {
     @State private var profileImage: UIImage? = nil
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var isRegistrationSuccessful = false
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.black
                     .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        hideKeyboard()
+                    }
                 GeometryReader{ geometry in
                     VStack (spacing: 20) {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.16)
-                            .foregroundColor(.white)
-                            .padding(.top, 5)
-                        
                         VStack(alignment: .leading, spacing: 5) {
                             Text("이메일")
                                 .foregroundColor(.white)
@@ -42,6 +41,7 @@ struct RegisterView: View {
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                                 .background(.white)
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 20)
@@ -54,6 +54,7 @@ struct RegisterView: View {
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                                 .background(.white)
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 20)
@@ -68,6 +69,7 @@ struct RegisterView: View {
                                 .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                                 .background(.white)
                                 .cornerRadius(10)
+                                .foregroundColor(.black)
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 20)
                             
@@ -80,6 +82,7 @@ struct RegisterView: View {
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                                 .background(.white)
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 40)
@@ -87,6 +90,7 @@ struct RegisterView: View {
                                 Spacer()
                                 Button(action: {
                                     if password == confinPassword { viewModel.registerWithEmailPassword(email: email, password: password, username: userName, profileImage: profileImage)
+                                        isRegistrationSuccessful = true
                                     } else {
                                         alertMessage = "비밀번호가 일치하지 않습니다."
                                         showAlert = true
@@ -110,6 +114,13 @@ struct RegisterView: View {
                     }
                 }
             }
+            .padding(.bottom, -keyboardViewModel.keyboardHeight)
+            .background(
+                NavigationLink(destination: LoginView(), isActive: $isRegistrationSuccessful) {
+                    EmptyView()
+                    
+                }
+                )
         }
     }
 }

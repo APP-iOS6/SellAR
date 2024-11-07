@@ -47,7 +47,7 @@ struct StartMessageView: View {
                 // 로그인한 상태
                 NavigationView {
                     ZStack {
-                        Color.black.edgesIgnoringSafeArea(.all)
+                        Color.primary.edgesIgnoringSafeArea(.all)
                         
                         if viewModel.chatRooms.isEmpty {
                             // 채팅방이 없는 경우
