@@ -14,29 +14,68 @@ class ItemStore: ObservableObject {
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?  // 리스너를 위한 변수 추가
 
+    // 주석되어 있는 fetchItems는 실시간으로 업데이트가 된다.
+//    func fetchItems() {
+//        // 기존 리스너가 존재할 경우 제거
+//        listener?.remove()
+//
+//        // Firestore에서 실시간 업데이트를 수신하기 위해 리스너를 추가합니다.
+//        listener = db.collection("items").addSnapshotListener { [weak self] (snapshot, error) in
+//            if let error = error {
+//                print("Error fetching documents: \(error)")
+//                return
+//            }
+//            
+//            guard let documents = snapshot?.documents else {
+//                print("No documents found")
+//                return
+//            }
+//            
+//            self?.items = documents.compactMap { queryDocumentSnapshot -> Item? in
+//                let data = queryDocumentSnapshot.data()
+//                print("Document data: \(data)")  // 데이터를 출력하여 확인
+//                return Item(document: data)  // Item의 초기화 메서드에 맞춰 데이터 매핑
+//            }
+//            
+//            print("Items loaded: \(String(describing: self?.items))")  // 로드된 items를 확인
+//        }
+//    }
     func fetchItems() {
-        // 기존 리스너가 존재할 경우 제거
-        listener?.remove()
-
-        // Firestore에서 실시간 업데이트를 수신하기 위해 리스너를 추가합니다.
-        listener = db.collection("items").addSnapshotListener { [weak self] (snapshot, error) in
+            db.collection("items").getDocuments { [weak self] (snapshot, error) in
+                if let error = error {
+                    print("Error fetching documents: \(error)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else {
+                    print("No documents found")
+                    return
+                }
+                
+                self?.items = documents.compactMap { queryDocumentSnapshot -> Item? in
+                    let data = queryDocumentSnapshot.data()
+                    print("Document data: \(data)")  // 데이터를 출력하여 확인
+                    return Item(document: data)  // Item의 초기화 메서드에 맞춰 데이터 매핑
+                }
+                
+                print("Items loaded: \(String(describing: self?.items))")  // 로드된 items를 확인
+            }
+        }
+    
+    func updateItem(_ item: Item, completion: @escaping (Error?) -> Void) {
+        db.collection("items").document(item.id).updateData([
+            "itemName": item.itemName,
+            "title": item.title,
+            "description": item.description,
+            "price": item.price,
+            // 필요한 경우 다른 필드도 추가
+        ]) { error in
             if let error = error {
-                print("Error fetching documents: \(error)")
-                return
+                print("Error updating document: \(error)")
+            } else {
+                print("Document successfully updated")
+                // 성공적으로 수정된 후 다른 행동 추가 (예: dismiss)
             }
-            
-            guard let documents = snapshot?.documents else {
-                print("No documents found")
-                return
-            }
-            
-            self?.items = documents.compactMap { queryDocumentSnapshot -> Item? in
-                let data = queryDocumentSnapshot.data()
-                print("Document data: \(data)")  // 데이터를 출력하여 확인
-                return Item(document: data)  // Item의 초기화 메서드에 맞춰 데이터 매핑
-            }
-            
-            print("Items loaded: \(String(describing: self?.items))")  // 로드된 items를 확인
         }
     }
     
