@@ -58,6 +58,8 @@ struct ItemRowView: View {
                 Text(item.title)
                     .font(.headline)
                 Text(item.description)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .font(.subheadline)
                 Text(item.location)
                 Text(item.isSold ? "판매 완료" : "판매 중")
