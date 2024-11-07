@@ -154,6 +154,9 @@ struct ItemListView: View {
         .onAppear {
             itemStore.fetchItems()
         }
+        .refreshable {
+            itemStore.fetchItems()
+        }
         .contentShape(Rectangle())
         .onTapGesture {
             isSearchTextFocused = false
