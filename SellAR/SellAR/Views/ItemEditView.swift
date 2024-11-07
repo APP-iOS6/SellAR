@@ -23,240 +23,238 @@ struct ItemEditView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    // MARK: - Helper Views
+    private var titleTextField: some View {
+        TextField("제목을 입력해 주세요", text: Binding(
+            get: { selectedItem?.title ?? "" },
+            set: { selectedItem?.title = $0 }
+        ))
+        .frame(maxWidth: .infinity, maxHeight: 25)
+        .textFieldStyle(.plain)
+        .focused($textFocused, equals: .text)
+        .padding(.vertical, 5)
+        .padding(.leading, 10)
+        .cornerRadius(10)
+    }
+    
+    private var descriptionTextEditor: some View {
+        TextEditor(text: $description)
+            .onChange(of: description) { newValue in
+                selectedItem?.description = newValue
+            }
+            .frame(width: .infinity, height: 220)
+            .focused($textFocused, equals: .text)
+            .overlay {
+                if description.isEmpty {
+                    Text(placeholder)
+                        .foregroundColor(Color(.systemGray4))
+                }
+            }
+            .scrollContentBackground(.hidden)
+    }
+    
+    private var priceTextField: some View {
+        HStack {
+            HStack {
+                Text("가격")
+                    .font(.system(size: 20, weight: .bold))
+                    .padding(.leading, 5)
+                
+                TextField("가격을 입력해 주세요", text: Binding(
+                    get: { selectedItem?.price ?? "0" },
+                    set: { selectedItem?.price = ($0) }
+                ))
+                
+                
+                Text("원")
+                    .padding(.trailing, 5)
+            }
+            .frame(maxWidth: .infinity, maxHeight: 25)
+            .focused($textFocused, equals: .text)
+            .textFieldStyle(.plain)
+            .padding(.vertical, 10)
+            .keyboardType(.numberPad)
+            
+            Button(action: {
+                if let item = selectedItem {
+                    // Firestore 문서의 ID를 사용하여 업데이트
+                    itemStore.updateItem(item) { error in
+                        if let error {
+                            print("Error updating item: \(error)")
+                        } else {
+                            print("Document successfully updated")
+                        }
+                    }
+                }
+            }) {
+                Text("수정")
+                    .foregroundColor(colorScheme == .dark ? Color.black : Color.black)
+            }
+            .frame(width: 100, height: 45)
+            .background(Color.cyan)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.gray, lineWidth: 2)
+            )
+        }
+        .frame(maxWidth: .infinity)
+        
+    }
+    
+    
+    
+    private var actionButtons: some View {
+        HStack {
+            Button(action: { textFocused = nil }) {
+                Text("촬영하기")
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                Image(systemName: "camera")
+                    .foregroundColor(Color.cyan)
+            }
+            
+            Divider()
+            
+            Button(action: { textFocused = nil }) {
+                Text("올리기")
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                Image(systemName: "square.and.arrow.up")
+                    .foregroundColor(Color.cyan)
+            }
+            
+            Divider()
+            
+            Button(action: { textFocused = nil }) {
+                Text("이미지")
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                Image(systemName: "photo")
+                    .foregroundColor(Color.cyan)
+            }
+            
+            Divider()
+            
+            Button(action: { print("지역설정") }) {
+                Text("지역설정")
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                Image(systemName: "map")
+                    .foregroundColor(Color.cyan)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(colorScheme == .dark ? Color.gray : Color.white)
+        .cornerRadius(8)
+        .padding(.top, 10)
+    }
+    
     
     var body: some View {
-        ScrollView {
-            VStack {
-                Text("게시글 수정")
-                    .font(.title3)
-                    .bold()
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                HStack {
-                    Button(action: {
-                        // Dismiss the view
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                    }
-                    Spacer()
-                }
-                .padding(.top, 10)
-                
-                // 아이템의 썸네일 이미지 표시
-                if let item = selectedItem {
-                    AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(width: 150, height: 150)
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray, lineWidth: 2)
-                                )
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 150, height: 150)
-                                .clipped()
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray, lineWidth: 2)
-                                )
-                        case .failure:
-                            Image("placeholder")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 150, height: 150)
-                                .clipped()
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray, lineWidth: 2)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                    .padding(.top, 10)
-                    
-                    HStack {
-                        Button(action: {
-                            textFocused = nil
-                        }) {
-                            Text("촬영하기")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            Image(systemName: "camera")
-                                .foregroundColor(Color.cyan)
-                        }
-                        
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            textFocused = nil
-                        }) {
-                            Text("올리기")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundColor(Color.cyan)
-                            
-                        }
-                        
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            textFocused = nil
-                        }) {
-                            Text("이미지")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            Image(systemName: "photo")
-                                .foregroundColor(Color.cyan)
-                        }
-                        
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            print("123")
-                        }) {
-                            Text("지역설정")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            Image(systemName: "map")
-                                .foregroundColor(Color.cyan)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(colorScheme == .dark ? Color.gray : Color.white) // 배경색을 다르게 설정
-                    .cornerRadius(8)
-                    .padding(.top, 10)
-                    //                    .padding(.horizontal, 16)
-                    
-                    VStack {
-                        HStack {
-                            Text("제목")
-                                .font(.system(size: 20, weight: .bold))
-                                .padding(.leading, 5)
-                            
-                            // 아이템의 제목, 설명, 가격을 수정할 수 있는 필드
-                            TextField("제목을 입력해 주세요", text: Binding(
-                                get: { item.title },
-                                set: { selectedItem?.title = $0 }
-                            ))
-                            .frame(maxWidth: .infinity, maxHeight: 25)
-                            .textFieldStyle(.plain)
-                            .focused($textFocused, equals: .text)
-                            .padding(.vertical, 5)
-                            .padding(.leading, 10)
-                            .cornerRadius(10)
-                            
-                            
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    // 아이템의 썸네일 이미지 표시
+                    if let item = selectedItem {
+                        AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                                    .frame(width: 150, height: 150)
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray, lineWidth: 2)
+                                    )
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 150, height: 150)
+                                    .clipped()
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray, lineWidth: 2)
+                                    )
+                            case .failure:
+                                Image("placeholder")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 150, height: 150)
+                                    .clipped()
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray, lineWidth: 2)
+                                    )
+                            @unknown default:
+                                EmptyView()
+                            }
                         }
                         .padding(.top, 10)
                         
-                        Divider()
+                        actionButtons
                         
-                        TextEditor(text: $description)
-                            .onChange(of: description) { newValue in
-                                selectedItem?.description = newValue
-                            }
-                            .frame(width: .infinity, height: 220)
-                            .focused($textFocused, equals: .text)
-                            .overlay {
-                                if description.isEmpty {
-                                    Text(placeholder)
-                                        .foregroundColor(Color(.systemGray4))
-                                }
-                            }
-                            .scrollContentBackground(.hidden)
-                        
-                        Divider()
-                        
-                        HStack {
+                        VStack {
                             HStack {
-                                Text("가격")
+                                Text("제목")
                                     .font(.system(size: 20, weight: .bold))
                                     .padding(.leading, 5)
                                 
-                                TextField("가격을 입력해 주세요", text: Binding(
-                                    get: { String(item.price) },
-                                    set: { selectedItem?.price = ($0) }
-                                ))
-                                
-                                
-                                Text("원")
-                                    .padding(.trailing, 5)
+                                titleTextField
                             }
-                            .frame(maxWidth: .infinity, maxHeight: 25)
-                            .focused($textFocused, equals: .text)
-                            .textFieldStyle(.plain)
-                            .padding(.vertical, 10)
-                            .keyboardType(.numberPad)
+                            .padding(.top, 10)
                             
-                            Button(action: {
-                                if let item = selectedItem {
-                                    // Firestore 문서의 ID를 사용하여 업데이트
-                                    itemStore.updateItem(item) { error in
-                                        if let error {
-                                            print("Error updating item: \(error)")
-                                        } else {
-                                            print("Document successfully updated")
-                                        }
-                                    }
-                                }
-                            }) {
-                                Text("수정")
-                                    .foregroundColor(colorScheme == .dark ? Color.black : Color.black)
-                            }
-                            .frame(width: 100, height: 45)
-                            .background(Color.cyan)
-                            .cornerRadius(20)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(Color.gray, lineWidth: 2)
-                            )
+                            Divider()
+                            
+                            descriptionTextEditor
+                            
+                            Divider()
+                            
+                            priceTextField
+                            
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(colorScheme == .dark ? Color.gray : Color.white)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.gray, lineWidth: 2)
+                        )
+                        .padding(.top, 10)
+                        
+                        .onAppear {
+                            description = item.description
                         }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(colorScheme == .dark ? Color.gray : Color.white) // 배경색을 다르게 설정
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 2)
-                    )
-                    .padding(.top, 10)
                     
-                    .onAppear {
-                        description = item.description
-                    }
+                    Spacer()
+                    
                 }
-                
-                Spacer()
-                
-            }
-            
-            .padding(.horizontal, 16)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                textFocused = nil
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    HStack {
-                        Spacer()
-                        Button("완료") {
-                            textFocused = nil
+                .padding(.horizontal, 16)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    textFocused = nil
+                }
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        HStack {
+                            Spacer()
+                            Button("완료") {
+                                textFocused = nil
+                            }
                         }
                     }
                 }
             }
+            .navigationTitle("상품 수정")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(leading: Button(action: {
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "xmark")
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+            })
         }
     }
 }
