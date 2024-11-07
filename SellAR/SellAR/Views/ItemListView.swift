@@ -55,6 +55,8 @@ struct ItemRowView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("\(item.price) 원")
                     .font(.system(size: 16, weight: .bold))
+                    .minimumScaleFactor(0.5) // 최소 크기를 50%로 설정
+                    .lineLimit(1) // 한 줄로 제한
                 Text(item.title)
                     .font(.headline)
                 Text(item.description)
