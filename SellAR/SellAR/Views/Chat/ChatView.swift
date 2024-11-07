@@ -146,7 +146,7 @@ struct ChatContentView: View {
         }
         .navigationTitle("채팅방")
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
+        .background(Color.primary.edgesIgnoringSafeArea(.all))
     }
 }
 
@@ -160,7 +160,7 @@ struct ChatInputView: View {
             TextField("메시지를 입력하세요", text: $messageContent)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.horizontal)
-                .foregroundColor(.black)
+                .foregroundColor(Color.primary)
             
             Button(action: {
                 guard !messageContent.isEmpty else { return }
@@ -173,6 +173,6 @@ struct ChatInputView: View {
             }
         }
         .padding(.vertical, 8)
-        .background(Color.black.opacity(0.9))
+        .background(Color.primary.opacity(0.9))
     }
 }
