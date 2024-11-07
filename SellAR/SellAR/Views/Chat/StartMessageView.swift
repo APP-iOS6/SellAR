@@ -27,27 +27,34 @@ struct StartMessageView: View {
             if loginViewModel.user.id.isEmpty {
                 // 로그인하지 않은 상태
                 VStack {
-                    Text("채팅을 시작하려면 로그인이 필요합니다")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                    
+                    Image(systemName: "iphone.gen1.slash")
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .foregroundStyle(Color.cyan)
+                        .padding(.bottom, 20)
+                    Text("표시할 채팅이 없어요.")
+                        .foregroundStyle(Color.gray)
+                        .padding(.bottom, 10)
+                    Text("로그인하여 AR로 물건을 거래해보세요.")
+                        .foregroundStyle(Color.gray)
+                        .padding(.bottom, 30)
                     NavigationLink(destination: LoginView()) {
                         Text("로그인하기")
                             .font(.body)
                             .foregroundColor(.white)
+                            .bold()
                             .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
+                            .background(Color.cyan)
+                            .cornerRadius(25)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.black)
+                .background(Color.white)
             } else {
                 // 로그인한 상태
                 NavigationView {
                     ZStack {
-                        Color.primary.edgesIgnoringSafeArea(.all)
+                        Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all)
                         
                         if viewModel.chatRooms.isEmpty {
                             // 채팅방이 없는 경우
@@ -89,7 +96,7 @@ struct StartMessageView: View {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             NavigationLink(destination: UserListView(chatViewModel: viewModel)) {
                                 Image(systemName: "square.and.pencil")
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.primary)
                             }
                         }
                     }
@@ -113,7 +120,7 @@ struct StartMessageView: View {
             "profileImageURL": "",
             "latestMessage": "환영합니다!",
             "latestTimestamp": Timestamp(date: Date()),
-            "unreadCount": 0,
+            "unreadCount": 2,
             "participants": [loginViewModel.user.id]
         ]
         
