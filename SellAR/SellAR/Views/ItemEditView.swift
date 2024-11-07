@@ -76,6 +76,8 @@ struct ItemEditView: View {
             .keyboardType(.numberPad)
             
             Button(action: {
+                textFocused = nil
+                presentationMode.wrappedValue.dismiss()
                 if let item = selectedItem {
                     // Firestore 문서의 ID를 사용하여 업데이트
                     itemStore.updateItem(item) { error in
