@@ -35,6 +35,9 @@ extension LoginViewModel: ASAuthorizationControllerDelegate {
             if let firebaseUser = authResult?.user {
                 self.saveUserToFirestore(uid: firebaseUser.uid, email: firebaseUser.email ?? "", username: appleIDCredential.fullName?.givenName ?? "", profileImageUrl: nil)
                 print("애플 로그인 성공!")
+                
+                self.saveUserID(firebaseUser.uid, loginMethod: "apple")
+                
                 if let completion = self.completionHandler {
                     completion(true)
                 }

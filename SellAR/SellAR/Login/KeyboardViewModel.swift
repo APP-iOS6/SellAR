@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 
-// MARK: 키보드 레이아웃이 바닥에 고정되게 하는 클래스
+// MARK: 키보드 레이아웃이 지오메트리 안밀게 하는 클래스
 final class KeyboardViewModel: ObservableObject {
     @Published var keyboardHeight: CGFloat = 0
     
@@ -35,7 +35,7 @@ final class KeyboardViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 }
-// 키보드 다른곳 누를시 내리게 하는 익스텐션
+// 키보드 띄우고 다른곳 누를시 내리게 하는 익스텐션
 extension View {
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
