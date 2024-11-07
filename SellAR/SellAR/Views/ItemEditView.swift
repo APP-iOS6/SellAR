@@ -7,6 +7,7 @@
 // 내 상품 게시글을 수정하는 뷰
 import SwiftUI
 import FirebaseFirestore
+import PhotosUI
 
 struct ItemEditView: View {
     enum KeyboardDone: Hashable {
@@ -17,6 +18,8 @@ struct ItemEditView: View {
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var textFocused: KeyboardDone?
     @State private var description: String = ""
+    @State private var selectedImage: UIImage? = nil // 선택된 이미지를 저장할 상태
+    @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     
     let placeholder: String = "내용을 입력해 주세요."
     @ObservedObject var itemStore = ItemStore()
@@ -126,7 +129,10 @@ struct ItemEditView: View {
             
             Divider()
             
-            Button(action: { textFocused = nil }) {
+            Button(action: {
+                isImagePickerPresented = true
+                textFocused = nil
+            }) {
                 Text("이미지")
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "photo")
@@ -257,6 +263,57 @@ struct ItemEditView: View {
                 Image(systemName: "xmark")
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             })
+            .sheet(isPresented: $isImagePickerPresented) {
+                ImagePicker(selectedImage: $selectedImage, isPresented: $isImagePickerPresented)
+            }
         }
     }
+}
+
+
+// PHPickerViewController를 SwiftUI에서 사용하기 위한 래퍼
+struct ImagePicker: UIViewControllerRepresentable {
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        var parent: ImagePicker
+        
+        init(parent: ImagePicker) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            // 선택된 이미지가 있을 경우
+            if let selectedItem = results.first {
+                selectedItem.itemProvider.loadObject(ofClass: UIImage.self) { (image, error) in
+                    if let image = image as? UIImage {
+                        // 부모 뷰로 이미지를 전달
+                        DispatchQueue.main.async {
+                            self.parent.selectedImage = image
+                        }
+                    }
+                }
+            }
+            
+            picker.dismiss(animated: true)
+        }
+    }
+    
+    @Binding var selectedImage: UIImage?  // 선택된 이미지를 바인딩
+    var isPresented: Binding<Bool>          // 선택기가 표시될지 여부
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(parent: self)
+    }
+    
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1 // 여러 이미지 선택을 허용하려면 이 값을 변경
+        configuration.filter = .images // 이미지만 필터링
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = context.coordinator
+        
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
 }
