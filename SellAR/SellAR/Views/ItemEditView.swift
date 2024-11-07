@@ -19,8 +19,7 @@ struct ItemEditView: View {
     @State private var description: String = ""
     
     let placeholder: String = "내용을 입력해 주세요."
-    
-    let db = Firestore.firestore()
+    @ObservedObject var itemStore = ItemStore()
     
     @Environment(\.presentationMode) var presentationMode
     
@@ -105,12 +104,12 @@ struct ItemEditView: View {
                                 .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             Image(systemName: "square.and.arrow.up")
                                 .foregroundColor(Color.cyan)
-
+                            
                         }
-                       
+                        
                         
                         Divider()
-
+                        
                         Button(action: {
                             textFocused = nil
                         }) {
@@ -122,7 +121,7 @@ struct ItemEditView: View {
                         
                         
                         Divider()
-
+                        
                         Button(action: {
                             print("123")
                         }) {
@@ -137,45 +136,45 @@ struct ItemEditView: View {
                     .background(colorScheme == .dark ? Color.gray : Color.white) // 배경색을 다르게 설정
                     .cornerRadius(8)
                     .padding(.top, 10)
-//                    .padding(.horizontal, 16)
+                    //                    .padding(.horizontal, 16)
                     
                     VStack {
-                    HStack {
-                        Text("제목")
-                            .font(.system(size: 20, weight: .bold))
-                            .padding(.leading, 5)
+                        HStack {
+                            Text("제목")
+                                .font(.system(size: 20, weight: .bold))
+                                .padding(.leading, 5)
+                            
+                            // 아이템의 제목, 설명, 가격을 수정할 수 있는 필드
+                            TextField("제목을 입력해 주세요", text: Binding(
+                                get: { item.title },
+                                set: { selectedItem?.title = $0 }
+                            ))
+                            .frame(maxWidth: .infinity, maxHeight: 25)
+                            .textFieldStyle(.plain)
+                            .focused($textFocused, equals: .text)
+                            .padding(.vertical, 5)
+                            .padding(.leading, 10)
+                            .cornerRadius(10)
+                            
+                            
+                        }
+                        .padding(.top, 10)
                         
-                        // 아이템의 제목, 설명, 가격을 수정할 수 있는 필드
-                        TextField("제목을 입력해 주세요", text: Binding(
-                            get: { item.title },
-                            set: { selectedItem?.title = $0 }
-                        ))
-                        .frame(maxWidth: .infinity, maxHeight: 25)
-                        .textFieldStyle(.plain)
-                        .focused($textFocused, equals: .text)
-                        .padding(.vertical, 5)
-                        .padding(.leading, 10)
-                        .cornerRadius(10)
-                        
-
-                    }
-                    .padding(.top, 10)
-                    
                         Divider()
-                    
-                    TextEditor(text: $description)
-                        .onChange(of: description) { newValue in
-                            selectedItem?.description = newValue
-                        }
-                        .frame(width: .infinity, height: 220)
-                        .focused($textFocused, equals: .text)
-                        .overlay {
-                            if description.isEmpty {
-                                Text(placeholder)
-                                    .foregroundColor(Color(.systemGray4))
+                        
+                        TextEditor(text: $description)
+                            .onChange(of: description) { newValue in
+                                selectedItem?.description = newValue
                             }
-                        }
-                        .scrollContentBackground(.hidden)
+                            .frame(width: .infinity, height: 220)
+                            .focused($textFocused, equals: .text)
+                            .overlay {
+                                if description.isEmpty {
+                                    Text(placeholder)
+                                        .foregroundColor(Color(.systemGray4))
+                                }
+                            }
+                            .scrollContentBackground(.hidden)
                         
                         Divider()
                         
@@ -203,17 +202,11 @@ struct ItemEditView: View {
                             Button(action: {
                                 if let item = selectedItem {
                                     // Firestore 문서의 ID를 사용하여 업데이트
-                                    db.collection("items").document(item.id).updateData([
-                                        "title": item.title,
-                                        "description": item.description,
-                                        "price": item.price,
-                                        // 필요한 경우 다른 필드도 추가
-                                    ]) { error in
-                                        if let error = error {
-                                            print("Error updating document: \(error)")
+                                    itemStore.updateItem(item) { error in
+                                        if let error {
+                                            print("Error updating item: \(error)")
                                         } else {
                                             print("Document successfully updated")
-                                            // 성공적으로 수정된 후 다른 행동 추가 (예: dismiss)
                                         }
                                     }
                                 }

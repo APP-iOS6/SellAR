@@ -40,6 +40,23 @@ class ItemStore: ObservableObject {
         }
     }
     
+    func updateItem(_ item: Item, completion: @escaping (Error?) -> Void) {
+        db.collection("items").document(item.id).updateData([
+            "itemName": item.itemName,
+            "title": item.title,
+            "description": item.description,
+            "price": item.price,
+            // 필요한 경우 다른 필드도 추가
+        ]) { error in
+            if let error = error {
+                print("Error updating document: \(error)")
+            } else {
+                print("Document successfully updated")
+                // 성공적으로 수정된 후 다른 행동 추가 (예: dismiss)
+            }
+        }
+    }
+    
     func updateItemStatus(itemId: String, isSold: Bool) {
         let db = Firestore.firestore()
         let itemRef = db.collection("items").document(itemId)
