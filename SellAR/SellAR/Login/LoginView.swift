@@ -11,15 +11,20 @@ import SwiftUI
 
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
+    @StateObject private var keyboardViewModel = KeyboardViewModel()
     @State private var email = ""
     @State private var password = ""
     @State private var isNavigation = false
+    
     
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.black
                     .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        hideKeyboard()
+                    }
                 GeometryReader{ geometry in
                     VStack (spacing: 20) {
                         Image(systemName: "person.fill")
@@ -34,6 +39,7 @@ struct LoginView: View {
                                 .padding(.vertical, 5)
                             TextField("이메일을 입력해 주세요", text: $email)
                                 .padding()
+                                .foregroundColor(.black)
                                 .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                                 .background(.white)
                                 .cornerRadius(10)
@@ -49,6 +55,7 @@ struct LoginView: View {
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                                 .background(.white)
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.bottom, 40)
                         }
@@ -114,7 +121,7 @@ struct LoginView: View {
                         .padding(.top, 20)
                         
                         NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
-                            EmptyView() // 네비게이션 링크 안보이게
+                            EmptyView()
                         }
                         
                         Button(action: {
@@ -137,11 +144,13 @@ struct LoginView: View {
                         }
                         
                         NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
-                            EmptyView() // 네비게이션 링크 안보이게
+                            EmptyView()
                         }
                     }
                 }
             }
+            .padding(.bottom, -keyboardViewModel.keyboardHeight)
+            
         }
     }
 }

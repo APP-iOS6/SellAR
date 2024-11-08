@@ -8,43 +8,52 @@
 import SwiftUI
 
 struct MainView: View {
-    
     @StateObject var vm = ItemListVM()
-    @State var formType: FormType?
+    @State private var showAddItemView = false
     
     var body: some View {
-        List {
-            ForEach(vm.items) { item in
-                ListItemView(item: item)
-                    .listRowSeparator(.hidden)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        formType = .edit(item)
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 0) {
+                    // 검색어 입력 필드
+                    TextField("검색어를 입력하세요", text: $vm.searchText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding([.top, .horizontal])
+                    
+                    LazyVStack {
+                        ForEach(vm.filteredItems) { item in
+                            NavigationLink(destination: DetailItemView(item: item)) {
+                                ListItemView(item: item)
+                                    .contentShape(Rectangle())
+                                    .padding(.horizontal)
+                                    .padding(.top, 5)
+                            }
+                            .buttonStyle(.plain) // 화살표 없애기
+                        }
                     }
-            }
-            
-        }
-        .navigationTitle("상품 목록")
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("상품 추가") {
-                    formType = .add
                 }
             }
-        }
-        .sheet(item: $formType) { type in
-            NavigationStack {
-                ItemFormView(vm: .init(formType: type))
+            .navigationTitle("SellAR")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("상품 추가") {
+                        showAddItemView = true
+                    }
+                }
             }
-            .presentationDetents([.fraction(0.85)])
-            .interactiveDismissDisabled()
-        }
-        
-        .onAppear {
-            vm.listenToItems()
+            .onAppear {
+                vm.listenToItems()
+            }
+            .sheet(isPresented: $showAddItemView) {
+                NavigationStack {
+                    ItemFormView(vm: .init(formType: .add))
+                }
+                .interactiveDismissDisabled()
+            }
         }
     }
 }
+
 
 struct ListItemView: View {
     let item: Items
@@ -88,9 +97,3 @@ struct ListItemView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        MainView()
-    }
-    
-}

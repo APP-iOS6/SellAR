@@ -24,6 +24,7 @@ struct MyPageView: View {
         NavigationView {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
+
                     VStack(spacing: 0) {
                         HStack {
                             Button(action: {
@@ -47,6 +48,7 @@ struct MyPageView: View {
                             }
                         }
                         .padding(.horizontal, 10)
+
                         
                         ScrollView {
                         Spacer()
@@ -96,7 +98,25 @@ struct MyPageView: View {
                                 .cornerRadius(10)
                             }
                         }
+
                         .padding()
+
+                    }
+//                    Spacer()
+//                        .frame(height: 50)
+                    // 프로필 사진과 닉네임/이메일을 병렬 배치
+                    HStack(alignment: .center, spacing: 20) {
+                        // 프로필 사진
+                        Image(systemName: "camera.fill")
+                        //Image("userdata.profileImageUrl")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .padding(30)
+                            .frame(width: 120, height: 120)
+                            .foregroundColor(.gray)
+                            .background(Color.white.opacity(0.1))
+                            .clipShape(Circle())
+
                         
                         VStack {
                             HStack {

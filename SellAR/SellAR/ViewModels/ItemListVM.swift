@@ -12,14 +12,23 @@ import FirebaseFirestore
 class ItemListVM: ObservableObject {
     
     @Published var items = [Items]()
+    @Published var searchText = ""
+    
+    var filteredItems: [Items] {
+        if searchText.isEmpty {
+            return items
+        } else {
+            return items.filter { $0.itemName.contains(searchText) || $0.location.contains(searchText) }
+        }
+    }
     
     @MainActor
     func listenToItems() {
         Firestore.firestore().collection("items")
             .order(by: "createdAt", descending: true)
             .limit(toLast: 100)
-            .addSnapshotListener{ snapshot, error in
-                guard let snapshot else {
+            .addSnapshotListener { snapshot, error in
+                guard let snapshot = snapshot else {
                     print("Error fetching snapshot: \(error?.localizedDescription ?? "error")")
                     return
                 }
@@ -34,3 +43,4 @@ class ItemListVM: ObservableObject {
             }
     }
 }
+

@@ -38,7 +38,7 @@ class ChatViewModel: ObservableObject {
            // 이미 캐시된 경우 스킵
            if chatUsers[userID] != nil { return }
            
-           print("Fetching user info for ID: \(userID)") // 디버깅용
+           print("Fetching user info for ID: \(userID)") 
            
            db.collection("users").document(userID).getDocument { [weak self] document, error in
                if let error = error {
@@ -52,7 +52,7 @@ class ChatViewModel: ObservableObject {
                }
                
                if let userData = document.data() {
-                   print("Found user data: \(userData)") // 디버깅용
+                   print("Found user data: \(userData)")
                    
                    // 옵셔널 바인딩으로 안전하게 처리
                    if let email = userData["email"] as? String,

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NicknameEntryView: View {
     @ObservedObject var viewModel: LoginViewModel
+    @StateObject private var keyboardViewModel = KeyboardViewModel()
     @State private var nickname = ""
     @State private var isNicknameSaved = false
     
@@ -17,6 +18,9 @@ struct NicknameEntryView: View {
             ZStack {
                 Color.black
                     .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        hideKeyboard()
+                    }
                 GeometryReader { geometry in
                     VStack(spacing: 20) {
                         Image(systemName: "person.fill")
@@ -36,6 +40,7 @@ struct NicknameEntryView: View {
                             .padding()
                             .frame(width: geometry.size.width * 0.9, height: geometry.size.height / 20)
                             .background(Color.white)
+                            .foregroundColor(.black)
                             .cornerRadius(10)
                             .padding(.horizontal, 10)
                         
@@ -51,17 +56,13 @@ struct NicknameEntryView: View {
                                 .foregroundColor(.white)
                         }
                         .padding(.top, 20)
-                        
-                        // 수정된 NavigationLink
-                        NavigationLink(
-                                destination: StartMessageView(loginViewModel: viewModel),
-                            isActive: $isNicknameSaved
-                        ) {
+                        NavigationLink(destination: MainView(), isActive: $isNicknameSaved) {
                             EmptyView()
                         }
                     }
                 }
             }
+            .padding(.bottom, -keyboardViewModel.keyboardHeight)
         }
     }
 }

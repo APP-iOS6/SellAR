@@ -22,7 +22,7 @@ struct DataRow: View {
     }
     
     private var messageBackgroundColor: Color {
-        isCurrentUser ? Color.blue.opacity(0.8) : Color.green.opacity(0.6)
+        isCurrentUser ? Color.cyan.opacity(1) : Color.green.opacity(1)
     }
     
     var body: some View {
@@ -35,7 +35,7 @@ struct DataRow: View {
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             
-            HStack(alignment: .bottom, spacing: 8) {
+            HStack(alignment: .bottom, spacing: 15) {
                 if !isCurrentUser {
                     // 상대방 프로필 이미지 및 닉네임 표시
                     if let user = chatViewModel.chatUsers[data.userID] {
@@ -58,21 +58,28 @@ struct DataRow: View {
                 VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 4) {
                     // 메시지 내용과 시간
                     HStack(alignment: .bottom, spacing: 4) {
+                        if isCurrentUser {
+                            Text(data.formattedTime)
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                        }
                         Text(data.content)
                             .padding(10)
                             .background(messageBackgroundColor)
                             .foregroundColor(.white)
                             .cornerRadius(15)
                         
-                        Text(data.formattedTime)
-                            .font(.caption2)
-                            .foregroundColor(.gray)
+                        if !isCurrentUser {
+                            Text(data.formattedTime)
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                        }
                     }
                 }
                 
                 if isCurrentUser {
                     // 현재 사용자 프로필 이미지
-                    VStack(alignment: .center, spacing: 4) {
+                    VStack(alignment: .center, spacing: 8) {
                         AsyncImage(url: URL(string: chatViewModel.chatUsers[chatViewModel.senderID]?.profileImageUrl ?? "")) { image in
                             image.resizable()
                         } placeholder: {
