@@ -73,40 +73,49 @@ class ItemFormVM: ObservableObject {
     }
     
     func save(fileURL: URL?) async throws {
-           loadingState = .savingItem
-           
-           defer { loadingState = .none }
-           
-           
-           if let fileURL = fileURL {
-               await uploadUSDZ(fileURL: fileURL)
-           }
-           
-           var item: Items
-           switch formType {
-           case .add:
-               item = .init(id: id, userId: Auth.auth().currentUser?.uid ?? "", itemName: itemName, description: description, price: price, location: location)
-           case .edit(let existingItem):
-               item = existingItem
-               item.itemName = itemName
-               item.description = description
-               item.price = price
-               item.location = location
-           }
-           
-          
-           item.usdzLink = usdzURL?.absoluteString
-           item.thumbnailLink = thumbnailURL?.absoluteString
-           
-           do {
-               // Firestore에 아이템 저장
-               try db.collection("items").document(item.id)
-                   .setData(from: item)
-           } catch {
-               self.error = error.localizedDescription
-               throw error
-           }
-       }
+        DispatchQueue.main.async {
+            self.loadingState = .savingItem
+        }
+        
+        defer {
+            DispatchQueue.main.async {
+                self.loadingState = .none
+            }
+        }
+        
+        if let fileURL = fileURL {
+            await uploadUSDZ(fileURL: fileURL)
+        }
+        
+        var item: Items
+        switch formType {
+        case .add:
+            item = .init(id: id, userId: Auth.auth().currentUser?.uid ?? "", itemName: itemName, description: description, price: price, location: location)
+        case .edit(let existingItem):
+            item = existingItem
+            item.itemName = itemName
+            item.description = description
+            item.price = price
+            item.location = location
+        }
+        
+        item.usdzLink = usdzURL?.absoluteString
+        item.thumbnailLink = thumbnailURL?.absoluteString
+        
+        do {
+            // Firestore에 아이템 저장
+            try await db.collection("items").document(item.id)
+                .setData(from: item)
+            
+        } catch {
+            DispatchQueue.main.async {
+                self.error = error.localizedDescription
+            }
+            throw error
+        }
+    }
+
+
     
     @MainActor
     func deleteUSDZ() async {
