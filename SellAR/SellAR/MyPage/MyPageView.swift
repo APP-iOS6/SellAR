@@ -24,33 +24,34 @@ struct MyPageView: View {
         NavigationView {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
-
-                    VStack(spacing: 0) {
-                        HStack {
-                            Button(action: {
-                                //버튼기능 추가예정
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .resizable()
-                                    .frame(width: 11, height: 22)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .foregroundColor(.gray)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            //프로필 수정버튼
-                            NavigationLink(destination: ProfileFixView()) {
-                                Image(systemName: "square.and.pencil" )
-                                    .resizable()
-                                    .frame(width: 28, height: 28)
-                                    .foregroundColor(.gray)
-                                    
-                            }
+                
+                VStack(spacing: 0) {
+                    HStack {
+                        Button(action: {
+                            //버튼기능 추가예정
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .resizable()
+                                .frame(width: 11, height: 22)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundColor(.gray)
                         }
-                        .padding(.horizontal, 10)
-
+                        .buttonStyle(PlainButtonStyle())
                         
-                        ScrollView {
+                        //프로필 수정버튼
+                        NavigationLink(destination: ProfileFixView()) {
+                            Image(systemName: "square.and.pencil" )
+                                .resizable()
+                                .frame(width: 28, height: 28)
+                                .foregroundColor(.gray)
+                            
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.bottom, 10)
+                    
+                    
+                    ScrollView {
                         Spacer()
                             .frame(height: 5)
                         // 프로필 사진과 닉네임/이메일을 병렬 배치
@@ -98,25 +99,8 @@ struct MyPageView: View {
                                 .cornerRadius(10)
                             }
                         }
-
-                        .padding()
-
-                    }
-//                    Spacer()
-//                        .frame(height: 50)
-                    // 프로필 사진과 닉네임/이메일을 병렬 배치
-                    HStack(alignment: .center, spacing: 20) {
-                        // 프로필 사진
-                        Image(systemName: "camera.fill")
-                        //Image("userdata.profileImageUrl")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(30)
-                            .frame(width: 120, height: 120)
-                            .foregroundColor(.gray)
-                            .background(Color.white.opacity(0.1))
-                            .clipShape(Circle())
-
+                        Spacer()
+                            .frame(height: 50)
                         
                         VStack {
                             HStack {
@@ -206,7 +190,6 @@ struct MyPageView: View {
         }
     }
 }
-
 //struct PostListView: View {
 //    var body: some View {
 //        Text("내 글 목록 화면")
