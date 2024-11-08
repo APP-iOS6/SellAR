@@ -39,6 +39,7 @@ struct Items: Identifiable, Codable, Equatable {
         var id: String
         var userId: String
         var title: String
+        var itemName: String
         var description: String
         var price: String
         var images: [String]
@@ -58,7 +59,8 @@ struct Items: Identifiable, Codable, Equatable {
             
             self.id = id
             self.userId = document["userId"] as? String ?? ""
-            self.title = title
+            self.title = document["title"] as? String ?? ""
+            self.itemName = document["itemName"] as? String ?? ""
             self.description = document["description"] as? String ?? ""
             self.price = document["price"] as? String ?? "0"
             self.images = [document["thumbnailLink"] as? String ?? "placeholder"]

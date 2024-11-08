@@ -25,7 +25,7 @@ struct ProfileFixView: View {
                 Color.black.edgesIgnoringSafeArea(.all)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("게시물 수정")
+                    Text("프로필 수정")
                         .font(.headline)
                         .padding(.bottom ,15)
                         .foregroundColor(.white)

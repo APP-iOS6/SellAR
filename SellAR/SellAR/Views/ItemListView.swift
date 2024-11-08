@@ -55,9 +55,13 @@ struct ItemRowView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("\(item.price) 원")
                     .font(.system(size: 16, weight: .bold))
+                    .minimumScaleFactor(0.5) // 최소 크기를 50%로 설정
+                    .lineLimit(1) // 한 줄로 제한
                 Text(item.title)
                     .font(.headline)
                 Text(item.description)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .font(.subheadline)
                 Text(item.location)
                 Text(item.isSold ? "판매 완료" : "판매 중")
@@ -99,6 +103,10 @@ struct ItemListView: View {
     @ObservedObject var itemStore = ItemStore()
     
     @State private var selectedItem: Item?
+    
+    private var userId: String {
+            return UserDefaults.standard.string(forKey: "userId") ?? ""
+        }
 
     var filteredItems: [Item] {
         if searchText.isEmpty {
@@ -111,10 +119,6 @@ struct ItemListView: View {
     var body: some View {
         ScrollView {
             VStack {
-                Text("내 상품 관리")
-                    .font(.title3)
-                    .bold()
-                
                 HStack {
                     TextField("상품 이름을 입력해주세요.", text: $searchText)
                         .frame(maxWidth: .infinity, maxHeight: 25)
@@ -141,6 +145,7 @@ struct ItemListView: View {
                         .stroke(Color.gray, lineWidth: 2)
                 )
                 .padding(.horizontal, 16)
+                .padding(.top, 10)
                 
                 ForEach(filteredItems) { item in
                     ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
@@ -149,8 +154,12 @@ struct ItemListView: View {
                 Spacer()
             }
         }
+        .navigationTitle("내 상품 관리")
         .onAppear {
-            itemStore.fetchItems()
+            itemStore.fetchItems(for: userId)
+        }
+        .refreshable {
+            itemStore.fetchItems(for: userId)
         }
         .contentShape(Rectangle())
         .onTapGesture {
