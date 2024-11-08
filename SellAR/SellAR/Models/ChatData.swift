@@ -35,4 +35,28 @@ struct ThreadDataType: Identifiable {
         }
         return ""
     }
+    
+    // Firebase 데이터로부터 초기화하는 생성자 추가
+    init?(dictionary: [String: Any], id: String? = nil) {
+        guard let userID = dictionary["userID"] as? String,
+              let content = dictionary["content"] as? String,
+              let date = dictionary["date"] as? String else {
+            return nil
+        }
+        
+        self.id = id ?? UUID().uuidString
+        self.userID = userID
+        self.content = content
+        self.date = date
+        self.isRead = dictionary["isRead"] as? Bool ?? false
+    }
+    
+    // 기본 생성자
+    init(id: String, userID: String, content: String, date: String, isRead: Bool) {
+        self.id = id
+        self.userID = userID
+        self.content = content
+        self.date = date
+        self.isRead = isRead
+    }
 }
