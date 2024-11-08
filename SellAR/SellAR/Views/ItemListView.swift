@@ -103,6 +103,10 @@ struct ItemListView: View {
     @ObservedObject var itemStore = ItemStore()
     
     @State private var selectedItem: Item?
+    
+    private var userId: String {
+            return UserDefaults.standard.string(forKey: "userId") ?? ""
+        }
 
     var filteredItems: [Item] {
         if searchText.isEmpty {
@@ -152,10 +156,10 @@ struct ItemListView: View {
         }
         .navigationTitle("내 상품 관리")
         .onAppear {
-            itemStore.fetchItems()
+            itemStore.fetchItems(for: userId)
         }
         .refreshable {
-            itemStore.fetchItems()
+            itemStore.fetchItems(for: userId)
         }
         .contentShape(Rectangle())
         .onTapGesture {
