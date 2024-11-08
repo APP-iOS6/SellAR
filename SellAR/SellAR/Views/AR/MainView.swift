@@ -88,9 +88,3 @@ struct ListItemView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        MainView()
-    }
-    
-}
