@@ -22,7 +22,7 @@ struct DataRow: View {
     }
     
     private var messageBackgroundColor: Color {
-        isCurrentUser ? Color.cyan.opacity(1) : Color.green.opacity(1)
+        isCurrentUser ? Color.indigo.opacity(1) : Color.cyan.opacity(1)
     }
     
     var body: some View {
