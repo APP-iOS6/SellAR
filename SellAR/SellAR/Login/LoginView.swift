@@ -14,7 +14,8 @@ struct LoginView: View {
     @StateObject private var keyboardViewModel = KeyboardViewModel()
     @State private var email = ""
     @State private var password = ""
-    @State private var isNavigation = false
+    @State private var isNicknameEntryActive = false
+    @State private var isMainViewActive = false
     
     
     var body: some View {
@@ -60,7 +61,7 @@ struct LoginView: View {
                                 .padding(.bottom, 40)
                         }
                         .padding(.horizontal, 20)
-                            // 로그인 회원가입 버튼
+                        // 로그인 회원가입 버튼
                         HStack (spacing: 20) {
                             Button(action: {
                                 viewModel.loginWithEmailPassword(email: email, password: password)
@@ -81,7 +82,7 @@ struct LoginView: View {
                                     .cornerRadius(10)
                             }
                         }
-                    
+                        
                         VStack {
                             HStack {
                                 VStack{
@@ -89,7 +90,7 @@ struct LoginView: View {
                                         .frame(height: 1)
                                         .background(Color.gray)
                                 }
-                                    Text("또는")
+                                Text("또는")
                                     .foregroundColor(.gray)
                                 VStack{
                                     Divider()
@@ -100,11 +101,12 @@ struct LoginView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
-                            
-                        Button(action: { viewModel.loginWithGoogle
-                            { success in
+                        
+                        Button(action: {
+                            viewModel.loginWithGoogle { success in
                                 if success {
-                                    isNavigation = true
+                                    isMainViewActive = viewModel.isMainViewActive
+                                    isNicknameEntryActive = viewModel.isNicknameEntryActive
                                 }
                             }
                         }) {
@@ -115,19 +117,16 @@ struct LoginView: View {
                                     .foregroundColor(.white)
                             }
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
-                            .padding()                            .background(.blue)
+                            .padding()
+                            .background(.blue)
                             .cornerRadius(10)
                         }
                         .padding(.top, 20)
-                        
-                        NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
-                            EmptyView()
-                        }
-                        
                         Button(action: {
                             viewModel.loginWithApple { success in
                                 if success {
-                                    isNavigation = true
+                                    isMainViewActive = viewModel.isMainViewActive
+                                    isNicknameEntryActive = !viewModel.isMainViewActive
                                 }
                             }
                         }) {
@@ -137,20 +136,25 @@ struct LoginView: View {
                                 Text("Apple로 로그인")
                                     .foregroundColor(.white)
                             }
-                                .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
-                                .padding()
-                                .background(.gray)
-                                .cornerRadius(10)
-                        }
-                        
-                        NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNavigation) {
-                            EmptyView()
+                            .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
+                            .padding()
+                            .background(.gray)
+                            .cornerRadius(10)
                         }
                     }
                 }
+                .padding(.bottom, -keyboardViewModel.keyboardHeight)
             }
-            .padding(.bottom, -keyboardViewModel.keyboardHeight)
-            
+           .background(
+               NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNicknameEntryActive) {
+                   EmptyView()
+               }
+           )
+           .background(
+               NavigationLink(destination: MainView(), isActive: $isMainViewActive) {
+                   EmptyView()
+               }
+           )
         }
     }
 }

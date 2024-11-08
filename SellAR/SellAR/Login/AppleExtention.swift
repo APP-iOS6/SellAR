@@ -32,24 +32,58 @@ extension LoginViewModel: ASAuthorizationControllerDelegate {
                 self.completionHandler?(false)
                 return
             }
+            
             if let firebaseUser = authResult?.user {
-                self.saveUserToFirestore(uid: firebaseUser.uid, email: firebaseUser.email ?? "", username: appleIDCredential.fullName?.givenName ?? "", profileImageUrl: nil)
-                print("애플 로그인 성공!")
-                
-                self.saveUserID(firebaseUser.uid, loginMethod: "apple")
-                
-                if let completion = self.completionHandler {
-                    completion(true)
+                self.getUserDocument(uid: firebaseUser.uid) { document, error in
+                    if let document = document, document.exists {
+                        // 기존 사용자의 경우
+                        print("애플로 로그인 성공")
+                        let email = document.get("email") as? String ?? ""
+                        self.user.email = email  // 사용자 이메일 업데이트
+                        self.saveUserID(firebaseUser.uid, loginMethod: "apple")
+                        self.isMainViewActive = true
+                        self.completionHandler?(true)
+                    } else {
+                        // 새로운 사용자의 경우
+                        var email = ""
+                        
+                        if let appleEmail = appleIDCredential.email {
+                            email = appleEmail
+                        } else {
+                            email = firebaseUser.email ?? ""
+                        }
+                        
+                        var username = "New User"
+                        if let fullName = appleIDCredential.fullName {
+                            let givenName = fullName.givenName ?? ""
+                            let familyName = fullName.familyName ?? ""
+                            username = [givenName, familyName].filter { !$0.isEmpty }.joined(separator: " ")
+                        }
+                        
+                        print("저장될 이메일: \(email)")
+                        
+                        self.saveUserToFirestore(uid: firebaseUser.uid,
+                                              email: email,
+                                              username: username,
+                                              profileImageUrl: nil)
+                        
+                        self.user.email = email
+                        self.user.username = username
+                        
+                        print("회원가입 성공, Firestore에 사용자 데이터 저장됨")
+                        self.saveUserID(firebaseUser.uid, loginMethod: "apple")
+                        self.isNicknameEntryActive = true
+                        self.completionHandler?(true)
+                    }
                 }
             }
         }
-        
+    }
         func authorizationController(controller: ASAuthorizationController, didFailWithError error: Error){
             print("애플 로그인 실패 \(error.localizedDescription)")
             self.completionHandler?(false)
         }
     }
-}
 // ASAuthorizationControllerPresentationContextProviding 구현
 extension LoginViewModel: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
