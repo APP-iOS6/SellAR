@@ -37,7 +37,6 @@ struct ItemEditView: View {
         .focused($textFocused, equals: .text)
         .padding(.vertical, 5)
         .padding(.leading, 10)
-        .cornerRadius(10)
     }
     
     private var descriptionTextEditor: some View {
