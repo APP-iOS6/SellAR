@@ -16,6 +16,8 @@ import SwiftUI
 @objcMembers
 class LoginViewModel: NSObject, ObservableObject {
     @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
+    @Published var isMainViewActive = false      // 추가된 부분
+    @Published var isNicknameEntryActive = false // 추가된 부분
     @ObservedObject private var errorViewModel = LoginErrorViewModel()
     var completionHandler: ((Bool) -> Void)?
     
@@ -65,6 +67,7 @@ class LoginViewModel: NSObject, ObservableObject {
     
     // MARK: Firestore에 사용자 데이터를 저장하는 공통 메서드
     func saveUserToFirestore(uid: String, email: String, username: String, profileImageUrl: String?) {
+        print("Firestore에 저장할 이메일: \(email)")
         let userData: [String:Any]  = [
             "id": uid,
             "email": email,
@@ -161,81 +164,96 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     // MARK: 구글 로그인 메서드
     func loginWithGoogle(completion: @escaping (Bool) -> Void) {
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
-        
-        guard let presentingVC = UIApplication.shared.connectedScenes
-            .compactMap({ $0 as? UIWindowScene })
-            .flatMap({ $0.windows })
-            .first(where: { $0.isKeyWindow })?.rootViewController else {
-            print("Root View Controller를 찾을 수 없습니다.")
-            completion(false)
-            return
-        }
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
-            if let error = error {
-                print ("구글 로그인 실패 \(error.localizedDescription)")
-                completion(false)
-                return
-            }
-
-            guard let idToken = signInResult?.user.idToken?.tokenString,
-                  let accessToken = signInResult?.user.accessToken.tokenString else {
-                print("ID 토큰 또는 액세스 토큰을 가져올 수 없습니다.")
-                completion(false)
-                return
-            }
-
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-
-            Auth.auth().signIn(with: credential) { authResult, error in
-                if let error = error {
-                    print("Firebase Google 인증 실패 \(error.localizedDescription)")
-                    completion(false)
-                } else if let firebaseUser = authResult?.user {
-                    self.saveUserID(firebaseUser.uid, loginMethod: "google")
-                    print("Google 로그인 성공!")
-                    completion(true)
-                }
-            }
-        }
-    }
-    
+         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+         let config = GIDConfiguration(clientID: clientID)
+         GIDSignIn.sharedInstance.configuration = config
+         
+         guard let presentingVC = UIApplication.shared.connectedScenes
+             .compactMap({ $0 as? UIWindowScene })
+             .flatMap({ $0.windows })
+             .first(where: { $0.isKeyWindow })?.rootViewController else {
+             print("Root View Controller를 찾을 수 없습니다.")
+             completion(false)
+             return
+         }
+         
+         GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
+             if let error = error {
+                 print("구글 로그인 실패 \(error.localizedDescription)")
+                 completion(false)
+                 return
+             }
+             
+             guard let idToken = signInResult?.user.idToken?.tokenString,
+                   let accessToken = signInResult?.user.accessToken.tokenString else {
+                 print("ID 토큰 또는 액세스 토큰을 가져올 수 없습니다.")
+                 completion(false)
+                 return
+             }
+             
+             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+             
+             Auth.auth().signIn(with: credential) { authResult, error in
+                 if let error = error {
+                     print("Firebase Google 인증 실패 \(error.localizedDescription)")
+                     completion(false)
+                 } else if let firebaseUser = authResult?.user {
+                     self.saveUserID(firebaseUser.uid, loginMethod: "google")
+                     print("Google 로그인 성공!")
+                     
+                     let email = signInResult?.user.profile?.email ?? ""
+                     self.checkIfUserExists(uid: firebaseUser.uid) { exists in
+                         DispatchQueue.main.async {
+                             if !exists {
+                                 let email = signInResult?.user.profile?.email ?? ""
+                                 let username = signInResult?.user.profile?.name ?? "New User"
+                                 self.saveUserToFirestore(uid: firebaseUser.uid, email: email, username: username, profileImageUrl: nil)
+                                 self.isNicknameEntryActive = true
+                             } else {
+                                 self.isMainViewActive = true
+                             }
+                             completion(true)
+                         }
+                     }
+                 }
+             }
+         }
+     }
+     
     // MARK: 애플 로그인 메서드 세부 코드는 AppleExtention.swift에서 구현
     
     func loginWithApple(completion: @escaping (Bool) -> Void) {
-        self.completionHandler = completion
-        let request = ASAuthorizationAppleIDProvider().createRequest()
-        request.requestedScopes = [.fullName, .email]
-        
-        let controller = ASAuthorizationController(authorizationRequests: [request])
-        controller.performRequests()
-        
-        controller.delegate = self
-        controller.presentationContextProvider = self
-    }
-
-    func handleAppleIDCredential(_ userID: String) {
-        self.saveUserID(userID, loginMethod: "apple")
-    }
-    
-    // 닉네임 저장 메서드
+            self.completionHandler = completion
+            let request = ASAuthorizationAppleIDProvider().createRequest()
+            request.requestedScopes = [.fullName, .email]
+            
+            let controller = ASAuthorizationController(authorizationRequests: [request])
+            controller.performRequests()
+            
+            controller.delegate = self
+            controller.presentationContextProvider = self
+        }
+    // MARK: 닉네임 저장 메서드
     func saveNickname(_ nickname: String) {
         guard !nickname.isEmpty else { return }
         
-        // Firebase 사용자 프로필 업데이트
-        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-        changeRequest?.displayName = nickname
-        changeRequest?.commitChanges { error in
-            if let error = error {
-                print("닉네임 저장 실패: \(error.localizedDescription)")
-            } else {
-                print("닉네임 저장 성공")
-                // 닉네임이 성공적으로 저장된 후 사용자 정보를 업데이트합니다.
-                self.user.username = nickname
+        // Firestore에 사용자 데이터 저장
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        self.saveUserToFirestore(uid: userID, email: self.user.email, username: nickname, profileImageUrl: self.user.profileImageUrl)
+    }
+    // MARK: 닉네임이 이미 저장되어있는지 확인하는 메서드
+    private func checkIfUserExists(uid: String, completion: @escaping (Bool) -> Void) {
+            db.collection("users").document(uid).getDocument { document, error in
+                if let document = document, document.exists {
+                    completion(true)
+                } else {
+                    completion(false)
+                }
             }
         }
+    // 다른곳에서 db 가져올 수 있는 메서드
+    func getUserDocument(uid: String, completion: @escaping (DocumentSnapshot?, Error?) -> Void) {
+        db.collection("users").document(uid).getDocument(completion: completion)
     }
 }
