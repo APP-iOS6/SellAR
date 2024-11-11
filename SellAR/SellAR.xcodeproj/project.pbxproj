@@ -13,6 +13,9 @@
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
 		B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46942CD884620076BE39 /* FirebaseAuth */; };
 		B86F46982CD9E3430076BE39 /* USDZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46972CD9E3430076BE39 /* USDZScanner */; };
+		E096A3DB2CE1D085004500C4 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E096A3DA2CE1D085004500C4 /* FirebaseAnalytics */; };
+		E096A3DD2CE1D08B004500C4 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E096A3DC2CE1D08B004500C4 /* FirebaseMessaging */; };
+		E096A3E02CE1D0DA004500C4 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E096A3DF2CE1D0DA004500C4 /* Algorithms */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +48,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E096A3E02CE1D0DA004500C4 /* Algorithms in Frameworks */,
+				E096A3DD2CE1D08B004500C4 /* FirebaseMessaging in Frameworks */,
+				E096A3DB2CE1D085004500C4 /* FirebaseAnalytics in Frameworks */,
 				0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */,
 				B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */,
 				B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */,
@@ -107,6 +113,9 @@
 				B86F46972CD9E3430076BE39 /* USDZScanner */,
 				0484022B2CD8506200C3CF8E /* GoogleSignIn */,
 				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
+				E096A3DA2CE1D085004500C4 /* FirebaseAnalytics */,
+				E096A3DC2CE1D08B004500C4 /* FirebaseMessaging */,
+				E096A3DF2CE1D0DA004500C4 /* Algorithms */,
 			);
 			productName = SellAR;
 			productReference = B86F46342CD7F85C0076BE39 /* SellAR.app */;
@@ -140,6 +149,7 @@
 				B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B86F46962CD9E3430076BE39 /* XCRemoteSwiftPackageReference "USDZScanner" */,
 				0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				E096A3DE2CE1D0DA004500C4 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B8482C5D2CD1F1CB009DDA02 /* Products */;
@@ -405,6 +415,14 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		E096A3DE2CE1D0DA004500C4 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -437,6 +455,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B86F46962CD9E3430076BE39 /* XCRemoteSwiftPackageReference "USDZScanner" */;
 			productName = USDZScanner;
+		};
+		E096A3DA2CE1D085004500C4 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		E096A3DC2CE1D08B004500C4 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		E096A3DF2CE1D0DA004500C4 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E096A3DE2CE1D0DA004500C4 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
