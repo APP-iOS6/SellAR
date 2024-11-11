@@ -111,7 +111,6 @@ struct NicknameEntryView: View {
                     }
                 }
             }
-            .padding(.bottom, -keyboardViewModel.keyboardHeight)
         }
     }
 }

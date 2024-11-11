@@ -218,7 +218,6 @@ struct RegisterView: View {
                     }
                 }
             }
-            .padding(.bottom, -keyboardViewModel.keyboardHeight)
             .background(
                 NavigationLink(destination: LoginView(), isActive: $isRegistrationSuccessful) {
                     EmptyView()
