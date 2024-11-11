@@ -29,7 +29,7 @@ struct RegisterView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(colorScheme == .dark ? Color(hex: "#242427") : .white)
+                Color(colorScheme == .dark ? Color("#242427") : .white)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -47,7 +47,7 @@ struct RegisterView: View {
                             TextField("이메일을 입력해 주세요", text: $email)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
+                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
                                 .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 20)
@@ -71,7 +71,7 @@ struct RegisterView: View {
                             SecureField("비밀번호를 입력해 주세요", text: $password)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
+                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
                                 .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 20)
@@ -95,7 +95,7 @@ struct RegisterView: View {
                             SecureField("비밀번호를 똑같이 입력해 주세요", text: $confirmPassword)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
+                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
                                 .cornerRadius(10)
                                 .foregroundColor(.black)
                                 .padding(.horizontal, 20)
@@ -119,7 +119,7 @@ struct RegisterView: View {
                             TextField("닉네임을 입력해 주세요", text: $userName)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
+                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
                                 .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .padding(.horizontal, 20)
@@ -140,7 +140,7 @@ struct RegisterView: View {
                             ) {
                                 ZStack {
                                     Circle()
-                                        .fill(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
+                                        .fill(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
                                         .frame(width: 120, height: 120)
                                         .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
 
@@ -201,7 +201,7 @@ struct RegisterView: View {
                                 }) {
                                     ZStack {
                                         Rectangle()
-                                            .fill(Color(hex: "#1BD6F5"))
+                                            .fill(Color("#1BD6F5"))
                                             .frame(width: geometry.size.width * 0.5, height: geometry.size.height / 15)
                                             .cornerRadius(10)
                                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
