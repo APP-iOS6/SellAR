@@ -84,14 +84,22 @@ struct StartMessageView: View {
                         } else {
                             // 채팅방 목록 표시
                             List(viewModel.chatRooms) { chatRoom in
-                                NavigationLink(destination: ChatContentView(chatViewModel: viewModel, chatRoomID: chatRoom.id)) {
-                                    ChatRoomRow(chatRoom: chatRoom)
+                                if let otherUserID = chatRoom.participants.first(where: { $0 != loginViewModel.user.id }) {
+                                    NavigationLink(destination: ChatContentView(
+                                        chatViewModel: viewModel,
+                                        chatRoomID: chatRoom.id,
+                                        currentUserID: loginViewModel.user.id,
+                                        otherUserID: otherUserID
+                                    )) {
+                                        ChatRoomRow(chatRoom: chatRoom, currentUserID: viewModel.senderID)
+                                    }
                                 }
                             }
                             .listStyle(PlainListStyle())
                         }
                     }
                     .navigationTitle("채팅")
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             NavigationLink(destination: UserListView(chatViewModel: viewModel)) {
