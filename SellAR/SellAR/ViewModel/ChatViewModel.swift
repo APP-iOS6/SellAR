@@ -17,6 +17,7 @@ class ChatViewModel: ObservableObject {
     @Published var lastReadMessageID: String?
     private var messageListener: ListenerRegistration?
     private var db = Firestore.firestore()
+    private let FCM_SERVER_KEY = "Your server key here"
     
     var senderID: String
     
@@ -28,6 +29,53 @@ class ChatViewModel: ObservableObject {
         }
         fetchChatRooms()
     }
+    
+    // 푸시 알림 전송 함수
+        func sendPushNotification(to userID: String, message: String, chatRoomID: String) {
+            // 받는 사람의 FCM 토큰 조회
+            db.collection("users").document(userID).getDocument { [weak self] document, error in
+                guard let self = self,
+                      let document = document,
+                      let fcmToken = document.data()?["fcmToken"] as? String else {
+                    print("FCM 토큰을 찾을 수 없습니다.")
+                    return
+                }
+                
+                // 보내는 사람 이름 가져오기
+                let senderName = self.chatUsers[self.senderID]?.username ?? "알 수 없음"
+                
+                // 푸시 알림 데이터 구성
+                let body: [String: Any] = [
+                    "to": fcmToken,
+                    "notification": [
+                        "title": senderName,
+                        "body": message,
+                        "sound": "default"
+                    ],
+                    "data": [
+                        "chatRoomID": chatRoomID,
+                        "senderID": self.senderID
+                    ]
+                ]
+                
+                // FCM 서버로 요청 보내기
+                guard let url = URL(string: "https://fcm.googleapis.com/fcm/send") else { return }
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.setValue("key=\(self.FCM_SERVER_KEY)", forHTTPHeaderField: "Authorization")
+                request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+                
+                URLSession.shared.dataTask(with: request) { data, response, error in
+                    if let error = error {
+                        print("푸시 알림 전송 실패: \(error)")
+                        return
+                    }
+                    print("푸시 알림 전송 성공")
+                }.resume()
+            }
+        }
+    
     // 메시지 구독 및 읽음 상태 추적
     func subscribeToMessages(for chatRoomID: String, currentUserID: String) {
         messageListener?.remove()
@@ -268,41 +316,43 @@ class ChatViewModel: ObservableObject {
     }
     
     func sendMessage(content: String, to chatRoomID: String) {
-           let date = ISO8601DateFormatter().string(from: Date())
-           let newMessage: [String: Any] = [
-               "userID": senderID,
-               "content": content,
-               "date": date,
-               "isRead": false
-           ]
-           
-           db.collection("chatRooms").document(chatRoomID).collection("messages")
-               .addDocument(data: newMessage) { [weak self] error in
-                   guard let self = self else { return }
-                   
-                   if let error = error {
-                       print("메시지 전송 중 에러 발생: \(error)")
-                       return
-                   }
-                   
-                   // 채팅방 정보 가져오기
-                   self.db.collection("chatRooms").document(chatRoomID).getDocument { document, error in
-                       guard let document = document,
-                             let data = document.data(),
-                             let participants = data["participants"] as? [String] else { return }
-                       
-                       // 받는 사람의 ID 찾기
-                       if let receiverID = participants.first(where: { $0 != self.senderID }) {
-                           // unreadCount 증가
-                           self.incrementUnreadCount(for: chatRoomID, receiverID: receiverID)
-                       }
-                       
-                       // 최신 메시지와 시간 업데이트
-                       document.reference.updateData([
-                           "latestMessage": content,
-                           "latestTimestamp": Timestamp(date: Date())
-                       ])
-                   }
-               }
-       }
+            let date = ISO8601DateFormatter().string(from: Date())
+            let newMessage: [String: Any] = [
+                "userID": senderID,
+                "content": content,
+                "date": date,
+                "isRead": false
+            ]
+            
+            db.collection("chatRooms").document(chatRoomID).collection("messages")
+                .addDocument(data: newMessage) { [weak self] error in
+                    guard let self = self else { return }
+                    
+                    if let error = error {
+                        print("메시지 전송 중 에러 발생: \(error)")
+                        return
+                    }
+                    
+                    // 채팅방 정보 가져오기
+                    self.db.collection("chatRooms").document(chatRoomID).getDocument { document, error in
+                        guard let document = document,
+                              let data = document.data(),
+                              let participants = data["participants"] as? [String] else { return }
+                        
+                        // 받는 사람의 ID 찾기
+                        if let receiverID = participants.first(where: { $0 != self.senderID }) {
+                            // unreadCount 증가
+                            self.incrementUnreadCount(for: chatRoomID, receiverID: receiverID)
+                            // 푸시 알림 전송
+                            self.sendPushNotification(to: receiverID, message: content, chatRoomID: chatRoomID)
+                        }
+                        
+                        // 최신 메시지와 시간 업데이트
+                        document.reference.updateData([
+                            "latestMessage": content,
+                            "latestTimestamp": Timestamp(date: Date())
+                        ])
+                    }
+                }
+        }
 }
