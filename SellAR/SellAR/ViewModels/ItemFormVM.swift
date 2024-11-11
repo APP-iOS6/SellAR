@@ -16,20 +16,21 @@ class ItemFormVM: ObservableObject {
     
     let db = Firestore.firestore()
     let formType: FormType
-    
     let id: String
     
     @Published var itemName = ""
     @Published var price = ""
     @Published var usdzURL: URL?
     @Published var thumbnailURL: URL?
-    
     @Published var loadingState = LoadingType.none
     @Published var error: String?
-    
     @Published var uploadProgress: UploadProgress?
     @Published var showUSDZSource = false
     @Published var selectedUSDZSource: USDZSourceType?
+    @Published var description = ""
+    @Published var location = ""
+    @Published var selectedImages: [UIImage] = []
+    @Published var imageURLs: [URL] = []
     
     let byteCountFormatter: ByteCountFormatter = {
         let f = ByteCountFormatter()
@@ -37,13 +38,9 @@ class ItemFormVM: ObservableObject {
         return f
     }()
     
-    @Published var description = ""
-    @Published var location = ""
-    
-    
     var navigationTitle: String {
         switch formType {
-        case.add:
+        case .add:
             return "상품 추가"
         case .edit:
             return "상품 수정"
@@ -61,14 +58,8 @@ class ItemFormVM: ObservableObject {
             price = item.price
             description = item.description
             location = item.location
-            
-            
-            if let usdzURL = item.usdzURL {
-                self.usdzURL = usdzURL
-            }
-            if let thumbnailURL = item.thumbnailURL {
-                self.thumbnailURL = thumbnailURL
-            }
+            usdzURL = item.usdzURL
+            thumbnailURL = item.thumbnailURL
         }
     }
     
@@ -87,36 +78,110 @@ class ItemFormVM: ObservableObject {
             await uploadUSDZ(fileURL: fileURL)
         }
         
+        // Firebase Storage에 이미지 업로드 및 URL 리스트 생성
+        print("선택된 이미지 개수: \(selectedImages.count)")
+        DispatchQueue.main.async {
+            self.imageURLs = []
+        }
+        
+        for (index, image) in selectedImages.enumerated() {
+            if let imageURL = await uploadImage(image: image, index: index) {
+                DispatchQueue.main.async {
+                    self.imageURLs.append(imageURL)
+                }
+                print("이미지 \(index) 업로드 성공: \(imageURL)")
+            } else {
+                print("이미지 \(index) 업로드 실패")
+            }
+        }
+        
+        // Firestore에 저장 전에 URL 배열 확인
+        print("저장할 imageURLs: \(imageURLs)")
+        
+        // URL 업로드가 완료된 후 Firestore에 저장
         var item: Items
         switch formType {
         case .add:
-            item = .init(id: id, userId: Auth.auth().currentUser?.uid ?? "", itemName: itemName, description: description, price: price, location: location)
+            item = .init(
+                id: id,
+                userId: Auth.auth().currentUser?.uid ?? "",
+                itemName: itemName,
+                usdzLink: usdzURL?.absoluteString,
+                thumbnailLink: thumbnailURL?.absoluteString,
+                description: description,
+                price: price,
+                images: imageURLs.map { $0.absoluteString },  // URL 문자열 배열로 변환
+                location: location
+            )
         case .edit(let existingItem):
             item = existingItem
             item.itemName = itemName
             item.description = description
             item.price = price
             item.location = location
+            item.images = imageURLs.map { $0.absoluteString }
         }
-        
-        item.usdzLink = usdzURL?.absoluteString
-        item.thumbnailLink = thumbnailURL?.absoluteString
         
         do {
             // Firestore에 아이템 저장
             try await db.collection("items").document(item.id)
                 .setData(from: item)
+            print("Firestore 저장 성공")
             
         } catch {
             DispatchQueue.main.async {
                 self.error = error.localizedDescription
             }
+            print("Firestore 저장 실패: \(error)")
             throw error
         }
     }
 
 
-    
+
+
+
+
+    // 이미지 업로드 함수
+    func uploadImage(image: UIImage, index: Int) async -> URL? {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("이미지 데이터를 생성할 수 없습니다.")
+            return nil
+        }
+        
+        let storageRef = Storage.storage().reference().child("\(id)_image_\(index).jpg")
+        
+        // 메인 스레드에서 초기화
+        DispatchQueue.main.async {
+            self.uploadProgress = .init(fractionCompleted: 0, totalUnitCount: 0, completedUnitCount: 0)
+            self.loadingState = .uploading(.thumbnail)
+        }
+        
+        do {
+            _ = try await storageRef.putDataAsync(imageData, metadata: .init(dictionary: ["contentType": "image/jpeg"])) { [weak self] progress in
+                guard let self = self, let progress = progress else { return }
+                
+                // 메인 스레드에서 업데이트
+                DispatchQueue.main.async {
+                    self.uploadProgress = .init(fractionCompleted: progress.fractionCompleted, totalUnitCount: progress.totalUnitCount, completedUnitCount: progress.completedUnitCount)
+                }
+            }
+            
+            let downloadURL = try await storageRef.downloadURL()
+            print("Firebase Storage 업로드 성공 - 다운로드 URL: \(downloadURL)")
+            return downloadURL
+        } catch {
+            DispatchQueue.main.async {
+                self.error = "이미지 업로드 실패: \(error.localizedDescription)"
+            }
+            print("Firebase Storage 업로드 실패: \(error)")
+            return nil
+        }
+    }
+
+
+
+
     @MainActor
     func deleteUSDZ() async {
         let storageRef = Storage.storage().reference()
@@ -154,12 +219,11 @@ class ItemFormVM: ObservableObject {
         if isSecurityScopedResource, !fileURL.startAccessingSecurityScopedResource() {
             return
         }
-//        let gotAccess = fileURL.startAccessingSecurityScopedResource()
         guard let data = try? Data(contentsOf: fileURL) else { return }
         if isSecurityScopedResource {
             fileURL.stopAccessingSecurityScopedResource()
         }
-        // 업로드 진행 상태 초기화
+        
         uploadProgress = .init(fractionCompleted: 0, totalUnitCount: 0, completedUnitCount: 0)
         loadingState = .uploading(.usdz)
         
@@ -167,12 +231,10 @@ class ItemFormVM: ObservableObject {
             let storageRef = Storage.storage().reference()
             let usdzRef = storageRef.child("\(id).usdz")
             
-            // Firebase Storage에 데이터 업로드
             _ = try await usdzRef.putDataAsync(data, metadata: .init(dictionary: ["contentType": "model/vnd.usd+zip"])) { [weak self] progress in
                 guard let self = self, let progress = progress else { return }
                 self.uploadProgress = .init(fractionCompleted: progress.fractionCompleted, totalUnitCount: progress.totalUnitCount, completedUnitCount: progress.completedUnitCount)
             }
-            
             
             let downloadURL = try await usdzRef.downloadURL()
             self.usdzURL = downloadURL
@@ -190,54 +252,40 @@ class ItemFormVM: ObservableObject {
                 loadingState = .uploading(.thumbnail)
                 let thumbnailRef = storageRef.child("\(id)_thumbnail.jpg")
                 
-                // 썸네일 Firebase Storage에 업로드
                 _ = try await thumbnailRef.putDataAsync(jpgData, metadata: .init(dictionary: ["contentType": "image/jpeg"])) { [weak self] progress in
                     guard let self = self, let progress = progress else { return }
                     self.uploadProgress = .init(fractionCompleted: progress.fractionCompleted, totalUnitCount: progress.totalUnitCount, completedUnitCount: progress.completedUnitCount)
                 }
                 
-                // 썸네일 다운로드 URL 획득
                 let thumbnailURL = try await thumbnailRef.downloadURL()
                 self.thumbnailURL = thumbnailURL
             }
             
         } catch {
-            
             self.error = "업로드 실패: \(error.localizedDescription)"
-            print("업로드 중 에러 발생: \(error)")
         }
         
         loadingState = .none
     }
-
-
-    
 }
 
-enum FormType : Identifiable {
-    
+enum FormType: Identifiable {
     case add
     case edit(Items)
     
     var id: String {
         switch self {
-        case .add:
-            return "add"
-            
-        case .edit(let items):
-            return "edit-\(String(describing: items.id))"
+        case .add: return "add"
+        case .edit(let item): return "edit-\(item.id)"
         }
     }
-    
 }
 
 enum LoadingType: Equatable {
-    
     case none
     case savingItem
     case uploading(UploadType)
     case deleting(DeleteType)
-    
 }
 
 enum USDZSourceType {
@@ -256,4 +304,4 @@ struct UploadProgress {
     var fractionCompleted: Double
     var totalUnitCount: Int64
     var completedUnitCount: Int64
-} 
+}

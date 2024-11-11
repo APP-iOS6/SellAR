@@ -27,8 +27,8 @@ struct Items: Identifiable, Codable, Equatable {
         return URL(string: thumbnailLink)
     }
     var description: String
-     var price: String
-    // var images: [String]
+    var price: String
+    var images: [String]
     // var category: String
      var location: String
     // var isSold: Bool

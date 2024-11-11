@@ -16,8 +16,10 @@ import SwiftUI
 @objcMembers
 class LoginViewModel: NSObject, ObservableObject {
     @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
-    @Published var isMainViewActive = false      // 추가된 부분
-    @Published var isNicknameEntryActive = false // 추가된 부분
+    @Published var isMainViewActive = false
+    @Published var isNicknameEntryActive = false
+    @Published var isLoggedIn = false
+    
     @ObservedObject private var errorViewModel = LoginErrorViewModel()
     var completionHandler: ((Bool) -> Void)?
     @Published var isLoggedIn: Bool = false  // 로그인 상태를 추적
@@ -77,55 +79,94 @@ class LoginViewModel: NSObject, ObservableObject {
             "profileImageUrl": profileImageUrl ?? ""
         ]
         
-        db.collection("users").document(uid).setData(userData) { error in
-            if let error = error {
-                print("Firestore에 사용자 데이터 저장 실패 \(error.localizedDescription)")
-            } else {
-                print("회원가입 성공, Firestore에 사용자 데이터 저장됨")
-                self.user = User(id: uid, email: email, username: username, profileImageUrl: profileImageUrl)
+        print("저장할 데이터:", userData)
+            
+            db.collection("users").document(uid).setData(userData) { error in
+                if let error = error {
+                    print("Firestore에 사용자 데이터 저장 실패: \(error.localizedDescription)")
+                } else {
+                    print("Firestore에 사용자 데이터 저장 성공")
+                    DispatchQueue.main.async {
+                        self.user = User(
+                            id: uid,
+                            email: email,
+                            username: username,
+                            profileImageUrl: profileImageUrl
+                        )
+                    }
+                }
             }
         }
-        
-    }
     
     // MARK: 이메일과 비밀번호로 가입하는 회원가입 메서드
-    func registerWithEmailPassword(email: String, password: String, username: String, profileImage: UIImage?) {
-        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+    func registerWithEmailPassword(email: String, password: String, username: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void = { _ in }) {
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
+            guard let self = self else { return }
+            
             if let error = error {
-                print("회원가입 실패 \(error.localizedDescription)")
+                print("회원가입 실패: \(error.localizedDescription)")
+                completion(false)
                 return
             }
+            
             if let user = authResult?.user {
-                self.uploadProfileImage(profileImage) { url in
-                    self.saveUserToFirestore(uid: user.uid, email: email, username: username, profileImageUrl: url?.absoluteString)
+                if let profileImage = profileImage {
+                    print("프로필 이미지 업로드 시작")
+                    self.uploadProfileImage(profileImage) { [weak self] url in
+                        guard let self = self else { return }
+                        
+                        print("이미지 업로드 완료, URL 저장 시작:", url?.absoluteString ?? "URL 없음")
+                        let imageUrl = url?.absoluteString
+                        
+                        DispatchQueue.main.async {
+                            self.saveUserToFirestore(
+                                uid: user.uid,
+                                email: email,
+                                username: username,
+                                profileImageUrl: imageUrl
+                            )
+                            completion(true)
+                        }
+                    }
+                } else {
+                    self.saveUserToFirestore(
+                        uid: user.uid,
+                        email: email,
+                        username: username,
+                        profileImageUrl: nil
+                    )
+                    completion(true)
                 }
             }
         }
     }
-    // MARK: - Firebase Storage에 이미지 업로드 메서드
-    
-    private func uploadProfileImage(_ image: UIImage?, completion: @escaping (URL?)-> Void) {
+
+    func uploadProfileImage(_ image: UIImage?, completion: @escaping (URL?) -> Void) {
         guard let image = image,
               let imageData = image.jpegData(compressionQuality: 0.5) else {
+            print("이미지 변환 실패")
             completion(nil)
             return
         }
         
         let fileName = UUID().uuidString
         let imageRef = storage.child("profileImages/\(fileName).jpg")
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
         
-        imageRef.putData(imageData, metadata: nil) { _, error in
+        imageRef.putData(imageData, metadata: metadata) { metadata, error in
             if let error = error {
                 print("이미지 업로드 실패: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
             
-            imageRef.downloadURL() { url, error in
+            imageRef.downloadURL { url, error in
                 if let error = error {
-                    print("이미지 가져오기 실패: \(error.localizedDescription)")
+                    print("다운로드 URL 가져오기 실패: \(error.localizedDescription)")
                     completion(nil)
-                } else {
+                } else if let url = url {
+                    print("다운로드 URL 생성 성공:", url.absoluteString)
                     completion(url)
                 }
             }
@@ -156,6 +197,7 @@ class LoginViewModel: NSObject, ObservableObject {
                 self.user = User(id: firebaseUser.uid, email: email, username: firebaseUser.displayName ?? "", profileImageUrl: nil)
                 print("로그인 성공")
                 self.saveUserID(firebaseUser.uid, loginMethod: "email")
+                self.isLoggedIn = true
             }
         }
     }
@@ -236,13 +278,13 @@ class LoginViewModel: NSObject, ObservableObject {
         controller.presentationContextProvider = self
     }
     // MARK: 닉네임 저장 메서드
-    func saveNickname(_ nickname: String) {
+    func saveNickname(_ nickname: String, profileImageUrl: String? = nil) {
         guard !nickname.isEmpty else { return }
         
         // Firestore에 사용자 데이터 저장
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
-        self.saveUserToFirestore(uid: userID, email: self.user.email, username: nickname, profileImageUrl: self.user.profileImageUrl)
+        self.saveUserToFirestore(uid: userID, email: self.user.email, username: nickname, profileImageUrl: profileImageUrl ?? self.user.profileImageUrl)
     }
     // MARK: 닉네임이 이미 저장되어있는지 확인하는 메서드
     private func checkIfUserExists(uid: String, completion: @escaping (Bool) -> Void) {
