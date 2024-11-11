@@ -29,8 +29,8 @@ struct ItemEditView: View {
     // MARK: - Helper Views
     private var titleTextField: some View {
         TextField("제목을 입력해 주세요", text: Binding(
-            get: { selectedItem?.title ?? "" },
-            set: { selectedItem?.title = $0 }
+            get: { selectedItem?.itemName ?? "" },
+            set: { selectedItem?.itemName = $0 }
         ))
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
