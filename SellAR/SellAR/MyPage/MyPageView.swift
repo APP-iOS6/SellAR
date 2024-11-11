@@ -19,6 +19,7 @@ struct MyPageView: View {
     //    @State private var userlocation: String = "서울시 강남구"
     //    @State private var isLoggedIn: Bool = false //로그인상태 확인변수
     @ObservedObject var itemStore = ItemStore()
+    @EnvironmentObject var loginViewModel: LoginViewModel
     
     var body: some View {
         NavigationView {
@@ -153,6 +154,8 @@ struct MyPageView: View {
                             
                             Button(action: {
                                 // 로그아웃 액션
+                                loginViewModel.logout()
+                                
                             }) {
                                 HStack {
                                     Image(systemName: "person.fill")
@@ -204,6 +207,6 @@ struct MyPageView: View {
 //    }
 //}
 
-#Preview {
-    MyPageView(userdata: UserData(id: "12345", email: "aaaaaa@gmail.com", username: "가나다", profileImageUrl:nil, userLocation: "서울시 강남구", intro: "자신을 소개해주세요"))
-}
+//#Preview {
+//    MyPageView(userdata: UserData(id: "12345", email: "aaaaaa@gmail.com", username: "가나다", profileImageUrl:nil, userLocation: "서울시 강남구", intro: "자신을 소개해주세요"))
+//}

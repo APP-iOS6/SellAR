@@ -52,18 +52,19 @@ struct ItemRowView: View {
                 .padding(.vertical, 10)
             }
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 15) {
                 Text("\(item.price) 원")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 20, weight: .bold))
                     .minimumScaleFactor(0.5) // 최소 크기를 50%로 설정
                     .lineLimit(1) // 한 줄로 제한
                 Text(item.itemName)
                     .font(.headline)
-                Text(item.description)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .font(.subheadline)
+//                Text(item.description)
+//                    .lineLimit(1)
+//                    .truncationMode(.tail)
+//                    .font(.subheadline)
                 Text(item.location)
+                    .font(.subheadline)
                 Text(item.isSold ? "판매 완료" : "판매 중")
                     .foregroundColor(item.isSold ? .gray : .red)
             }
@@ -85,10 +86,6 @@ struct ItemRowView: View {
             .padding(.trailing, 15)
         }
         .frame(maxWidth: .infinity, maxHeight: 200)
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray, lineWidth: 3)
-        )
         .padding(.top, 10)
         .padding(.horizontal, 16)
     }

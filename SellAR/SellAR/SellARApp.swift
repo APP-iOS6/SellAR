@@ -28,6 +28,7 @@ struct SellARApp: App {
         WindowGroup {
             NavigationStack {
                 ContentView(viewModel: LoginViewModel())
+                    .environmentObject(LoginViewModel())
             }
         }
     }
