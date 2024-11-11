@@ -121,7 +121,7 @@ struct NicknameEntryView: View {
                                         .disabled(nickname.isEmpty)
                                 }
                                 
-                                NavigationLink(destination: MainView(), isActive: $isNicknameSaved) {
+                                NavigationLink(destination: MainView().navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
                                     EmptyView()
                                 }
                             }
