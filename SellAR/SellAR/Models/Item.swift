@@ -52,15 +52,18 @@ struct Items: Identifiable, Codable, Equatable {
         var usdzLink: String
         
         init?(document: [String: Any]) {
+            print("Document data: \(document)") // 데이터 출력
+            
             guard let id = document["id"] as? String,
-                  let title = document["itemName"] as? String else {
+                  let itemName = document["itemName"] as? String else {
+                print("Missing required fields: id or itemName")
                 return nil
             }
-            
+
             self.id = id
             self.userId = document["userId"] as? String ?? ""
             self.title = document["title"] as? String ?? ""
-            self.itemName = document["itemName"] as? String ?? ""
+            self.itemName = itemName
             self.description = document["description"] as? String ?? ""
             self.price = document["price"] as? String ?? "0"
             self.images = [document["thumbnailLink"] as? String ?? "placeholder"]
@@ -72,5 +75,6 @@ struct Items: Identifiable, Codable, Equatable {
             self.thumbnailLink = document["thumbnailLink"] as? String ?? ""
             self.usdzLink = document["usdzLink"] as? String ?? ""
         }
+
     }
 
