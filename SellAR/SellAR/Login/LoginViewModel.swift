@@ -18,11 +18,9 @@ class LoginViewModel: NSObject, ObservableObject {
     @Published var user = User(id: "", email: "", username: "", profileImageUrl: nil)
     @Published var isMainViewActive = false
     @Published var isNicknameEntryActive = false
-    @Published var isLoggedIn = false
-    
+    @Published var isLoggedIn: Bool = false  // 로그인 상태를 추적
     @ObservedObject private var errorViewModel = LoginErrorViewModel()
     var completionHandler: ((Bool) -> Void)?
-    @Published var isLoggedIn: Bool = false  // 로그인 상태를 추적
 
     private var db = Firestore.firestore()
     private var storage = Storage.storage().reference()
