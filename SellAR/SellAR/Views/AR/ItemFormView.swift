@@ -113,8 +113,12 @@ struct ItemFormView: View {
             TextField("제목", text: $vm.itemName)
             TextField("가격", text: $vm.price)
                 .keyboardType(.numberPad)
+            // 수정 필요
                 .onChange(of: vm.price) { newValue in
                     vm.price = newValue.filter { $0.isNumber }
+                    if vm.price.isEmpty {
+                        vm.price = "0"
+                    }
                 }
             
             TextField("상품 설명", text: $vm.description)

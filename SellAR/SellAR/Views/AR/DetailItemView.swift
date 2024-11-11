@@ -45,11 +45,11 @@ struct DetailItemView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    Text("가격: \(item.price) ₩")
+                    Text("가격: \(item.price) 원")
                         .font(.title2)
                         .foregroundColor(.blue)
                     
-                    Text("설명: \(item.description)")
+                    Text("\(item.description)")
                         .font(.body)
                         .padding(.top, 8)
                     

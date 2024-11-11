@@ -73,37 +73,13 @@ struct ProfileFixView: View {
                                 .background(Color.gray.opacity(0.2))
                                 .cornerRadius(10)
                                 
-                                HStack {
-                                    Text("이메일")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.white)
-                                    Text(email)  // 이메일 표시
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .lineLimit(1)
-                                        .font(.system(size: 14))
-                                }
-                                .padding(10)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
+                            
                             }
                         }
                         .padding()
                         
                         VStack {
-                            HStack {
-                                TextField("", text: $userLocation)
-                                    .frame(width: 100, alignment: .leading)
-                                    .foregroundColor(.white)
-                                Image(systemName: "location.fill")
-                                    .foregroundColor(.white)
-                            }
-                            .padding(10)
-                            .foregroundColor(.white)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 10)
+               
                             // 자기소개 구문 (텍스트만 출력하는 형태로 변경)
                             TextField("",text: $intro)
                                 .frame(maxWidth: .infinity, maxHeight: 150, alignment: .topLeading)  // 좌측 정렬

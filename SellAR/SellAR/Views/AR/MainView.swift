@@ -98,7 +98,7 @@ struct ListItemView: View {
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("가격: \(item.price) ₩")
+                Text("가격: \(item.price) 원")
                     .font(.subheadline)
                     .fixedSize(horizontal: false, vertical: true)
 
