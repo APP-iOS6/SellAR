@@ -10,6 +10,7 @@ import SafariServices
 
 struct DetailItemView: View {
     let item: Items
+    @StateObject private var userVM = UserViewModel() // userId 없이 초기화
     
     var body: some View {
         ScrollView {
@@ -36,7 +37,7 @@ struct DetailItemView: View {
                 
                 // 상품 정보
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("판매자: \(item.userId)")
+                    Text("판매자: \(userVM.user?.username ?? "알 수 없음")")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -95,6 +96,9 @@ struct DetailItemView: View {
             }
             .padding()
         }
+        .onAppear {
+            userVM.setUserId(item.userId)  // `onAppear`에서 `userId` 설정
+        }
         .navigationTitle("상품 상세 정보")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -106,7 +110,7 @@ struct DetailItemView: View {
         vc?.present(safariVC, animated: true)
     }
     
-    // 채팅 시작 기능 
+    // 채팅 시작 기능
     func startChat() {
         // 채팅 화면으로 이동하는 로직을 여기에 추가
     }

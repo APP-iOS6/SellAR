@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 struct Items: Identifiable, Codable, Equatable {
     var id = UUID().uuidString
-    var userId: String // 작성자 아이디
+    var userId: String
     @ServerTimestamp var createdAt: Date?
     @ServerTimestamp var updatedAT: Date?
     var itemName: String
@@ -20,6 +20,7 @@ struct Items: Identifiable, Codable, Equatable {
         guard let usdzLink else { return nil }
         return URL(string: usdzLink)
     }
+    
     
     var thumbnailLink: String?
     var thumbnailURL: URL? {
