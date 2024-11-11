@@ -9,12 +9,14 @@ import SwiftUI
 import UniformTypeIdentifiers
 import SafariServices
 import USDZScanner
+import PhotosUI
 
 struct ItemFormView: View {
     
     @StateObject var vm = ItemFormVM()
     @Environment(\.dismiss) var dismiss
     
+    @State private var showImagePicker = false
     
     @State private var selectedUSDZFileURL: URL?
     
@@ -23,6 +25,7 @@ struct ItemFormView: View {
             List {
                 inputSection
                 arSection
+                imageSection
                 
                 if case .deleting(let type) = vm.loadingState {
                     HStack {
@@ -120,6 +123,7 @@ struct ItemFormView: View {
         .disabled(vm.loadingState != .none)
     }
     
+    //USDZ추가
     var arSection: some View {
         Section("AR 모델") {
             if let thumbnailURL = vm.thumbnailURL {
@@ -187,13 +191,111 @@ struct ItemFormView: View {
         .disabled(vm.loadingState != .none)
     }
     
+    //이미지 추가
+    var imageSection: some View {
+        Section("이미지") {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(vm.selectedImages.indices, id: \.self) { index in
+                        ZStack(alignment: .topTrailing) {
+                            Image(uiImage: vm.selectedImages[index])
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 100, height: 100)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                            Button(action: {
+                                vm.selectedImages.remove(at: index)
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.red)
+                                    .background(Color.white.clipShape(Circle()))
+                            }
+                            .offset(x: -5, y: 5)
+                        }
+                    }
+                    
+                    Button(action: {
+                        showImagePicker = true
+                    }) {
+                        VStack {
+                            Image(systemName: "photo.on.rectangle.angled")
+                                .font(.system(size: 40))
+                                .foregroundColor(.blue)
+                            Text("이미지 추가")
+                                .font(.footnote)
+                        }
+                        .frame(width: 100, height: 100)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showImagePicker) {
+            PhotoPickerView(selectedImages: $vm.selectedImages)  // `vm.selectedImages`에 바인딩
+        }
+    }
+
     func viewAR(url: URL) {
         let safariVC = SFSafariViewController(url: url)
         let vc = UIApplication.shared.firstKeyWindow?.rootViewController?.presentedViewController ?? UIApplication.shared.firstKeyWindow?.rootViewController
-        
         vc?.present(safariVC, animated: true)
     }
 }
+
+
+struct PhotoPickerView: UIViewControllerRepresentable {
+    @Binding var selectedImages: [UIImage]
+    
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 0  // 여러 이미지 선택 가능, 필요 시 1로 설정하여 단일 선택으로 변경 가능
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        var parent: PhotoPickerView
+        
+        init(_ parent: PhotoPickerView) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            picker.dismiss(animated: true)
+            
+            // 선택한 이미지가 없을 경우 종료
+            guard !results.isEmpty else { return }
+            
+            // 선택된 이미지를 비동기로 배열에 추가
+            for result in results {
+                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+                    result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                        if let image = image as? UIImage {
+                            // 메인 스레드에서 배열에 추가
+                            DispatchQueue.main.async {
+                                self?.parent.selectedImages.append(image)
+                            }
+                        } else if let error = error {
+                            print("이미지를 로드할 수 없습니다: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 extension UIApplication {
     var firstKeyWindow: UIWindow? {

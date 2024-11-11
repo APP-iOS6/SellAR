@@ -11,10 +11,11 @@ import SafariServices
 struct DetailItemView: View {
     let item: Items
     
-    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                
+                // 상품 썸네일 이미지
                 if let thumbnailURL = item.thumbnailURL {
                     AsyncImage(url: thumbnailURL) { phase in
                         switch phase {
@@ -33,22 +34,31 @@ struct DetailItemView: View {
                     .frame(height: 300)
                 }
                 
-                Text("상품명: \(item.itemName)")
-                    .font(.title2)
-                    .padding(.bottom, 4)
+                // 상품 정보
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("판매자: \(item.userId)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    Text(item.itemName)
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    Text("가격: \(item.price) ₩")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                    
+                    Text("설명: \(item.description)")
+                        .font(.body)
+                        .padding(.top, 8)
+                    
+                    Text("지역: \(item.location)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 4)
+                }
                 
-                Text("가격: \(item.price) ₩")
-                    .font(.title3)
-                
-                Text("설명: \(item.description)")
-                    .padding(.top, 8)
-                
-                Text("지역: \(item.location)")
-                    .padding(.top, 8)
-                
-                Text("펀매자: \(item.userId)")
-                    .padding(.top, 8)
-                
+                // AR로 보기 버튼
                 if let usdzURL = item.usdzURL {
                     Button(action: {
                         viewAR(url: usdzURL)
@@ -63,7 +73,25 @@ struct DetailItemView: View {
                         .background(Color.blue.opacity(0.2))
                         .cornerRadius(8)
                     }
+                    .padding(.top, 16)
                 }
+                
+                // 채팅하기 버튼
+                Button(action: {
+                    startChat()
+                }) {
+                    HStack {
+                        Image(systemName: "message")
+                            .imageScale(.large)
+                        Text("채팅하기")
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.green.opacity(0.2))
+                    .cornerRadius(8)
+                }
+                .padding(.top, 8)
+                
             }
             .padding()
         }
@@ -71,9 +99,15 @@ struct DetailItemView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     
+    // AR 보기 기능
     func viewAR(url: URL) {
         let safariVC = SFSafariViewController(url: url)
         let vc = UIApplication.shared.firstKeyWindow?.rootViewController?.presentedViewController ?? UIApplication.shared.firstKeyWindow?.rootViewController
         vc?.present(safariVC, animated: true)
+    }
+    
+    // 채팅 시작 기능 
+    func startChat() {
+        // 채팅 화면으로 이동하는 로직을 여기에 추가
     }
 }
