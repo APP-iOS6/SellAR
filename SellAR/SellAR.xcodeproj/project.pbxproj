@@ -12,9 +12,7 @@
 		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
 		B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46942CD884620076BE39 /* FirebaseAuth */; };
-
 		B86F46982CD9E3430076BE39 /* USDZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46972CD9E3430076BE39 /* USDZScanner */; };
-
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,9 +104,7 @@
 				B8482C6F2CD213DC009DDA02 /* FirebaseStorage */,
 				B8482C712CD213F0009DDA02 /* FirebaseFirestore */,
 				B86F46942CD884620076BE39 /* FirebaseAuth */,
-
 				B86F46972CD9E3430076BE39 /* USDZScanner */,
-
 				0484022B2CD8506200C3CF8E /* GoogleSignIn */,
 				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
 			);
@@ -437,13 +433,11 @@
 			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
 		};
-
 		B86F46972CD9E3430076BE39 /* USDZScanner */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B86F46962CD9E3430076BE39 /* XCRemoteSwiftPackageReference "USDZScanner" */;
 			productName = USDZScanner;
 		};
-
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B8482C542CD1F1CB009DDA02 /* Project object */;

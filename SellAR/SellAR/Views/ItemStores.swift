@@ -7,61 +7,78 @@
 // ItemStore
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 class ItemStore: ObservableObject {
     @Published var items: [Item] = []
     
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?  // 리스너를 위한 변수 추가
+    
 
     // 유저 아이디로 실시간 업데이트 되는 fetchItem
-    func fetchItems(for userId: String) {
-        db.collection("items")
-            .whereField("userId", isEqualTo: userId)
-            .addSnapshotListener { [weak self] (snapshot, error) in
-                if let error = error {
-                    print("Error fetching documents: \(error)")
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    print("No documents found")
-                    return
-                }
-                
-                self?.items = documents.compactMap { queryDocumentSnapshot -> Item? in
-                    let data = queryDocumentSnapshot.data()
-                    return Item(document: data)
-                }
-            }
+//    func fetchItems(for userId: String) {
+//        db.collection("items")
+//            .whereField("userId", isEqualTo: userId)
+//            .addSnapshotListener { [weak self] (snapshot, error) in
+//                if let error = error {
+//                    print("Error fetching documents: \(error)")
+//                    return
+//                }
+//                
+//                guard let documents = snapshot?.documents else {
+//                    print("No documents found")
+//                    return
+//                }
+//                
+//                self?.items = documents.compactMap { queryDocumentSnapshot -> Item? in
+//                    let data = queryDocumentSnapshot.data()
+//                    return Item(document: data)
+//                }
+//            }
+//    }
+    
+    func getCurrentUserId() -> String? {
+        // 현재 로그인된 사용자 가져오기
+        if let currentUser = Auth.auth().currentUser {
+            // 로그인된 사용자의 userId 가져오기
+            return currentUser.uid
+        } else {
+            // 로그인된 사용자가 없을 경우
+            print("로그인된 사용자가 없습니다.")
+            return nil
+        }
     }
     
 //     실시간으로 업데이트되는 fetchItems
-//    func fetchItems() {
-//        // 기존 리스너가 존재할 경우 제거
-//        listener?.remove()
-//
-//        // Firestore에서 실시간 업데이트를 수신하기 위해 리스너를 추가합니다.
-//        listener = db.collection("items").addSnapshotListener { [weak self] (snapshot, error) in
-//            if let error = error {
-//                print("Error fetching documents: \(error)")
-//                return
-//            }
-//            
-//            guard let documents = snapshot?.documents else {
-//                print("No documents found")
-//                return
-//            }
-//            
-//            self?.items = documents.compactMap { queryDocumentSnapshot -> Item? in
-//                let data = queryDocumentSnapshot.data()
-//                print("Document data: \(data)")  // 데이터를 출력하여 확인
-//                return Item(document: data)  // Item의 초기화 메서드에 맞춰 데이터 매핑
-//            }
-//            
-//            print("Items loaded: \(String(describing: self?.items))")  // 로드된 items를 확인
-//        }
-//    }
+    func fetchItems() {
+            guard let userId = getCurrentUserId() else {
+                print("userId가 없습니다.")
+                return
+            }
+
+            // Firestore에서 해당 userId에 맞는 아이템만 가져오기
+            db.collection("items")
+                .whereField("userId", isEqualTo: userId)  // userId로 필터링
+                .addSnapshotListener { (snapshot, error) in
+                    if let error = error {
+                        print("아이템을 가져오는 중 오류 발생: \(error.localizedDescription)")
+                        return
+                    }
+
+                    guard let documents = snapshot?.documents else {
+                        print("아이템이 없습니다.")
+                        return
+                    }
+
+                    self.items = documents.compactMap { doc in
+                        let data = doc.data()
+                        return Item(document: data)
+                    }
+                }
+        }
+
+
 //    func fetchItems() {
 //            db.collection("items").getDocuments { [weak self] (snapshot, error) in
 //                if let error = error {

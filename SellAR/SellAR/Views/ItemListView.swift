@@ -57,7 +57,7 @@ struct ItemRowView: View {
                     .font(.system(size: 16, weight: .bold))
                     .minimumScaleFactor(0.5) // 최소 크기를 50%로 설정
                     .lineLimit(1) // 한 줄로 제한
-                Text(item.title)
+                Text(item.itemName)
                     .font(.headline)
                 Text(item.description)
                     .lineLimit(1)
@@ -103,10 +103,6 @@ struct ItemListView: View {
     @ObservedObject var itemStore = ItemStore()
     
     @State private var selectedItem: Item?
-    
-    private var userId: String {
-            return UserDefaults.standard.string(forKey: "userId") ?? ""
-        }
 
     var filteredItems: [Item] {
         if searchText.isEmpty {
@@ -156,10 +152,10 @@ struct ItemListView: View {
         }
         .navigationTitle("내 상품 관리")
         .onAppear {
-            itemStore.fetchItems(for: userId)
+            itemStore.fetchItems()
         }
         .refreshable {
-            itemStore.fetchItems(for: userId)
+            itemStore.fetchItems()
         }
         .contentShape(Rectangle())
         .onTapGesture {
