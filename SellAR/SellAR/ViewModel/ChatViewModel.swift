@@ -1,4 +1,4 @@
-//
+
 //  ChatViewModel.swift
 //  SellAR
 //
@@ -15,10 +15,19 @@ class ChatViewModel: ObservableObject {
     @Published var chatRooms: [ChatRoom] = []
     @Published var chatUsers: [String: User] = [:] // 사용자 캐시
     @Published var lastReadMessageID: String?
+    
     private var messageListener: ListenerRegistration?
     private var db = Firestore.firestore()
+    private let FCM_SERVER_KEY = "5881ee576b3b8003e54f1c50924b67bba8407a43"
+    private var chatRoomsListener: ListenerRegistration?
+    // 채팅방 활성화 상태를 추적하기 위한 새로운 속성
+    private var isInChatRoom = false
+    private var currentChatRoomID: String?
     
     var senderID: String
+    deinit {
+        cleanupListeners()
+    }
     
     init(senderID: String) {
         self.senderID = senderID
@@ -28,9 +37,128 @@ class ChatViewModel: ObservableObject {
         }
         fetchChatRooms()
     }
+    // 채팅방 입장 시 호출할 메서드
+      func enterChatRoom(chatRoomID: String, currentUserID: String) {
+          isInChatRoom = true
+          currentChatRoomID = chatRoomID
+          resetUnreadCount(for: chatRoomID, userID: currentUserID)
+          subscribeToMessages(for: chatRoomID, currentUserID: currentUserID)
+          
+          // 마지막 메시지를 읽음 처리
+          if let lastMessage = messages.last {
+              updateLastReadMessage(chatRoomID: chatRoomID, userID: currentUserID, messageID: lastMessage.id)
+          }
+      }
+    
+    // 리스너 정리를 위한 메서드
+    private func cleanupListeners() {
+        messageListener?.remove()
+        messageListener = nil
+        chatRoomsListener?.remove()
+        chatRoomsListener = nil
+    }
+    // 채팅방 퇴장 시 호출할 메서드
+    func leaveChatRoom() {
+        isInChatRoom = false
+        if let chatRoomID = currentChatRoomID {
+            updateUnreadCountOnExit(for: chatRoomID)
+        }
+        messageListener?.remove()
+        messageListener = nil
+        messages.removeAll()
+        currentChatRoomID = nil
+    }
+    // 채팅방 퇴장 시 읽지 않은 메시지 수 업데이트
+    private func updateUnreadCountOnExit(for chatRoomID: String) {
+          let currentUserID = self.senderID  // Optional 바인딩 제거
+          
+          db.collection("chatRooms").document(chatRoomID).getDocument { [weak self] document, error in
+              guard let self = self,
+                    let document = document,
+                    let data = document.data(),
+                    let lastReadMessageIDs = data["lastReadMessageID"] as? [String: String] else { return }
+              
+              let lastReadMessageID = lastReadMessageIDs[currentUserID] ?? ""
+              
+              // 마지막으로 읽은 메시지 이후의 새 메시지만 계산
+              let unreadCount = self.messages.filter { message in
+                  // 자신의 메시지는 제외
+                  if message.userID == currentUserID {
+                      return false
+                  }
+                  
+                  // 마지막으로 읽은 메시지가 없는 경우
+                  if lastReadMessageID.isEmpty {
+                      return true
+                  }
+                  
+                  // 마지막으로 읽은 메시지 이후의 메시지만 카운트
+                  guard let lastReadIndex = self.messages.firstIndex(where: { $0.id == lastReadMessageID }),
+                        let messageIndex = self.messages.firstIndex(where: { $0.id == message.id }) else {
+                      return false
+                  }
+                  
+                  return messageIndex > lastReadIndex
+              }.count
+              
+              // unreadCount 업데이트
+              document.reference.updateData([
+                  "unreadCount.\(currentUserID)": unreadCount
+              ])
+          }
+      }
+    
+    
+    // 푸시 알림 전송 함수
+    func sendPushNotification(to userID: String, message: String, chatRoomID: String) {
+        // 받는 사람의 FCM 토큰 조회
+        db.collection("users").document(userID).getDocument { [weak self] document, error in
+            guard let self = self,
+                  let document = document,
+                  let fcmToken = document.data()?["fcmToken"] as? String else {
+                print("FCM 토큰을 찾을 수 없습니다.")
+                return
+            }
+            
+            // 보내는 사람 이름 가져오기
+            let senderName = self.chatUsers[self.senderID]?.username ?? "알 수 없음"
+            
+            // 푸시 알림 데이터 구성
+            let body: [String: Any] = [
+                "token": fcmToken,
+                "notification": [
+                    "title": senderName,
+                    "body": message,
+                    "sound": "default"
+                ],
+                "data": [
+                    "chatRoomID": chatRoomID,
+                    "senderID": self.senderID
+                ]
+            ]
+            
+            // FCM 서버로 요청 보내기
+            guard let url = URL(string: "https://fcm.googleapis.com/fcm/send") else { return }
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("key=\(self.FCM_SERVER_KEY)", forHTTPHeaderField: "Authorization")
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("푸시 알림 전송 실패: \(error)")
+                    return
+                }
+                print("푸시 알림 전송 성공")
+            }.resume()
+        }
+    }
+    
     // 메시지 구독 및 읽음 상태 추적
     func subscribeToMessages(for chatRoomID: String, currentUserID: String) {
         messageListener?.remove()
+        messages.removeAll()
         
         let messagesRef = db.collection("chatRooms").document(chatRoomID).collection("messages")
         messageListener = messagesRef
@@ -49,17 +177,20 @@ class ChatViewModel: ObservableObject {
                 for change in newMessages {
                     let messageData = change.document.data()
                     if let message = ThreadDataType(dictionary: messageData, id: change.document.documentID) {
-                        self.messages.append(message)
-                        
-                        // 다른 사용자의 메시지이고 화면이 active 상태가 아닐 때만 unreadCount 증가
-                        if message.userID != currentUserID {
-                            self.incrementUnreadCount(for: chatRoomID, receiverID: currentUserID)
+                        // 중복 메시지 확인
+                        if !self.messages.contains(where: { $0.id == message.id }) {
+                            self.messages.append(message)
+                            
+                            // 채팅방에 있지 않을 때만 unreadCount 증가
+                            if message.userID != currentUserID && !self.isInChatRoom {
+                                self.incrementUnreadCount(for: chatRoomID, receiverID: currentUserID)
+                            }
                         }
                     }
                 }
                 
-                // 현재 사용자의 lastReadMessageID 업데이트
-                if let lastMessage = self.messages.last {
+                // 채팅방에 있을 때만 lastReadMessageID 업데이트
+                if self.isInChatRoom, let lastMessage = self.messages.last {
                     self.updateLastReadMessage(chatRoomID: chatRoomID, userID: currentUserID, messageID: lastMessage.id)
                 }
             }
@@ -112,6 +243,7 @@ class ChatViewModel: ObservableObject {
             }
         }
     }
+    
     func resetUnreadCount(for chatRoomID: String, userID: String) {
         guard !chatRoomID.isEmpty else { return }
         
@@ -178,13 +310,23 @@ class ChatViewModel: ObservableObject {
     func createNewChatRoom(with targetUser: User) {
         let participants = [self.senderID, targetUser.id]
         
+        // unreadCount로 통일
+        let unreadCount: [String: Int] = [
+            self.senderID: 0,
+            targetUser.id: 0
+        ]
+        
         let newChatRoom: [String: Any] = [
             "name": targetUser.username,
             "profileImageURL": targetUser.profileImageUrl ?? "",
             "latestMessage": "대화를 시작해보세요",
             "latestTimestamp": Timestamp(date: Date()),
-            "unreadCount": 0,
-            "participants": participants
+            "unreadCount": unreadCount,  // unreadCounts -> unreadCount로 변경
+            "participants": participants,
+            "lastReadMessageID": [
+                self.senderID: "",
+                targetUser.id: ""
+            ]
         ]
         
         db.collection("chatRooms").addDocument(data: newChatRoom) { [weak self] error in
@@ -196,53 +338,71 @@ class ChatViewModel: ObservableObject {
             }
         }
     }
+
+
     
     func fetchChatRooms() {
-            guard !senderID.isEmpty else {
-                print("Error: Sender ID is empty")
-                return
-            }
-            
-            db.collection("chatRooms")
-                .whereField("participants", arrayContains: senderID)
-                .order(by: "latestTimestamp", descending: true)
-                .addSnapshotListener { [weak self] querySnapshot, error in
-                    guard let self = self else { return }
-                    
-                    if let error = error {
-                        print("채팅방을 불러오는 중 에러 발생: \(error.localizedDescription)")
-                        return
-                    }
-                    
-                    guard let documents = querySnapshot?.documents else {
-                        print("No chat rooms found")
-                        return
-                    }
-                    
-                    self.chatRooms = documents.compactMap { doc -> ChatRoom? in
-                        let data = doc.data()
-                        guard let participants = data["participants"] as? [String],
-                              let unreadCounts = data["unreadCount"] as? [String: Int] else {
-                            return nil
-                        }
-                        
-                        // 상대방 정보 가져오기
-                        if let otherUserID = participants.first(where: { $0 != self.senderID }) {
-                            self.fetchUserInfo(userID: otherUserID)
-                        }
-                        
-                        return ChatRoom(
-                            id: doc.documentID,
-                            name: data["name"] as? String ?? "알 수 없음",
-                            profileImageURL: data["profileImageURL"] as? String ?? "",
-                            latestMessage: data["latestMessage"] as? String ?? "",
-                            timestamp: (data["latestTimestamp"] as? Timestamp)?.dateValue() ?? Date(),
-                            participants: participants,
-                            unreadCounts: unreadCounts
-                        )
-                    }
-                }
+        // 기존 리스너 제거
+        chatRoomsListener?.remove()
+        
+        guard !senderID.isEmpty else {
+            print("Error: Sender ID is empty")
+            return
         }
+        
+        print("Fetching chat rooms for user: \(senderID)")  // 디버깅용 로그
+        
+        chatRoomsListener = db.collection("chatRooms")
+            .whereField("participants", arrayContains: senderID)
+            .order(by: "latestTimestamp", descending: true)
+            .addSnapshotListener { [weak self] querySnapshot, error in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("채팅방을 불러오는 중 에러 발생: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let documents = querySnapshot?.documents else {
+                    print("No chat rooms found")
+                    DispatchQueue.main.async {
+                        self.chatRooms = []  // 문서가 없을 때 빈 배열로 설정
+                    }
+                    return
+                }
+                
+                print("Found \(documents.count) chat rooms")  // 디버깅용 로그
+                
+                let newChatRooms = documents.compactMap { doc -> ChatRoom? in
+                    let data = doc.data()
+                    guard let participants = data["participants"] as? [String],
+                          let unreadCount = data["unreadCount"] as? [String: Int] else {
+                        print("Failed to parse data for chat room: \(doc.documentID)")
+                        return nil
+                    }
+                    
+                    // 상대방 정보 가져오기
+                    if let otherUserID = participants.first(where: { $0 != self.senderID }) {
+                        self.fetchUserInfo(userID: otherUserID)
+                    }
+                    
+                    return ChatRoom(
+                        id: doc.documentID,
+                        name: data["name"] as? String ?? "알 수 없음",
+                        profileImageURL: data["profileImageURL"] as? String ?? "",
+                        latestMessage: data["latestMessage"] as? String ?? "",
+                        timestamp: (data["latestTimestamp"] as? Timestamp)?.dateValue() ?? Date(),
+                        participants: participants,
+                        unreadCount: unreadCount
+                    )
+                }
+                
+                DispatchQueue.main.async {
+                    self.chatRooms = newChatRooms
+                    print("Updated chatRooms array with \(self.chatRooms.count) rooms")  // 디버깅용 로그
+                }
+            }
+    }
     
     
     func fetchMessages(for chatRoomID: String) {
@@ -268,41 +428,43 @@ class ChatViewModel: ObservableObject {
     }
     
     func sendMessage(content: String, to chatRoomID: String) {
-           let date = ISO8601DateFormatter().string(from: Date())
-           let newMessage: [String: Any] = [
-               "userID": senderID,
-               "content": content,
-               "date": date,
-               "isRead": false
-           ]
-           
-           db.collection("chatRooms").document(chatRoomID).collection("messages")
-               .addDocument(data: newMessage) { [weak self] error in
-                   guard let self = self else { return }
-                   
-                   if let error = error {
-                       print("메시지 전송 중 에러 발생: \(error)")
-                       return
-                   }
-                   
-                   // 채팅방 정보 가져오기
-                   self.db.collection("chatRooms").document(chatRoomID).getDocument { document, error in
-                       guard let document = document,
-                             let data = document.data(),
-                             let participants = data["participants"] as? [String] else { return }
-                       
-                       // 받는 사람의 ID 찾기
-                       if let receiverID = participants.first(where: { $0 != self.senderID }) {
-                           // unreadCount 증가
-                           self.incrementUnreadCount(for: chatRoomID, receiverID: receiverID)
-                       }
-                       
-                       // 최신 메시지와 시간 업데이트
-                       document.reference.updateData([
-                           "latestMessage": content,
-                           "latestTimestamp": Timestamp(date: Date())
-                       ])
-                   }
-               }
-       }
+        let date = ISO8601DateFormatter().string(from: Date())
+        let newMessage: [String: Any] = [
+            "userID": senderID,
+            "content": content,
+            "date": date,
+            "isRead": false
+        ]
+        
+        db.collection("chatRooms").document(chatRoomID).collection("messages")
+            .addDocument(data: newMessage) { [weak self] error in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("메시지 전송 중 에러 발생: \(error)")
+                    return
+                }
+                
+                // 채팅방 정보 가져오기
+                self.db.collection("chatRooms").document(chatRoomID).getDocument { document, error in
+                    guard let document = document,
+                          let data = document.data(),
+                          let participants = data["participants"] as? [String] else { return }
+                    
+                    // 받는 사람의 ID 찾기
+                    if let receiverID = participants.first(where: { $0 != self.senderID }) {
+                        // unreadCount 증가
+                        self.incrementUnreadCount(for: chatRoomID, receiverID: receiverID)
+                        // 푸시 알림 전송
+                        self.sendPushNotification(to: receiverID, message: content, chatRoomID: chatRoomID)
+                    }
+                    
+                    // 최신 메시지와 시간 업데이트
+                    document.reference.updateData([
+                        "latestMessage": content,
+                        "latestTimestamp": Timestamp(date: Date())
+                    ])
+                }
+            }
+    }
 }
