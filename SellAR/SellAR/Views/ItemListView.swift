@@ -14,82 +14,86 @@ struct ItemRowView: View {
     @Binding var selectedItem: Item?
 
     var body: some View {
-        HStack {
-            VStack {
-                // AsyncImage를 사용하여 URL에서 이미지를 로드
+        VStack {
+            HStack {
+                // Image Section
                 AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
                     switch phase {
                     case .empty:
-                        // 로딩 중일 때 표시할 뷰
                         ProgressView()
                             .frame(width: 150, height: 150)
                     case .success(let image):
-                        // 성공적으로 로드되면 이미지를 표시
                         image
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
                             .clipped()
-                            .cornerRadius(10)
+                            .cornerRadius(12)
                     case .failure:
-                        // 로드 실패 시 기본 이미지를 표시
                         Image("placeholder")
                             .resizable()
                             .scaledToFill()
                             .frame(width: 150, height: 150)
                             .clipped()
-                            .cornerRadius(10)
+                            .cornerRadius(12)
                     @unknown default:
-                        // 기타 예외 처리
                         EmptyView()
                     }
                 }
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                 )
-                .padding(.leading, 10)
+                .padding(.leading, 12)
                 .padding(.vertical, 10)
-            }
-
-            VStack(alignment: .leading, spacing: 15) {
-                Text("\(item.price) 원")
-                    .font(.system(size: 20, weight: .bold))
-                    .minimumScaleFactor(0.5) // 최소 크기를 50%로 설정
-                    .lineLimit(1) // 한 줄로 제한
-                Text(item.itemName)
-                    .font(.headline)
-//                Text(item.description)
-//                    .lineLimit(1)
-//                    .truncationMode(.tail)
-//                    .font(.subheadline)
-                Text(item.location)
-                    .font(.subheadline)
-                Text(item.isSold ? "판매 완료" : "판매 중")
-                    .foregroundColor(item.isSold ? .gray : .red)
-            }
-            .padding(.leading, 8)
-
-            Spacer()
-
-            VStack {
+                
+                // Item Info Section
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("\(item.price) 원")
+                        .font(.title2.bold())
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Text(item.itemName)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Text(item.location)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Text(item.isSold ? "판매 완료" : "판매 중")
+                        .font(.subheadline)
+                        .foregroundColor(item.isSold ? .gray : .red)
+                }
+                .padding(.leading, 12)
+                
+                Spacer()
+                
+                // Ellipsis Button
                 Button(action: {
                     selectedItem = item
-                    print("아이템 선택됨: \(item.title)")
                     showDetailSheet = true
                 }) {
                     Image(systemName: "ellipsis")
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                        .foregroundColor(colorScheme == .dark ? .black : .white)
+                        .padding(8)
+                        .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                 }
                 .padding(.top, -70)
+                .padding(.trailing, 12)
             }
-            .padding(.trailing, 15)
         }
         .frame(maxWidth: .infinity, maxHeight: 200)
-        .padding(.top, 10)
+        .padding(.vertical, 8)
+        .background(
+            colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white
+        )
+        .cornerRadius(15)
+        .shadow(color: colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.2), radius: 5, x: 0, y: 2)
         .padding(.horizontal, 16)
+        .padding(.top, 8)
     }
 }
+
 
 struct ItemListView: View {
     @State private var searchText: String = ""
@@ -111,14 +115,15 @@ struct ItemListView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(spacing: 20) {
+                // Search Bar
                 HStack {
                     TextField("상품 이름을 입력해주세요.", text: $searchText)
-                        .frame(maxWidth: .infinity, maxHeight: 25)
-                        .textFieldStyle(.plain)
+                        .padding(12)
+                        .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                        .foregroundColor(.primary)
                         .focused($isSearchTextFocused)
-                        .padding(.vertical, 10)
-                        .padding(.leading, 10)
+                        .font(.body)
                     
                     if !searchText.isEmpty {
                         Button(action: {
@@ -131,15 +136,10 @@ struct ItemListView: View {
                         }
                     }
                 }
-                .background(colorScheme == .dark ? Color(.systemGray5) : Color.white) // 배경색을 다르게 설정
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 2)
-                )
+                .padding(.top, 15)
                 .padding(.horizontal, 16)
-                .padding(.top, 10)
                 
+                // Item Rows
                 ForEach(filteredItems) { item in
                     ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
                 }
