@@ -166,12 +166,18 @@ struct ItemEditView: View {
                         AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
                             switch phase {
                             case .empty:
-                                ProgressView()
+                                // When the image is empty or not loaded, show a white background and placeholder text
+                                Color.white
                                     .frame(width: 150, height: 150)
                                     .cornerRadius(10)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
                                             .stroke(Color.gray, lineWidth: 2)
+                                    )
+                                    .overlay(
+                                        Text("없음")
+                                            .foregroundColor(.gray)
+                                            .font(.system(size: 16, weight: .bold))
                                     )
                             case .success(let image):
                                 image
@@ -185,6 +191,7 @@ struct ItemEditView: View {
                                             .stroke(Color.gray, lineWidth: 2)
                                     )
                             case .failure:
+                                // Show the placeholder image when loading fails
                                 Image("placeholder")
                                     .resizable()
                                     .scaledToFill()
@@ -200,6 +207,7 @@ struct ItemEditView: View {
                             }
                         }
                         .padding(.top, 15)
+
                         
                         actionButtons
                         

@@ -12,7 +12,7 @@ struct ItemRowView: View {
     @Environment(\.colorScheme) var colorScheme
     @Binding var showDetailSheet: Bool
     @Binding var selectedItem: Item?
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -28,6 +28,11 @@ struct ItemRowView: View {
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )
+                                .overlay(
+                                    Text("없음")
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 16, weight: .bold))
                                 )
                         } else {
                             ProgressView()
@@ -59,7 +64,7 @@ struct ItemRowView: View {
                 )
                 .padding(.leading, 12)
                 .padding(.vertical, 10)
-
+                
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 10) {
@@ -118,7 +123,7 @@ struct ItemListView: View {
     @ObservedObject var itemStore = ItemStore()
     
     @State private var selectedItem: Item?
-
+    
     var filteredItems: [Item] {
         if searchText.isEmpty {
             return itemStore.items
@@ -126,7 +131,7 @@ struct ItemListView: View {
             return itemStore.items.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
         }
     }
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
