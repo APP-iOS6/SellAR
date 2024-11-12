@@ -14,7 +14,7 @@ struct ChatRoom: Identifiable {
     var latestMessage: String
     var timestamp: Date
     var participants: [String] // 참여자 ID 배열 추가
-    var unreadCounts: [String: Int] // 변경: 개별 사용자별 unreadCount를 저장
+    var unreadCount: [String: Int] // 변경: 개별 사용자별 unreadCount를 저장
     
     var formattedTime: String {
         let formatter = DateFormatter()
@@ -24,6 +24,6 @@ struct ChatRoom: Identifiable {
     }
     // 현재 사용자의 unreadCount만 반환하는 계산 프로퍼티
     func getUnreadCount(for userID: String) -> Int {
-        return unreadCounts[userID] ?? 0
+        return unreadCount[userID] ?? 0
     }
 }
