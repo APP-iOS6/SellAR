@@ -17,7 +17,7 @@ class ChatViewModel: ObservableObject {
     @Published var lastReadMessageID: String?
     private var messageListener: ListenerRegistration?
     private var db = Firestore.firestore()
-    private let FCM_SERVER_KEY = "Your server key here"
+    private let FCM_SERVER_KEY = "5881ee576b3b8003e54f1c50924b67bba8407a43"
     
     var senderID: String
     
@@ -46,7 +46,7 @@ class ChatViewModel: ObservableObject {
                 
                 // 푸시 알림 데이터 구성
                 let body: [String: Any] = [
-                    "to": fcmToken,
+                    "token": fcmToken,
                     "notification": [
                         "title": senderName,
                         "body": message,
