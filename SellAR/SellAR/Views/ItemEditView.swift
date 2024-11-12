@@ -11,7 +11,9 @@ import PhotosUI
 
 struct ItemEditView: View {
     enum KeyboardDone: Hashable {
-        case text
+        case textTitle
+        case textdescription
+        case textPrice
     }
     
     @Binding var selectedItem: Item?
@@ -34,7 +36,7 @@ struct ItemEditView: View {
         ))
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
-        .focused($textFocused, equals: .text)
+        .focused($textFocused, equals: .textTitle)
         .padding(.vertical, 5)
         .padding(.leading, 10)
     }
@@ -44,8 +46,8 @@ struct ItemEditView: View {
             .onChange(of: description) { newValue in
                 selectedItem?.description = newValue
             }
-            .frame(width: .infinity, height: 220)
-            .focused($textFocused, equals: .text)
+            .frame(maxWidth: .infinity, minHeight: 300)
+            .focused($textFocused, equals: .textdescription)
             .overlay {
                 if description.isEmpty {
                     Text(placeholder)
@@ -72,7 +74,7 @@ struct ItemEditView: View {
                     .padding(.trailing, 5)
             }
             .frame(maxWidth: .infinity, maxHeight: 25)
-            .focused($textFocused, equals: .text)
+            .focused($textFocused, equals: .textPrice)
             .textFieldStyle(.plain)
             .padding(.vertical, 10)
             .keyboardType(.numberPad)
@@ -197,7 +199,7 @@ struct ItemEditView: View {
                                 EmptyView()
                             }
                         }
-                        .padding(.top, 10)
+                        .padding(.top, 15)
                         
                         actionButtons
                         
@@ -209,7 +211,6 @@ struct ItemEditView: View {
                                 
                                 titleTextField
                             }
-                            .padding(.top, 10)
                             
                             Divider()
                             
@@ -228,7 +229,7 @@ struct ItemEditView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color.gray, lineWidth: 2)
                         )
-                        .padding(.top, 10)
+                        .padding(.top, 15)
                         
                         .onAppear {
                             description = item.description
