@@ -14,125 +14,102 @@ struct RegisterView: View {
     @StateObject private var viewModel = LoginViewModel()
     @StateObject private var keyboardViewModel = KeyboardViewModel()
     @StateObject private var errorViewModel = LoginErrorViewModel()
-    @State private var email = ""
-    @State private var password = ""
-    @State private var confirmPassword = ""
-    @State private var userName = ""
-    @State private var profileImage: UIImage? = nil
-    @State private var isRegistrationSuccessful = false
     
+    @State private var isRegistrationSuccessful = false
+    @State private var isPasswordValid: Bool = false
     @Environment(\.colorScheme) var colorScheme
     
     @State private var selectedItem: PhotosPickerItem? = nil
     @State private var selectedItemData: Data? = nil
     
     var body: some View {
-        NavigationStack {
             ZStack {
-                Color(colorScheme == .dark ? Color("#242427") : .white)
+                Color(colorScheme == .dark ? Color(hex: "#242427") : .white)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
                     }
-                GeometryReader{ geometry in
-                    VStack (spacing: 20) {
+                GeometryReader { geometry in
+                    VStack(spacing: 20) {
                         VStack(alignment: .leading, spacing: 5) {
+                            // 이메일 필드
                             Text("이메일")
+                                .bold()
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 5)
                                 .padding(.leading, 20)
-                                .bold()
-                            
-                            TextField("이메일을 입력해 주세요", text: $email)
+                            TextField("이메일을 입력해 주세요", text: $errorViewModel.email)
                                 .padding()
-                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
-                                .foregroundColor(.black)
+                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                                 .cornerRadius(10)
+                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
-                                .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             
-                            if !errorViewModel.emailError.isEmpty {
-                                Text(errorViewModel.emailError)
-                                    .foregroundColor(.red)
-                                    .font(.caption)
-                                    .padding(.bottom, 20)
-                                    .padding(.horizontal, 20)
-                            }
+                            Text(errorViewModel.emailError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.horizontal, 20)
+                                .opacity(errorViewModel.emailError.isEmpty ? 0 : 1)
+                                .padding(.bottom, 10)
                             
+                            // 비밀번호 필드
                             Text("비밀번호")
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 5)
-                                .padding(.leading, 20)
                                 .bold()
-                            
-                            SecureField("비밀번호를 입력해 주세요", text: $password)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .padding(.leading, 20)
+                            SecureField("비밀번호를 입력해 주세요", text: $errorViewModel.password)
                                 .padding()
-                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
-                                .foregroundColor(.black)
+                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                                 .cornerRadius(10)
+                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
-                                .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             
-                            if !errorViewModel.passwordError.isEmpty {
-                                Text(errorViewModel.passwordError)
-                                    .foregroundColor(.red)
-                                    .font(.caption)
-                                    .padding(.bottom, 20)
-                                    .padding(.horizontal, 20)
-                            }
+                            Text(errorViewModel.passwordError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.horizontal, 20)
+                                .opacity(errorViewModel.passwordError.isEmpty ? 0 : 1)
+                                .frame(height: 20)
                             
+                            // 비밀번호 확인 필드
                             Text("비밀번호 확인")
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 5)
-                                .padding(.leading, 20)
                                 .bold()
-                            
-                            SecureField("비밀번호를 똑같이 입력해 주세요", text: $confirmPassword)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .padding(.leading, 20)
+                            SecureField("비밀번호를 똑같이 입력해 주세요", text: $errorViewModel.confirmPassword)
                                 .padding()
-                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                                 .cornerRadius(10)
-                                .foregroundColor(.black)
+                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
-                                .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             
-                            if !errorViewModel.confirmPasswordError.isEmpty {
-                                Text(errorViewModel.confirmPasswordError)
-                                    .foregroundColor(.red)
-                                    .font(.caption)
-                                    .padding(.bottom, 20)
-                                    .padding(.horizontal, 20)
-                            }
+                            Text(errorViewModel.confirmPasswordError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.horizontal, 20)
+                                .opacity(errorViewModel.confirmPasswordError.isEmpty ? 0 : 1)
+                                .frame(height: 20)
                             
+                            // 닉네임 필드
                             Text("닉네임")
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 5)
-                                .padding(.leading, 20)
                                 .bold()
-                            
-                            TextField("닉네임을 입력해 주세요", text: $userName)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .padding(.leading, 20)
+                            TextField("닉네임을 입력해 주세요", text: $errorViewModel.userName)
                                 .padding()
-                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
-                                .foregroundColor(.black)
+                                .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                                 .cornerRadius(10)
+                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
-                                .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             
-                            if !errorViewModel.nicknameError.isEmpty {
-                                Text(errorViewModel.nicknameError)
-                                    .foregroundColor(.red)
-                                    .font(.caption)
-                                    .padding(.bottom, 20)
-                                    .padding(.horizontal, 20)
-                            }
+                            Text(errorViewModel.nicknameError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.horizontal, 20)
+                                .opacity(errorViewModel.nicknameError.isEmpty ? 0 : 1)
+                                .frame(height: 20)
                             
+                            // 프로필 이미지 선택
                             PhotosPicker(
                                 selection: $selectedItem,
                                 matching: .images,
@@ -140,9 +117,9 @@ struct RegisterView: View {
                             ) {
                                 ZStack {
                                     Circle()
-                                        .fill(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                                        .fill(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                                         .frame(width: 120, height: 120)
-                                        .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                        .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
 
                                     if let data = selectedItemData, let image = UIImage(data: data) {
                                         Image(uiImage: image)
@@ -155,7 +132,7 @@ struct RegisterView: View {
                                                 .font(.system(size: 30))
                                             Text("프로필 (선택)")
                                                 .font(.caption)
-                                                .padding(.top, 5)
+                                                .padding(.top,3)
                                         }
                                         .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .bold()
@@ -164,52 +141,48 @@ struct RegisterView: View {
                             }
                             .onChange(of: selectedItem) { newItem in
                                 Task {
-                                    print("이미지 선택됨")
                                     if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                        print("이미지 데이터 로드 성공")
                                         selectedItemData = data
-                                        if let image = UIImage(data: data) {
-                                            print("UIImage 변환 성공")
-                                            profileImage = image
-                                        } else {
-                                            print("UIImage 변환 실패")
-                                        }
-                                    } else {
-                                        print("이미지 데이터 로드 실패")
                                     }
                                 }
                             }
                             .padding(.leading, 140)
                             .padding(.bottom, 20)
+                            
+                            // 가입 완료 버튼
                             HStack {
                                 Spacer()
                                 Button(action: {
-                                    if password != confirmPassword {
-                                        errorViewModel.handleLoginError(.passwordMismatch)
-                                    } else {
-                                        errorViewModel.handleLoginError(nil)
-                                        viewModel.registerWithEmailPassword(
-                                            email: email,
-                                            password: password,
-                                            username: userName,
-                                            profileImage: profileImage
-                                        )
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            isRegistrationSuccessful = true
+                                    if errorViewModel.isRegisterButtonEnabled {
+                                        errorViewModel.startValidationTimer()
+                                        if errorViewModel.password != errorViewModel.confirmPassword {
+                                            errorViewModel.handleLoginError(.passwordMismatch)
+                                        } else {
+                                            errorViewModel.handleLoginError(nil)
+                                            viewModel.registerWithEmailPassword(
+                                                email: errorViewModel.email,
+                                                password: errorViewModel.password,
+                                                username: errorViewModel.userName,
+                                                profileImage: selectedItemData != nil ? UIImage(data: selectedItemData!) : nil
+                                            )
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                isRegistrationSuccessful = true
+                                            }
                                         }
                                     }
                                 }) {
                                     ZStack {
                                         Rectangle()
-                                            .fill(Color("#1BD6F5"))
+                                            .fill(errorViewModel.isRegisterButtonEnabled ? Color(hex: "#1BD6F5") : Color(hex: "#F3F2F8"))
                                             .frame(width: geometry.size.width * 0.5, height: geometry.size.height / 15)
                                             .cornerRadius(10)
                                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
-
+                                        
                                         Text("가입완료")
-                                            .font(.system(size: 18, weight: .bold))
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .foregroundColor(.black)
+                                            .bold()
                                     }
+                                    .disabled(!errorViewModel.isRegisterButtonEnabled)
                                 }
                                 Spacer()
                             }
@@ -219,13 +192,18 @@ struct RegisterView: View {
                 }
             }
             .background(
-                NavigationLink(destination: LoginView(), isActive: $isRegistrationSuccessful) {
+                NavigationLink(destination: LoginView().navigationBarBackButtonHidden(true), isActive: $isRegistrationSuccessful) {
                     EmptyView()
                 }
             )
+            .onAppear {
+                errorViewModel.startValidationTimer()
+            }
+            .onDisappear {
+                errorViewModel.stopValidationTimer()
+            }
         }
     }
-}
 #Preview {
     RegisterView()
 }
