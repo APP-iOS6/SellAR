@@ -27,7 +27,7 @@ struct NicknameEntryView: View {
             } else {
                 NavigationStack {
                     ZStack {
-                        Color(colorScheme == .dark ? Color(hex: "#242427") : .white)
+                        Color(colorScheme == .dark ? Color("#242427") : .white)
                             .edgesIgnoringSafeArea(.all)
                             .onTapGesture {
                                 hideKeyboard()
@@ -41,7 +41,7 @@ struct NicknameEntryView: View {
                                 ) {
                                     ZStack {
                                         Circle()
-                                            .fill(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
+                                            .fill(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
                                             .frame(width: 120, height: 120)
                                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                                         
@@ -113,7 +113,7 @@ struct NicknameEntryView: View {
                                     Text("닉네임 저장")
                                         .frame(width: geometry.size.width * 0.4, height: geometry.size.height / 30)
                                         .padding()
-                                        .background(nickname.isEmpty ? Color(hex: "#F3F2F8") : Color(hex: "#1BD6F5"))
+                                        .background(nickname.isEmpty ? Color("#F3F2F8") : Color("#1BD6F5"))
                                         .foregroundColor(colorScheme == .dark ? .white : .black)
                                         .cornerRadius(10)
                                         .bold()
