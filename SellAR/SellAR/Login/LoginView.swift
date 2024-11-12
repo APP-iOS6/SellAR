@@ -22,7 +22,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(colorScheme == .dark ? Color("#242427") : .white)
+                Color(colorScheme == .dark ? Color(hex: "#242427") : .white)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -49,7 +49,7 @@ struct LoginView: View {
                                 .padding()
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.white : Color("F3F2F8"))
+                                .background(colorScheme == .dark ? Color.white : Color(hex: "F3F2F8"))
                                 .cornerRadius(10)
                                 .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             
@@ -70,7 +70,7 @@ struct LoginView: View {
                             SecureField("비밀번호를 입력해 주세요", text: $password)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.white : Color("#F3F2F8"))
+                                .background(colorScheme == .dark ? Color.white : Color(hex: "#F3F2F8"))
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .cornerRadius(10)
                                 .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -105,7 +105,7 @@ struct LoginView: View {
                                 Text("로그인")
                                     .frame(width: geometry.size.width * 0.34, height: geometry.size.height / 50)
                                     .padding()
-                                    .background(Color("#1BD6F5"))
+                                    .background(Color(hex: "#1BD6F5"))
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .cornerRadius(10)
                                     .bold()
@@ -117,7 +117,7 @@ struct LoginView: View {
                                     .frame(width: geometry.size.width * 0.34, height: geometry.size.height / 50)
                                     .padding()
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                                    .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                                     .cornerRadius(10)
                                     .bold()
                                     .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -160,7 +160,7 @@ struct LoginView: View {
                             }
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
                             .padding()
-                            .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                            .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                             .cornerRadius(10)
                             .bold()
                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -184,7 +184,7 @@ struct LoginView: View {
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
                             .padding()
                             .bold()
-                            .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                            .background(colorScheme == .dark ? Color.black : Color(hex: "#F3F2F8"))
                             .cornerRadius(10)
                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                         }
