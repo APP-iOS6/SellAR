@@ -21,27 +21,27 @@ struct MyPageView: View {
     @ObservedObject var itemStore = ItemStore()
     @EnvironmentObject var loginViewModel: LoginViewModel
     
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
-                
-                if loginViewModel.isLoggedIn {
-                    LoggedInContent(userdata: loginViewModel.user, itemStore: itemStore)
-                } else {
-                    NotLoggedInContent()
-                }
-            }
-            .navigationTitle("마이페이지")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-}
-                
-struct LoggedInContent: View {
-    let userdata: User
-    @ObservedObject var itemStore: ItemStore
-    @EnvironmentObject var loginViewModel: LoginViewModel
+//    var body: some View {
+//        NavigationView {
+//            ZStack {
+//                Color.black.edgesIgnoringSafeArea(.all)
+//                
+//                if loginViewModel.isLoggedIn {
+//                    LoggedInContent(userdata: loginViewModel.user, itemStore: itemStore)
+//                } else {
+//                    NotLoggedInContent()
+//                }
+//            }
+//            .navigationTitle("마이페이지")
+//            .navigationBarTitleDisplayMode(.inline)
+//        }
+//    }
+//}
+//                
+//struct LoggedInContent: View {
+//    let userdata: User
+//    @ObservedObject var itemStore: ItemStore
+//    @EnvironmentObject var loginViewModel: LoginViewModel
     
     var body: some View {
                 VStack(spacing: 0) {
@@ -171,8 +171,8 @@ struct LoggedInContent: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             Button(action: {
-                                // 로그아웃 액션
- //                               loginViewModel.logout()
+//                                 로그아웃 액션
+                                loginViewModel.logout()
                                 
                             }) {
                                 HStack {

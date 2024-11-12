@@ -47,8 +47,8 @@ struct Items: Identifiable, Codable, Equatable {
         var category: String
         var location: String
         var isSold: Bool
-        @ServerTimestamp var createdAt: Date?
-        @ServerTimestamp var updatedAt: Date?
+        var createdAt: Date?
+        var updatedAt: Date?
         var thumbnailLink: String?
         var usdzLink: String
         
