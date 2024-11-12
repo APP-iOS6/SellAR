@@ -111,13 +111,19 @@ struct StartMessageView: View {
                 }
             }
         }
+        .onAppear {
+                    if viewModel.senderID != loginViewModel.user.id {
+                        viewModel.senderID = loginViewModel.user.id
+                        viewModel.fetchChatRooms()
+                    }
+                }
         // loginViewModel.user.id가 변경될 때 ChatViewModel 업데이트
-        .onChange(of: loginViewModel.user.id) { newID in
-            if !newID.isEmpty {
-                viewModel.senderID = newID
-                viewModel.fetchChatRooms()
-            }
-        }
+//        .onChange(of: loginViewModel.user.id) { newID in
+//            if !newID.isEmpty {
+//                viewModel.senderID = newID
+//                viewModel.fetchChatRooms()
+//            }
+//        }
     }
     
     private func createNewChat() {
