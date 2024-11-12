@@ -16,8 +16,8 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isNicknameEntryActive = false
-    @State private var isMainViewActive = false
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationStack {
@@ -82,10 +82,8 @@ struct LoginView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // 로그인 회원가입 버튼
                         HStack(spacing: 20) {
                             Button(action: {
-                                // 로그인 검증
                                 if email.isEmpty || password.isEmpty {
                                     errorViewModel.handleLoginError(.emptyFields)
                                 } else if (errorViewModel.validateEmailFormat(email) == nil) {
@@ -96,7 +94,7 @@ struct LoginView: View {
                                     viewModel.loginWithEmailPassword(email: email, password: password)
                                     
                                     if viewModel.isLoggedIn {
-                                        isMainViewActive = true
+                                        presentationMode.wrappedValue.dismiss() // 로그인 성공 후 뷰 닫기
                                     } else {
                                         errorViewModel.handleLoginError(.incorrectPassword)
                                     }
@@ -143,12 +141,10 @@ struct LoginView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
                         
-                        // 소셜 로그인 버튼
                         Button(action: {
                             viewModel.loginWithGoogle { success in
                                 if success {
-                                    isMainViewActive = viewModel.isMainViewActive
-                                    isNicknameEntryActive = viewModel.isNicknameEntryActive
+                                    presentationMode.wrappedValue.dismiss()
                                 }
                             }
                         }) {
@@ -170,8 +166,7 @@ struct LoginView: View {
                         Button(action: {
                             viewModel.loginWithApple { success in
                                 if success {
-                                    isMainViewActive = viewModel.isMainViewActive
-                                    isNicknameEntryActive = !viewModel.isMainViewActive
+                                    presentationMode.wrappedValue.dismiss()
                                 }
                             }
                         }) {
@@ -196,20 +191,16 @@ struct LoginView: View {
                     EmptyView()
                 }
             )
-            .background(
-                NavigationLink(destination: MainView(), isActive: $isMainViewActive) {
-                    EmptyView()
-                }
-            )
         }
     }
 }
-//
+
 func isValidEmail(_ email: String) -> Bool {
     let validDomains = ["naver.com", "gmail.com", "daum.net", "hotmail.com", "nate.com"]
     guard let domain = email.split(separator: "@").last else { return false }
     return validDomains.contains(String(domain))
 }
+
 #Preview {
     LoginView()
 }
