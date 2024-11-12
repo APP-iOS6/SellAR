@@ -10,7 +10,7 @@ import SafariServices
 
 struct DetailItemView: View {
     let item: Items
-    @StateObject private var userVM = UserViewModel() // userId 없이 초기화
+    @StateObject private var userVM = UserViewModel()
     
     var body: some View {
         ScrollView {
@@ -25,14 +25,45 @@ struct DetailItemView: View {
                         case .success(let image):
                             image.resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(maxWidth: .infinity)
                         case .failure:
                             Text("썸네일을 불러올 수 없습니다")
                         @unknown default:
                             EmptyView()
                         }
                     }
-                    .frame(height: 300)
+                   
+                }
+                
+                // 등록된 이미지들
+                if !item.images.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("등록된 이미지")
+                            .font(.headline)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(item.images, id: \.self) { imageURL in
+                                    if let url = URL(string: imageURL) {
+                                        AsyncImage(url: url) { phase in
+                                            switch phase {
+                                            case .empty:
+                                                ProgressView()
+                                            case .success(let image):
+                                                image.resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                            case .failure:
+                                                Text("이미지를 불러올 수 없습니다")
+                                            @unknown default:
+                                                EmptyView()
+                                            }
+                                        }
+                                        .frame(width: 300, height: 300)
+                                        .cornerRadius(8)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical)
                 }
                 
                 // 상품 정보
@@ -97,7 +128,7 @@ struct DetailItemView: View {
             .padding()
         }
         .onAppear {
-            userVM.setUserId(item.userId)  // `onAppear`에서 `userId` 설정
+            userVM.setUserId(item.userId)
         }
         .navigationTitle("상품 상세 정보")
         .navigationBarTitleDisplayMode(.inline)
