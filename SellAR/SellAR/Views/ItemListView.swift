@@ -20,8 +20,19 @@ struct ItemRowView: View {
                 AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
                     switch phase {
                     case .empty:
-                        ProgressView()
-                            .frame(width: 150, height: 150)
+                        // URL이 비어있거나 이미지가 없을 때, 기본적으로 흰색 배경을 띄우기
+                        if item.thumbnailLink?.isEmpty ?? true {
+                            Color.white
+                                .frame(width: 150, height: 150)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )
+                        } else {
+                            ProgressView()
+                                .frame(width: 150, height: 150)
+                        }
                     case .success(let image):
                         image
                             .resizable()
@@ -30,12 +41,14 @@ struct ItemRowView: View {
                             .clipped()
                             .cornerRadius(12)
                     case .failure:
-                        Image("placeholder")
-                            .resizable()
-                            .scaledToFill()
+                        // 이미지를 불러오지 못했을 때 흰색 배경
+                        Color.white
                             .frame(width: 150, height: 150)
-                            .clipped()
                             .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                            )
                     @unknown default:
                         EmptyView()
                     }
@@ -46,6 +59,7 @@ struct ItemRowView: View {
                 )
                 .padding(.leading, 12)
                 .padding(.vertical, 10)
+
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 10) {
