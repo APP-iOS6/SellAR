@@ -20,6 +20,7 @@ struct MyPageView: View {
     //    @State private var isLoggedIn: Bool = false //로그인상태 확인변수
     @ObservedObject var itemStore = ItemStore()
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @StateObject private var dataManager = MyPageDataManager()
     
     var body: some View {
         NavigationView {
@@ -27,7 +28,11 @@ struct MyPageView: View {
                 Color.black.edgesIgnoringSafeArea(.all)
                 
                 if loginViewModel.isLoggedIn {
-                    LoggedInContent(userdata: loginViewModel.user, itemStore: itemStore)
+                    if let userData = dataManager.userData {
+                        LoggedInContent(userdata: userData, itemStore: itemStore)
+                    } else {
+                        ProgressView()
+                    }
                 } else {
                     NotLoggedInContent()
                 }
@@ -35,10 +40,16 @@ struct MyPageView: View {
             .navigationTitle("마이페이지")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .onAppear {
+            if loginViewModel.isLoggedIn {
+                dataManager.fetchUserData()
+            }
+        }
     }
 }
                 
 struct LoggedInContent: View {
+    
     let userdata: User
     @ObservedObject var itemStore: ItemStore
     @EnvironmentObject var loginViewModel: LoginViewModel
@@ -47,7 +58,7 @@ struct LoggedInContent: View {
                 VStack(spacing: 0) {
                     HStack {
                         Button(action: {
-                            //버튼기능 추가예정
+                            //버튼기능 추가예정  
                         }) {
                             Image(systemName: "chevron.left")
                                 .resizable()
@@ -227,20 +238,3 @@ struct NotLoggedInContent: View {
         }
     }
 }
-//struct PostListView: View {
-//    var body: some View {
-//        Text("내 글 목록 화면")
-//            .navigationTitle("내 글 목록")
-//    }
-//}
-
-//struct ProfileFixView: View {
-//    var body: some View {
-//        Text("프로필 수정 화면")
-//            .navigationTitle("프로필 수정")
-//    }
-//}
-
-//#Preview {
-//    MyPageView(userdata: UserData(id: "12345", email: "aaaaaa@gmail.com", username: "가나다", profileImageUrl:nil, userLocation: "서울시 강남구", intro: "자신을 소개해주세요"))
-//}
