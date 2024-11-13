@@ -15,12 +15,15 @@ struct MainView: View {
                     LazyVStack(spacing: 8) {
                         ForEach(vm.filteredItems) { item in
                             NavigationLink(destination: DetailItemView(item: item)) {
-                                ListItemView(item: item)
+                                ListItemView(item: item, status: item.isSold)
                                     .contentShape(Rectangle())
                                     .padding(.horizontal)
                             }
                             .buttonStyle(.plain)
                         }
+
+
+
                     }
                     .padding(.top, 8)
                 }
@@ -81,6 +84,7 @@ struct MainView: View {
 
 struct ListItemView: View {
     let item: Items
+    let status: Bool  // Bool 타입으로 수정
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -102,6 +106,11 @@ struct ListItemView: View {
                 Text("지역: \(item.location)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+
+                // 판매 상태 표시
+                Text(status ? "판매 완료" : "판매 중")
+                    .font(.subheadline)
+                    .foregroundColor(status ? .gray : .red)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

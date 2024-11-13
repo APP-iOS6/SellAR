@@ -117,6 +117,10 @@ struct DetailItemView: View {
                         .font(.title2)
                         .foregroundColor(.blue)
                     
+                    Text(item.isSold ? "판매 완료" : "판매 중")  // 판매 상태 표시
+                        .font(.subheadline)
+                        .foregroundColor(item.isSold ? .gray : .red)
+
                     Text("\(item.description)")
                         .font(.body)
                         .padding(.top, 8)

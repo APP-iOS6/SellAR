@@ -5,6 +5,13 @@
 //  Created by Juno Lee on 11/1/24.
 //
 
+//
+//  Item.swift
+//  SellAR
+//
+//  Created by Juno Lee on 11/1/24.
+//
+
 import SwiftUI
 import Foundation
 import FirebaseFirestore
@@ -32,7 +39,7 @@ struct Items: Identifiable, Codable, Equatable {
     var images: [String]
     // var category: String
      var location: String
-    // var isSold: Bool
+    var isSold: Bool = false
     
 }
     // 이정민이 추가한 Item
