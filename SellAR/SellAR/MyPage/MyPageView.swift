@@ -21,11 +21,29 @@ struct MyPageView: View {
     @ObservedObject var itemStore = ItemStore()
     @EnvironmentObject var loginViewModel: LoginViewModel
     
+//    var body: some View {
+//        NavigationView {
+//            ZStack {
+//                Color.black.edgesIgnoringSafeArea(.all)
+//                
+//                if loginViewModel.isLoggedIn {
+//                    LoggedInContent(userdata: loginViewModel.user, itemStore: itemStore)
+//                } else {
+//                    NotLoggedInContent()
+//                }
+//            }
+//            .navigationTitle("마이페이지")
+//            .navigationBarTitleDisplayMode(.inline)
+//        }
+//    }
+//}
+//                
+//struct LoggedInContent: View {
+//    let userdata: User
+//    @ObservedObject var itemStore: ItemStore
+//    @EnvironmentObject var loginViewModel: LoginViewModel
+    
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
-                
                 VStack(spacing: 0) {
                     HStack {
                         Button(action: {
@@ -105,7 +123,7 @@ struct MyPageView: View {
                         
                         VStack {
                             HStack {
-                                Text(userdata.userLocation)
+                                Text("지역") //Text(userdata.userLocation) 데이터없어서 임시로 작성
                                     .frame(width: 100, alignment: .leading)
                                     .foregroundColor(.white)
                                 Image(systemName: "location.fill")
@@ -117,7 +135,7 @@ struct MyPageView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 10)
                             // 자기소개 구문 (텍스트만 출력하는 형태로 변경)
-                            Text(userdata.intro)
+                            Text("자기소개")//Text(userdata.intro) 데이터없어서 임시로 작성 
                                 .frame(maxWidth: .infinity, maxHeight: 150, alignment: .topLeading)  // 좌측 정렬
                                 .padding()
                                 .background(Color.gray.opacity(0.2))
@@ -153,7 +171,7 @@ struct MyPageView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             Button(action: {
-                                // 로그아웃 액션
+//                                 로그아웃 액션
                                 loginViewModel.logout()
                                 
                             }) {
@@ -189,6 +207,22 @@ struct MyPageView: View {
                     .navigationTitle("")
                     .navigationBarHidden(true) // 상단여백제거
                 }
+            }
+        }
+
+struct NotLoggedInContent: View {
+    var body: some View {
+        VStack {
+            Text("로그인이 필요합니다")
+                .foregroundColor(.white)
+                .font(.title)
+            
+            NavigationLink(destination: LoginView()) {
+                Text("로그인하기")
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(10)
             }
         }
     }

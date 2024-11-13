@@ -16,7 +16,7 @@ import Firebase
 // ChatRoomRow 컴포넌트 분리
 struct ChatRoomRow: View {
     let chatRoom: ChatRoom
-    let currentUserID: String // 추가: 현재 사용자 ID
+    let currentUserID: String
     
     var body: some View {
         HStack(spacing: 15) {
@@ -40,6 +40,7 @@ struct ChatRoomRow: View {
             }
             
             Spacer()
+            
             VStack {
                 Text(chatRoom.formattedTime)
                     .font(.caption)
@@ -49,10 +50,10 @@ struct ChatRoomRow: View {
                 if unreadCount > 0 {
                     Text("\(unreadCount)")
                         .font(.caption)
-                        .padding(8)
+                        .foregroundColor(.white)
+                        .frame(minWidth: 20, minHeight: 20)
                         .background(Color.red)
                         .clipShape(Circle())
-                        .foregroundColor(.white)
                 }
             }
         }
@@ -137,17 +138,18 @@ struct ChatContentView: View {
                 }
             }
             
-            //            Divider()
-            //                .background(Color.gray)
-            
             // 메시지 입력 영역
             ChatInputView(messageContent: $messageContent) { content in
                 chatViewModel.sendMessage(content: content, to: chatRoomID)
             }
         }
         .onAppear {
-            chatViewModel.subscribeToMessages(for: chatRoomID, currentUserID: currentUserID)
-            chatViewModel.resetUnreadCount(for: chatRoomID, userID: currentUserID)
+            // 채팅방 입장 시 호출
+            chatViewModel.enterChatRoom(chatRoomID: chatRoomID, currentUserID: currentUserID)
+        }
+        .onDisappear {
+            // 채팅방 퇴장 시 호출
+            chatViewModel.leaveChatRoom()
         }
         // 스크롤할 때마다 메시지를 읽은 것으로 처리
         .simultaneousGesture(
@@ -155,10 +157,6 @@ struct ChatContentView: View {
                 chatViewModel.resetUnreadCount(for: chatRoomID, userID: currentUserID)
             }
         )
-//        .onDisappear {
-//            // 채팅방을 닫을 때 상대방의 unreadCount 증가
-//            chatViewModel.incrementUnreadCount(for: chatRoomID, receiverID: otherUserID)
-//        }
         .navigationTitle("채팅방")
         .navigationBarTitleDisplayMode(.inline)
         .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))
@@ -169,7 +167,6 @@ struct ChatContentView: View {
     }
     
     private func hideKeyboard() {
-        // 키보드를 내리는 코드
         UIApplication.shared.windows.first { $0.isKeyWindow }?.endEditing(true)
     }
 }

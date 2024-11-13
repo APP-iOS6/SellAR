@@ -60,6 +60,7 @@ class ItemStore: ObservableObject {
             // Firestore에서 해당 userId에 맞는 아이템만 가져오기
             db.collection("items")
                 .whereField("userId", isEqualTo: userId)  // userId로 필터링
+                .order(by: "createdAt", descending: true)
                 .addSnapshotListener { (snapshot, error) in
                     if let error = error {
                         print("아이템을 가져오는 중 오류 발생: \(error.localizedDescription)")

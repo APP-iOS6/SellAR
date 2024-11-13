@@ -44,6 +44,8 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     // 로그인 성공 시 userID 저장
     func saveUserID(_ userID: String, loginMethod: String) {
+        self.isLoggedIn = true
+        print("로그인 됨\(isLoggedIn)")
         switch loginMethod {
         case "email":
             // 이메일로 로그인 시 구글과 애플 ID 지우기

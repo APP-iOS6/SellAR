@@ -15,8 +15,8 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isNicknameEntryActive = false
-    @State private var isMainViewActive = false
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationStack {
@@ -81,10 +81,8 @@ struct LoginView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // 로그인 회원가입 버튼
                         HStack(spacing: 20) {
                             Button(action: {
-                                // 로그인 검증
                                 if email.isEmpty || password.isEmpty {
                                     errorViewModel.handleLoginError(.emptyFields)
                                 } else {
@@ -139,12 +137,10 @@ struct LoginView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
                         
-                        // 소셜 로그인 버튼
                         Button(action: {
                             viewModel.loginWithGoogle { success in
                                 if success {
-                                    isMainViewActive = viewModel.isMainViewActive
-                                    isNicknameEntryActive = viewModel.isNicknameEntryActive
+                                    presentationMode.wrappedValue.dismiss()
                                 }
                             }
                         }) {
@@ -166,8 +162,7 @@ struct LoginView: View {
                         Button(action: {
                             viewModel.loginWithApple { success in
                                 if success {
-                                    isMainViewActive = viewModel.isMainViewActive
-                                    isNicknameEntryActive = !viewModel.isMainViewActive
+                                    presentationMode.wrappedValue.dismiss()
                                 }
                             }
                         }) {

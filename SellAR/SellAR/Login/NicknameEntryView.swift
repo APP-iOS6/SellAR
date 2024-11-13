@@ -41,8 +41,7 @@ struct NicknameEntryView: View {
                                 ) {
                                     ZStack {
                                         Circle()
-                                            .fill(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
-                                            .frame(width: 120, height: 120)
+                                            .fill(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))                                            .frame(width: 120, height: 120)
                                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                                         
                                         if let data = selectedItemData, let image = UIImage(data: data) {
@@ -112,8 +111,13 @@ struct NicknameEntryView: View {
                                     Text("닉네임 저장")
                                         .frame(width: geometry.size.width * 0.4, height: geometry.size.height / 30)
                                         .padding()
+<<<<<<< HEAD
                                         .background(nickname.isEmpty ? Color(red: 0.95, green: 0.95, blue: 0.97) : Color(red: 0.30, green: 0.50, blue: 0.78))
                                         .foregroundColor(nickname.isEmpty ? .gray : .white)
+=======
+                                        .background(nickname.isEmpty ? Color("#F3F2F8") : Color("#1BD6F5"))
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+>>>>>>> main
                                         .cornerRadius(10)
                                         .bold()
                                         .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
