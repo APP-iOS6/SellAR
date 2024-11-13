@@ -5,25 +5,15 @@
 //  Created by 배문성 on 11/1/24.
 //
 import SwiftUI
+import PhotosUI
 
 struct ProfileFixView: View {
+    @EnvironmentObject var userDataManager: UserDataManager
+    @State private var username: String = ""
+    @State private var selectedImage: UIImage?
+    @State private var isImagePickerPresented = false
+    @Environment(\.presentationMode) var presentationMode
     
-//    @State private var id: String = UUID().uuidString
-//    @State private var email: String = "aaaaaa@gmail.com"
-//    @State private var username: String = "가나다"
-//    @State private var profileImageUrl: String = "image"
-//    @State private var intro: String = "자신을 소개해주세요."
-//    @State private var userLocation: String = "서울시 강남구"
-    @State private var isLoggedIn: Bool = false //로그인상태 확인변수,예정
-    @State private var selectedImage: UIImage? // 이미지 선택
-    
-    //let userdata: UserData
-    private func showPhotoPicker() {
-    }
-
-    private func saveChange() {
-    }
-
     var body: some View {
         NavigationView {
             ZStack {
@@ -32,20 +22,16 @@ struct ProfileFixView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text("프로필 수정")
                         .font(.headline)
-                        .padding(.bottom ,15)
+                        .padding(.bottom, 15)
                         .foregroundColor(.white)
                     
                     VStack(alignment: .center, spacing: 20) {
                         // 프로필 사진
-                        Image(systemName: "camera.fill")
-                        //Image("userdata.profileImageUrl")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(30)
-                            .frame(width: 135, height: 135)
-                            .foregroundColor(.gray)
-                            .background(Color.white.opacity(0.1))
-                            .clipShape(Circle())
+                        Button(action: {
+                            isImagePickerPresented = true
+                        }) {
+                            profileImage
+                        }
                         
                         // 닉네임 및 이메일
                         VStack(alignment: .leading, spacing: 10) {
@@ -57,7 +43,7 @@ struct ProfileFixView: View {
                             
                             HStack {
                                 Image(systemName: "person.text.rectangle")
-                                TextField("", text: username)
+                                TextField("", text: $username)
                             }
                             .padding(10)
                             .foregroundColor(.white)
@@ -66,6 +52,7 @@ struct ProfileFixView: View {
                             .cornerRadius(10)
                         }
                         .padding(.bottom, 20)
+                        
                         Spacer()
                         
                         Button(action: saveChange) {
@@ -75,16 +62,109 @@ struct ProfileFixView: View {
                                 .foregroundColor(.black)
                                 .background(Color.white)
                                 .cornerRadius(10)
-                            
                         }
-                        //Spacer()
                     }
                 }
                 .padding(10)
             }
+            .navigationBarHidden(true)
+        }
+        .onAppear {
+            if let currentUser = userDataManager.currentUser {
+                username = currentUser.username
+            }
+        }
+        .sheet(isPresented: $isImagePickerPresented) {
+            imagePicker(image: $selectedImage)
+        }
+    }
+    
+    private var profileImage: some View {
+        Group {
+            if let selectedImage = selectedImage {
+                Image(uiImage: selectedImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 135, height: 135)
+                    .clipShape(Circle())
+            } else if let imageUrl = userDataManager.currentUser?.profileImageUrl,
+                      let url = URL(string: imageUrl) {
+                AsyncImage(url: url) { image in
+                    image.resizable()
+                } placeholder: {
+                    Image(systemName: "person.circle.fill")
+                }
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 135, height: 135)
+                .clipShape(Circle())
+            } else {
+                Image(systemName: "camera")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .padding(30)
+                    .frame(width: 135, height: 135)
+                    .clipShape(Circle())
+                    .foregroundColor(.gray)
+                    .background(Color.white.opacity(0.1))
+            }
+        }
+    }
+    
+    private func saveChange() {
+        userDataManager.updateUserProfile(username: username, image: selectedImage) { result in
+            switch result {
+            case .success:
+                print("프로필 업데이트 성공")
+                presentationMode.wrappedValue.dismiss()
+            case .failure(let error):
+                print("프로필 업데이트 실패: \(error.localizedDescription)")
+            }
         }
     }
 }
+
+struct imagePicker: UIViewControllerRepresentable {
+    @Binding var image: UIImage?
+    
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        let parent: imagePicker
+        
+        init(_ parent: imagePicker) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            picker.dismiss(animated: true)
+            
+            guard let provider = results.first?.itemProvider else { return }
+            
+            if provider.canLoadObject(ofClass: UIImage.self) {
+                provider.loadObject(ofClass: UIImage.self) { image, _ in
+                    DispatchQueue.main.async {
+                        self.parent.image = image as? UIImage
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
                     //                    VStack(alignment: .leading, spacing: 10) {
                     //                        VStack(alignment: .center, spacing: 20) {
                     //                            // 프로필 사진
