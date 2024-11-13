@@ -3,7 +3,7 @@
   <img src="https://github.com/user-attachments/assets/73c6e5d9-a891-4e36-a971-3de72af88bdc" alt="Logoround">
 </p>
 
-# 나의 물건을 AR로 3D로 만들어 거래해보세요!
+# 나의 물건을 3D로 만들어 거래해보세요!
 
 - 앱스쿨 : iOS 6기 최종프로젝트
 - 2024/10/26 - 2024/11/26
