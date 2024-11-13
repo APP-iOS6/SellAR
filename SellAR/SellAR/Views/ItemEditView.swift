@@ -112,7 +112,9 @@ struct ItemEditView: View {
     
     private var actionButtons: some View {
         HStack {
-            Button(action: { textFocused = nil }) {
+            Button(action: {
+                textFocused = nil
+            }) {
                 Text("촬영하기")
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "camera")
@@ -121,7 +123,9 @@ struct ItemEditView: View {
             
             Divider()
             
-            Button(action: { textFocused = nil }) {
+            Button(action: {
+                textFocused = nil
+            }) {
                 Text("올리기")
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "square.and.arrow.up")
@@ -151,9 +155,12 @@ struct ItemEditView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(colorScheme == .dark ? Color.gray : Color.white)
-        .cornerRadius(8)
-        .padding(.top, 10)
+        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+        .cornerRadius(8).overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.gray, lineWidth: 2)
+        )
+        .padding(.top, 15)
     }
     
     
@@ -166,7 +173,6 @@ struct ItemEditView: View {
                         AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
                             switch phase {
                             case .empty:
-                                // When the image is empty or not loaded, show a white background and placeholder text
                                 Color.white
                                     .frame(width: 150, height: 150)
                                     .cornerRadius(10)
@@ -231,7 +237,7 @@ struct ItemEditView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(colorScheme == .dark ? Color.gray : Color.white)
+                        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -314,7 +320,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 1 // 여러 이미지 선택을 허용하려면 이 값을 변경
+        configuration.selectionLimit = 0 // 여러 이미지 선택을 허용하려면 이 값을 변경
         configuration.filter = .images // 이미지만 필터링
         
         let picker = PHPickerViewController(configuration: configuration)
