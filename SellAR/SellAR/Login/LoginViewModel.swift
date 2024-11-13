@@ -172,20 +172,21 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     
     // 로그인 메서드
-    func loginWithEmailPassword(email: String, password: String) {
+    func loginWithEmailPassword(email: String, password: String, completion: @escaping (Bool) -> Void = { _ in }) {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 print("로그인 실패 \(error.localizedDescription)")
-                // 오류 코드에 따라 적절한 오류 메시지 처리
+                
                 if (error as NSError).code == AuthErrorCode.invalidEmail.rawValue {
-                    self.errorViewModel.handleLoginError(.invalidEmail)
+                    self.errorViewModel.handleLoginError(.emailNotFound)
                 } else if (error as NSError).code == AuthErrorCode.userNotFound.rawValue {
                     self.errorViewModel.handleLoginError(.emailNotFound)
                 } else if (error as NSError).code == AuthErrorCode.wrongPassword.rawValue {
                     self.errorViewModel.handleLoginError(.incorrectPassword)
                 } else {
-                    self.errorViewModel.handleLoginError(nil)
+                    self.errorViewModel.handleLoginError(.emailNotFound)
                 }
+                completion(false)
                 return
             }
 
@@ -197,6 +198,7 @@ class LoginViewModel: NSObject, ObservableObject {
                 self.saveUserID(firebaseUser.uid, loginMethod: "email")
                 self.isLoggedIn = true
             }
+            completion(true)
         }
     }
 
@@ -297,5 +299,35 @@ class LoginViewModel: NSObject, ObservableObject {
     // 다른곳에서 db 가져올 수 있는 메서드
     func getUserDocument(uid: String, completion: @escaping (DocumentSnapshot?, Error?) -> Void) {
         db.collection("users").document(uid).getDocument(completion: completion)
+    }
+
+// MARK: 로그아웃 버튼 클릭 시 로그아웃 되는 함수
+    func logout() {
+        // Firebase에서 현재 로그인 상태 확인
+        if Auth.auth().currentUser == nil {
+            print("이미 로그아웃 상태입니다.")
+            return  // 이미 로그아웃 상태이면 함수 종료
+        }
+        
+        do {
+            // Firebase 로그아웃
+            try Auth.auth().signOut()
+            
+            self.isLoggedIn = false
+            
+            // UserDefaults에서 저장된 로그인 정보 삭제
+            UserDefaults.standard.removeObject(forKey: "userID")
+            UserDefaults.standard.removeObject(forKey: "googleUserID")
+            UserDefaults.standard.removeObject(forKey: "appleUserID")
+            
+            // 뷰 상태 초기화
+            self.user = User(id: "", email: "", username: "", profileImageUrl: nil)
+            self.isMainViewActive = false
+            self.isNicknameEntryActive = false
+            
+            print("로그아웃 성공")
+        } catch let signOutError as NSError {
+            print("로그아웃 실패: \(signOutError.localizedDescription)")
+        }
     }
 }

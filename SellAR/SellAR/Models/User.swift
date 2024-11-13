@@ -12,6 +12,4 @@ struct User: Identifiable {
     var email: String
     var username: String
     var profileImageUrl: String?
-    var userLocation: String
-    var intro:String
 }
