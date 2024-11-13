@@ -3,6 +3,7 @@ import SwiftUI
 struct MainView: View {
     @StateObject var vm = ItemListVM()
     @State private var showAddItemView = false
+    @ObservedObject var loginViewModel: LoginViewModel
 
     var body: some View {
         NavigationView {
@@ -21,9 +22,6 @@ struct MainView: View {
                             }
                             .buttonStyle(.plain)
                         }
-
-
-
                     }
                     .padding(.top, 8)
                 }
@@ -38,10 +36,18 @@ struct MainView: View {
                 vm.listenToItems()
             }
             .sheet(isPresented: $showAddItemView) {
-                NavigationStack {
-                    ItemFormView(vm: .init(formType: .add))
+                if loginViewModel.user.id.isEmpty {
+                    // 로그인되지 않은 경우 로그인 화면으로 이동
+                    NavigationStack {
+                        LoginView()
+                    }
+                } else {
+                    // 로그인된 경우 아이템 추가 화면 표시
+                    NavigationStack {
+                        ItemFormView(vm: .init(formType: .add))
+                    }
+                    .interactiveDismissDisabled()
                 }
-                .interactiveDismissDisabled()
             }
         }
     }
@@ -71,7 +77,6 @@ struct MainView: View {
         .cornerRadius(10)
         .shadow(radius: 1)
     }
-
 
     private var addButton: some View {
         Button(action: {
@@ -113,7 +118,6 @@ struct ListItemView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 
-               
                 Text(status ? "판매 완료" : "판매 중")
                     .font(.subheadline)
                     .foregroundColor(status ? .gray : .red)

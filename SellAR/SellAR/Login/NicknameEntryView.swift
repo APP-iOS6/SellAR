@@ -23,7 +23,7 @@ struct NicknameEntryView: View {
     var body: some View {
         VStack {
             if isNicknameSaved {
-                MainView()
+                MainView(loginViewModel: viewModel)
             } else {
                 NavigationStack {
                     ZStack {
@@ -120,7 +120,7 @@ struct NicknameEntryView: View {
                                         .disabled(nickname.isEmpty)
                                 }
                                 
-                                NavigationLink(destination: MainView().navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
+                                NavigationLink(destination: MainView(loginViewModel: viewModel).navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
                                     EmptyView()
                                 }
                             }
