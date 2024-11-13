@@ -17,11 +17,25 @@ struct ItemRowView: View {
         VStack {
             HStack {
                 // Image Section
-                AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
-                    switch phase {
-                    case .empty:
-                        // URL이 비어있거나 이미지가 없을 때, 기본적으로 흰색 배경을 띄우기
-                        if item.thumbnailLink?.isEmpty ?? true {
+                if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
+                   let imageURL = URL(string: imageURLString) {
+                    // URL이 유효하면 AsyncImage로 이미지를 비동기적으로 로딩
+                    AsyncImage(url: imageURL) { phase in
+                        switch phase {
+                        case .empty:
+                            // 이미지 로딩 중
+                            ProgressView()
+                                .frame(width: 150, height: 150)
+                        case .success(let image):
+                            // 이미지 로딩 성공 시
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 150, height: 150)
+                                .clipped()
+                                .cornerRadius(12)
+                        case .failure:
+                            // 이미지를 불러오지 못했을 때 흰색 배경
                             Color.white
                                 .frame(width: 150, height: 150)
                                 .cornerRadius(12)
@@ -29,41 +43,33 @@ struct ItemRowView: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                                 )
-                                .overlay(
-                                    Text("없음")
-                                        .foregroundColor(.gray)
-                                        .font(.system(size: 16, weight: .bold))
-                                )
-                        } else {
-                            ProgressView()
-                                .frame(width: 150, height: 150)
+                        @unknown default:
+                            EmptyView()
                         }
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 150, height: 150)
-                            .clipped()
-                            .cornerRadius(12)
-                    case .failure:
-                        // 이미지를 불러오지 못했을 때 흰색 배경
-                        Color.white
-                            .frame(width: 150, height: 150)
-                            .cornerRadius(12)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                            )
-                    @unknown default:
-                        EmptyView()
                     }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+                    .padding(.leading, 12)
+                    .padding(.vertical, 10)
+                } else {
+                    // 이미지 URL이 비어있으면 "없음" 표시
+                    Color.white
+                        .frame(width: 150, height: 150)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                        )
+                        .overlay(
+                            Text("없음")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 16, weight: .bold))
+                        )
                 }
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                )
-                .padding(.leading, 12)
-                .padding(.vertical, 10)
+
+
                 
                 
                 // Item Info Section

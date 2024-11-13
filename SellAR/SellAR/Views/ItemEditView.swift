@@ -170,49 +170,66 @@ struct ItemEditView: View {
                 VStack {
                     // 아이템의 썸네일 이미지 표시
                     if let item = selectedItem {
-                        AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
-                            switch phase {
-                            case .empty:
-                                Color.white
-                                    .frame(width: 150, height: 150)
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray, lineWidth: 2)
-                                    )
-                                    .overlay(
-                                        Text("없음")
-                                            .foregroundColor(.gray)
-                                            .font(.system(size: 16, weight: .bold))
-                                    )
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 150, height: 150)
-                                    .clipped()
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray, lineWidth: 2)
-                                    )
-                            case .failure:
-                                // Show the placeholder image when loading fails
-                                Image("placeholder")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 150, height: 150)
-                                    .clipped()
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray, lineWidth: 2)
-                                    )
-                            @unknown default:
-                                EmptyView()
+                        // thumbnailLink가 없을 경우, item.images.first 사용
+                        let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink
+                        
+                        if let imageURL = URL(string: imageURLString ?? "") {
+                            AsyncImage(url: imageURL) { phase in
+                                switch phase {
+                                case .empty:
+                                    // 이미지 로딩 중
+                                    ProgressView()
+                                        .frame(width: 150, height: 150)
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(Color.gray, lineWidth: 2)
+                                        )
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 150, height: 150)
+                                        .clipped()
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(Color.gray, lineWidth: 2)
+                                        )
+                                case .failure:
+                                    // 이미지 불러오기 실패 시 placeholder 이미지 표시
+                                    Image("placeholder")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 150, height: 150)
+                                        .clipped()
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(Color.gray, lineWidth: 2)
+                                        )
+                                @unknown default:
+                                    EmptyView()
+                                }
                             }
+                            .padding(.top, 15)
+                        } else {
+                            // 이미지 URL이 비어있으면 "없음" 텍스트 표시
+                            Color.white
+                                .frame(width: 150, height: 150)
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.gray, lineWidth: 2)
+                                )
+                                .overlay(
+                                    Text("없음")
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 16, weight: .bold))
+                                )
                         }
-                        .padding(.top, 15)
+                    
+
 
                         
                         actionButtons
