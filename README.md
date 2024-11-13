@@ -1,5 +1,7 @@
 
-![Logoround](https://github.com/user-attachments/assets/73c6e5d9-a891-4e36-a971-3de72af88bdc)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/73c6e5d9-a891-4e36-a971-3de72af88bdc" alt="Logoround">
+</p>
 
 # 나의 물건을 AR로 3D로 만들어 거래해보세요!
 
