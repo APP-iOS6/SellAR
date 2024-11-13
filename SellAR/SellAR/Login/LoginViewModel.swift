@@ -19,6 +19,7 @@ class LoginViewModel: NSObject, ObservableObject {
     @Published var isMainViewActive = false
     @Published var isNicknameEntryActive = false
     @Published var isLoggedIn = false
+    @Published var userID: String? = nil
     
     @ObservedObject private var errorViewModel = LoginErrorViewModel()
     var completionHandler: ((Bool) -> Void)?
@@ -26,22 +27,30 @@ class LoginViewModel: NSObject, ObservableObject {
     private var db = Firestore.firestore()
     private var storage = Storage.storage().reference()
     
+    private var isLoginPrinted = false
+    
     // MARK: UserDefaults에서 userID 불러오기
     override init() {
-        super.init()
-        if let savedUserID = UserDefaults.standard.string(forKey: "userID") {
-            self.user.id = savedUserID
-            print("유지된 로그인: userID = \(savedUserID)")
-        }
-        if let savedGoogleUserID = UserDefaults.standard.string(forKey: "googleUserID") {
-            self.user.id = savedGoogleUserID
-            print("유지된 구글 로그인: userID = \(savedGoogleUserID)")
-        }
-        if let savedAppleUserID = UserDefaults.standard.string(forKey: "appleUserID") {
-            self.user.id = savedAppleUserID
-            print("유지된 애플 로그인: userID = \(savedAppleUserID)")
-        }
-    }
+            super.init()
+            
+                if let savedUserID = UserDefaults.standard.string(forKey: "userID"), user.id.isEmpty, !isLoginPrinted {
+                    self.user.id = savedUserID
+                    print("유지된 로그인: userID = \(savedUserID)")
+                    isLoginPrinted = true
+                }
+                
+                if let savedGoogleUserID = UserDefaults.standard.string(forKey: "googleUserID"), user.id.isEmpty, !isLoginPrinted {
+                    self.user.id = savedGoogleUserID
+                    print("유지된 구글 로그인: userID = \(savedGoogleUserID)")
+                    isLoginPrinted = true
+                }
+                
+                if let savedAppleUserID = UserDefaults.standard.string(forKey: "appleUserID"), user.id.isEmpty, !isLoginPrinted {
+                    self.user.id = savedAppleUserID
+                    print("유지된 애플 로그인: userID = \(savedAppleUserID)")
+                    isLoginPrinted = true
+                }
+            }
     // 로그인 성공 시 userID 저장
     func saveUserID(_ userID: String, loginMethod: String) {
         switch loginMethod {

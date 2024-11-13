@@ -35,6 +35,9 @@ final class LoginErrorViewModel: ObservableObject {
 
     // 타이머 시작
     func startValidationTimer() {
+        // 타이머가 이미 실행 중이라면 중지
+        stopValidationTimer()
+
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.validateFields()
         }
@@ -43,6 +46,7 @@ final class LoginErrorViewModel: ObservableObject {
     // 타이머 중지
     func stopValidationTimer() {
         timer?.invalidate()
+        timer = nil
     }
     
     // 필드 검증
