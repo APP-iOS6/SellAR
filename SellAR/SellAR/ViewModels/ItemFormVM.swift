@@ -41,7 +41,7 @@ class ItemFormVM: ObservableObject {
     var navigationTitle: String {
         switch formType {
         case .add:
-            return "팔기"
+            return "판매"
         case .edit:
             return "상품 수정"
         }
