@@ -8,18 +8,34 @@ import SwiftUI
 import PhotosUI
 
 struct ProfileFixView: View {
-    @EnvironmentObject var userDataManager: UserDataManager
+    @ObservedObject var userDataManager: UserDataManager
     @State private var username: String = ""
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented = false
     @Environment(\.presentationMode) var presentationMode
     
+    init(userDataManager: UserDataManager) {
+        self._userDataManager = ObservedObject(wrappedValue: userDataManager)
+    }
+    
     var body: some View {
-        NavigationView {
             ZStack {
                 Color.black.edgesIgnoringSafeArea(.all)
                 
                 VStack(alignment: .leading, spacing: 0) {
+                    
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName:"chevron.left")
+                            .resizable()
+                            .frame(width: 11, height: 22)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(.gray)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.bottom, 20)
+                    
                     Text("프로필 수정")
                         .font(.headline)
                         .padding(.bottom, 15)
@@ -67,8 +83,8 @@ struct ProfileFixView: View {
                 }
                 .padding(10)
             }
+            .navigationBarBackButtonHidden(true) // 상단 네비게이션 바, 버튼 제거
             .navigationBarHidden(true)
-        }
         .onAppear {
             if let currentUser = userDataManager.currentUser {
                 username = currentUser.username
@@ -89,21 +105,35 @@ struct ProfileFixView: View {
                     .clipShape(Circle())
             } else if let imageUrl = userDataManager.currentUser?.profileImageUrl,
                       let url = URL(string: imageUrl) {
-                AsyncImage(url: url) { image in
-                    image.resizable()
-                } placeholder: {
-                    Image(systemName: "person.circle.fill")
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 135, height: 135)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 135, height: 135)
+                            .clipShape(Circle())
+                    case .failure:
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 135, height: 135)
+                            .clipShape(Circle())
+                            .foregroundColor(.gray)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 135, height: 135)
-                .clipShape(Circle())
             } else {
                 Image(systemName: "camera")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .clipShape(Circle())
                     .padding(30)
                     .frame(width: 135, height: 135)
-                    .clipShape(Circle())
                     .foregroundColor(.gray)
                     .background(Color.white.opacity(0.1))
             }

@@ -38,7 +38,7 @@ struct MyPageView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                     
                     //프로필 수정버튼
-                    NavigationLink(destination: ProfileFixView()) {
+                    NavigationLink(destination: ProfileFixView(userDataManager: userDataManager)) {
                         Image(systemName: "square.and.pencil" )
                             .resizable()
                             .frame(width: 28, height: 28)
@@ -63,6 +63,7 @@ struct MyPageView: View {
             .padding(10)
             .navigationTitle("")
             .navigationBarHidden(true) // 상단여백제거
+            .navigationBarBackButtonHidden(true) //네비게이션 시스템 백 버튼 젝
             .onAppear {
                 userDataManager.fetchCurrentUser { _ in
                     isLoading = false
@@ -78,22 +79,35 @@ struct MyPageView: View {
             VStack(alignment: .center, spacing: 20) {
                 // 프로필 사진
                 if let imageUrl = user.profileImageUrl, let url = URL(string: imageUrl) {
-                    AsyncImage(url: url) { image in
-                        image.resizable()
-                    } placeholder: {
-                        Image(systemName: "person.circle.fill")
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 135, height: 135)
+                                .clipShape(Circle())
+                        case .success(let image):
+                            image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 135, height: 135)
+                            .clipShape(Circle())
+                        case .failure:
+                            Image(systemName: "person.circle.fill")
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 135, height: 135)
+                                .clipShape(Circle())
+                                .foregroundColor(.gray)
+                        @unknown default:
+                            EmptyView()
                     }
+                }
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 135, height: 135)
-                    .clipShape(Circle())
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 135, height: 135)
-                        .foregroundColor(.gray)
-                }
-                
+                    .foregroundColor(.gray)
+                                }
                 // 닉네임 및 이메일
                 VStack(alignment: .leading, spacing: 10) {
                     Text("이름")
@@ -177,7 +191,8 @@ struct MyPageView: View {
         ZStack {
             VStack(alignment: .center, spacing: 20) {
                 
-                Image(systemName: "person.fill") // 셀라아이콘 이미지 교체예정
+                Image(systemName: "person.fill")
+//                Image("SellarLogoDark") 셀라아이콘 이미지 교체예정
                     .resizable()
                     .frame(width: 150, height: 150)
                     .padding()
