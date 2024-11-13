@@ -12,6 +12,8 @@ struct DetailItemView: View {
     let item: Items
     @StateObject private var userVM = UserViewModel()
     @State private var showAlert = false
+    @State private var showUserItems = false
+    @State private var showReportConfirmation = false  // 추가: 신고 완료 메시지 표시 여부
     
     var body: some View {
         ScrollView {
@@ -66,12 +68,47 @@ struct DetailItemView: View {
                     .padding(.vertical)
                 }
                 
+                // 판매자 정보 (클릭 시 이동)
+                HStack {
+                    if let profileImageUrl = userVM.user?.profileImageUrl, let url = URL(string: profileImageUrl) {
+                        Button(action: {
+                            showUserItems = true
+                        }) {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                case .success(let image):
+                                    image.resizable()
+                                        .scaledToFill()
+                                        .frame(width: 40, height: 40)
+                                        .clipShape(Circle())
+                                case .failure:
+                                    Image(systemName: "person.circle.fill")
+                                        .resizable()
+                                        .frame(width: 40, height: 40)
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
+                        }
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                    }
+                    
+                    Button(action: {
+                        showUserItems = true
+                    }) {
+                        Text("판매자: \(userVM.user?.username ?? "알 수 없음")")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
                 // 상품 정보
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("판매자: \(userVM.user?.username ?? "알 수 없음")")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
                     Text(item.itemName)
                         .font(.title)
                         .fontWeight(.bold)
@@ -131,6 +168,12 @@ struct DetailItemView: View {
         }
         .navigationTitle("상품 상세 정보")
         .navigationBarTitleDisplayMode(.inline)
+        .background(
+            NavigationLink(destination: UserItemsView(userId: item.userId), isActive: $showUserItems) {
+                EmptyView()
+            }
+            .hidden()
+        )
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -152,6 +195,27 @@ struct DetailItemView: View {
                 secondaryButton: .cancel(Text("취소"))
             )
         }
+        .overlay(
+            VStack {
+                if showReportConfirmation {
+                    Text("신고가 완료되었습니다.")
+                        .padding()
+                        .background(Color(red: 0.30, green: 0.50, blue: 0.78))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .zIndex(1)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                withAnimation {
+                                    showReportConfirmation = false
+                                }
+                            }
+                        }
+                }
+                Spacer()
+            }
+        )
     }
     
     // AR 보기 기능
@@ -169,6 +233,9 @@ struct DetailItemView: View {
     // 신고하기 기능
     func reportItem() {
         // 신고 기능 로직을 여기에 추가
+        withAnimation {
+            showReportConfirmation = true
+        }
         print("신고가 완료되었습니다.")
     }
 }
