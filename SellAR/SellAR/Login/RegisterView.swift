@@ -76,7 +76,7 @@ struct RegisterView: View {
                                 .bold()
                                 .foregroundColor(colorScheme == .dark ? .white : Color(red: 36/255, green: 36/255, blue: 39/255))
                                 .padding(.leading, 20)
-                            SecureField("비밀번호를 똑같이 입력해 주세요", text: $errorViewModel.confirmPassword)
+                            SecureField("비밀번호를 다시 입력해 주세요", text: $errorViewModel.confirmPassword)
                                 .padding()
                                 .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
                                 .cornerRadius(10)

@@ -1,9 +1,3 @@
-//  LoginView.swift
-//  SellAR
-//
-//  Created by Mac on 11/1/24.
-//
-
 import FirebaseAuth
 import FirebaseCore
 import SwiftUI
@@ -81,10 +75,8 @@ struct LoginView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // 로그인 회원가입 버튼
                         HStack(spacing: 20) {
                             Button(action: {
-                                // 로그인 검증
                                 if email.isEmpty || password.isEmpty {
                                     errorViewModel.handleLoginError(.emptyFields)
                                 } else {
@@ -139,7 +131,6 @@ struct LoginView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
                         
-                        // 소셜 로그인 버튼
                         Button(action: {
                             viewModel.loginWithGoogle { success in
                                 if success {
@@ -194,6 +185,11 @@ struct LoginView: View {
             )
             .background(
                 NavigationLink(destination: NicknameEntryView(viewModel: viewModel), isActive: $isNicknameEntryActive) {
+                    EmptyView()
+                }
+            )
+            .background(
+                NavigationLink(destination: ContentView(viewModel: viewModel).navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
                     EmptyView()
                 }
             )
