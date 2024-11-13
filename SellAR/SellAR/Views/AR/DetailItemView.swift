@@ -11,6 +11,7 @@ import SafariServices
 struct DetailItemView: View {
     let item: Items
     @StateObject private var userVM = UserViewModel()
+    @State private var showAlert = false
     
     var body: some View {
         ScrollView {
@@ -31,13 +32,12 @@ struct DetailItemView: View {
                             EmptyView()
                         }
                     }
-                   
                 }
                 
                 // 등록된 이미지들
                 if !item.images.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("등록된 이미지")
+                        Text("상품 이미지")
                             .font(.headline)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 10) {
@@ -114,7 +114,7 @@ struct DetailItemView: View {
                 }) {
                     HStack {
                         Image(systemName: "message")
-                            .imageScale(.large)
+                            .imageScale(.small)
                         Text("채팅하기")
                     }
                     .padding()
@@ -123,7 +123,6 @@ struct DetailItemView: View {
                     .cornerRadius(8)
                 }
                 .padding(.top, 8)
-                
             }
             .padding()
         }
@@ -132,6 +131,27 @@ struct DetailItemView: View {
         }
         .navigationTitle("상품 상세 정보")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    showAlert = true
+                }) {
+                    Image(systemName: "exclamationmark.triangle")
+                        .imageScale(.large)
+                        .foregroundColor(.red)
+                }
+            }
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(
+                title: Text("신고하기"),
+                message: Text("이 상품을 신고하시겠습니까?"),
+                primaryButton: .destructive(Text("신고하기")) {
+                    reportItem()
+                },
+                secondaryButton: .cancel(Text("취소"))
+            )
+        }
     }
     
     // AR 보기 기능
@@ -144,5 +164,11 @@ struct DetailItemView: View {
     // 채팅 시작 기능
     func startChat() {
         // 채팅 화면으로 이동하는 로직을 여기에 추가
+    }
+    
+    // 신고하기 기능
+    func reportItem() {
+        // 신고 기능 로직을 여기에 추가
+        print("신고가 완료되었습니다.")
     }
 }
