@@ -97,150 +97,61 @@ import Firebase
 import FirebaseMessaging
 import UserNotifications
 
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Firebase 초기화
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         
-        // 메시징 델리게이트 설정
-        Messaging.messaging().delegate = self
-        
-        // 원격 알림 등록
-        UNUserNotificationCenter.current().delegate = self
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, error in
-            print("알림 권한 허용 여부: \(granted)")
-            if let error = error {
-                print("알림 권한 에러: \(error)")
-            }
-            
-            DispatchQueue.main.async {
-                self.checkNotificationStatus()
-            }
-        }
-        
-        application.registerForRemoteNotifications()
-        
+        // 앱 실행 시 사용자에게 알림 허용 권한을 받음
+          UNUserNotificationCenter.current().delegate = self
+          
+          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound] // 필요한 알림 권한을 설정
+          UNUserNotificationCenter.current().requestAuthorization(
+              options: authOptions,
+              completionHandler: { _, _ in }
+          )
+          
+          // UNUserNotificationCenterDelegate를 구현한 메서드를 실행시킴
+          application.registerForRemoteNotifications()
+          
+          // 파이어베이스 Meesaging 설정
+          Messaging.messaging().delegate = self
         return true
     }
     
-    // APNs 토큰 등록 성공
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
-        print("APNs 토큰: \(token)")
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    // 백그라운드에서 푸시 알림을 탭했을 때 실행
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("APNS token: \(deviceToken)")
         Messaging.messaging().apnsToken = deviceToken
     }
     
-    // APNs 토큰 등록 실패
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("APNs 등록 실패: \(error)")
-    }
-    
-    // 알림 권한 상태 체크
-    func checkNotificationStatus() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            print("알림 설정 상태:")
-            print("권한 상태: \(settings.authorizationStatus.rawValue)")
-            print("알림 배너: \(settings.alertSetting)")
-            print("사운드: \(settings.soundSetting)")
-            print("배지: \(settings.badgeSetting)")
-        }
+    // Foreground(앱 켜진 상태)에서도 알림 오는 설정
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.list, .banner])
     }
 }
 
-// MARK: - MessagingDelegate
 extension AppDelegate: MessagingDelegate {
-    // FCM 등록 토큰 갱신
+    
+    // 파이어베이스 MessagingDelegate 설정
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("FCM 토큰: \(String(describing: fcmToken))")
-        
-        // 토큰을 서버에 전송하거나 저장하는 로직 추가
-        let dataDict: [String: String] = ["token": fcmToken ?? ""]
-        NotificationCenter.default.post(
-            name: Notification.Name("FCMToken"),
-            object: nil,
-            userInfo: dataDict
-        )
+      print("Firebase registration token: \(String(describing: fcmToken))")
+
+      let dataDict: [String: String] = ["token": fcmToken ?? ""]
+      NotificationCenter.default.post(
+        name: Notification.Name("FCMToken"),
+        object: nil,
+        userInfo: dataDict
+      )
+      // TODO: If necessary send token to application server.
+      // Note: This callback is fired at each app startup and whenever a new token is generated.
     }
 }
-
-// MARK: - UNUserNotificationCenterDelegate
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    // 앱이 foreground 상태일 때 푸시 수신
-    func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        let userInfo = notification.request.content.userInfo
-        print("푸시 수신(foreground): \(userInfo)")
-        
-        completionHandler([[.banner, .badge, .sound]])
-    }
-    
-    // 푸시 알림 탭했을 때
-    func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        let userInfo = response.notification.request.content.userInfo
-        print("푸시 클릭: \(userInfo)")
-        
-        completionHandler()
-    }
-    
-    // 백그라운드 푸시 수신
-    func application(
-        _ application: UIApplication,
-        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        print("백그라운드 푸시 수신: \(userInfo)")
-        
-        completionHandler(.newData)
-    }
-}
-
-class NotificationManager {
-    static let shared = NotificationManager()
-    
-    private init() {}
-    
-    func getCurrentFCMToken(completion: @escaping (String?) -> Void) {
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("FCM 토큰 조회 에러: \(error)")
-                completion(nil)
-                return
-            }
-            completion(token)
-        }
-    }
-    
-    func subscribeToTopic(_ topic: String) {
-        Messaging.messaging().subscribe(toTopic: topic) { error in
-            if let error = error {
-                print("토픽 구독 실패: \(error)")
-                return
-            }
-            print("\(topic) 토픽 구독 성공")
-        }
-    }
-    
-    func unsubscribeFromTopic(_ topic: String) {
-        Messaging.messaging().unsubscribe(fromTopic: topic) { error in
-            if let error = error {
-                print("토픽 구독 해제 실패: \(error)")
-                return
-            }
-            print("\(topic) 토픽 구독 해제 성공")
-        }
-    }
-}
-
 
 @main
 struct SellARApp: App {
