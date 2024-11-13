@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var viewModel: LoginViewModel
-
+    
     let userdata = UserData(
         id: "12345",
         email: "aaaaaa@gmail.com",
@@ -26,17 +26,19 @@ struct ContentView: View {
                     Image(systemName: "1.square.fill")
                     Text("홈")
                 }
+            
             StartMessageView(loginViewModel: viewModel)
                 .tabItem {
                     Image(systemName: "2.square.fill")
                     Text("채팅")
                 }
-            MyPageView(userdata: userdata) 
+            
+            MyPageView(userdata: userdata)
                 .tabItem {
                     Image(systemName: "3.square.fill")
                     Text("마이페이지")
                 }
-                .font(.headline)
+                .environmentObject(viewModel) 
         }
     }
 }
