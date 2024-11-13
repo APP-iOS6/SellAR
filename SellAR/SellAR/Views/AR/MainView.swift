@@ -39,7 +39,7 @@ struct MainView: View {
             .navigationTitle("SellAR")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("상품 팔기") {
+                    Button("팔기") {
                         showAddItemView = true
                     }
                 }
