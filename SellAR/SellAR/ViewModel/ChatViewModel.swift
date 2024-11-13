@@ -18,7 +18,6 @@ class ChatViewModel: ObservableObject {
     
     private var messageListener: ListenerRegistration?
     private var db = Firestore.firestore()
-    private let FCM_SERVER_KEY = "5881ee576b3b8003e54f1c50924b67bba8407a43"
     private var chatRoomsListener: ListenerRegistration?
     // 채팅방 활성화 상태를 추적하기 위한 새로운 속성
     private var isInChatRoom = false
@@ -120,38 +119,23 @@ class ChatViewModel: ObservableObject {
                 return
             }
             
-            // 보내는 사람 이름 가져오기
             let senderName = self.chatUsers[self.senderID]?.username ?? "알 수 없음"
             
-            // 푸시 알림 데이터 구성
-            let body: [String: Any] = [
-                "token": fcmToken,
-                "notification": [
-                    "title": senderName,
-                    "body": message,
-                    "sound": "default"
-                ],
-                "data": [
-                    "chatRoomID": chatRoomID,
-                    "senderID": self.senderID
-                ]
-            ]
-            
-            // FCM 서버로 요청 보내기
-            guard let url = URL(string: "https://fcm.googleapis.com/fcm/send") else { return }
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("key=\(self.FCM_SERVER_KEY)", forHTTPHeaderField: "Authorization")
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
+            Task {
+                do {
+                    try await FCMNotificationService.shared.sendNotification(
+                        to: fcmToken,
+                        title: senderName,
+                        body: message,
+                        data: [
+                            "chatRoomID": chatRoomID,
+                            "senderID": self.senderID
+                        ]
+                    )
+                } catch {
                     print("푸시 알림 전송 실패: \(error)")
-                    return
                 }
-                print("푸시 알림 전송 성공")
-            }.resume()
+            }
         }
     }
     
@@ -318,7 +302,7 @@ class ChatViewModel: ObservableObject {
         
         let newChatRoom: [String: Any] = [
             "name": targetUser.username,
-            "profileImageURL": targetUser.profileImageUrl ?? "",
+//            "profileImageURL": targetUser.profileImageUrl ?? "",
             "latestMessage": "대화를 시작해보세요",
             "latestTimestamp": Timestamp(date: Date()),
             "unreadCount": unreadCount,  // unreadCounts -> unreadCount로 변경
@@ -389,7 +373,7 @@ class ChatViewModel: ObservableObject {
                     return ChatRoom(
                         id: doc.documentID,
                         name: data["name"] as? String ?? "알 수 없음",
-                        profileImageURL: data["profileImageURL"] as? String ?? "",
+//                        profileImageURL: data["profileImageURL"] as? String ?? "",
                         latestMessage: data["latestMessage"] as? String ?? "",
                         timestamp: (data["latestTimestamp"] as? Timestamp)?.dateValue() ?? Date(),
                         participants: participants,

@@ -1,4 +1,4 @@
-
+//
 //  File.swift
 //  SellAR
 //
@@ -91,7 +91,7 @@ struct StartMessageView: View {
                                         currentUserID: loginViewModel.user.id,
                                         otherUserID: otherUserID
                                     )) {
-                                        ChatRoomRow(chatRoom: chatRoom, currentUserID: viewModel.senderID)
+                                        ChatRoomRow(chatRoom: chatRoom, currentUserID: viewModel.senderID, chatViewModel: viewModel)
                                     }
                                 }
                             }
@@ -111,19 +111,13 @@ struct StartMessageView: View {
                 }
             }
         }
-        .onAppear {
-                    if viewModel.senderID != loginViewModel.user.id {
-                        viewModel.senderID = loginViewModel.user.id
-                        viewModel.fetchChatRooms()
-                    }
-                }
         // loginViewModel.user.id가 변경될 때 ChatViewModel 업데이트
-//        .onChange(of: loginViewModel.user.id) { newID in
-//            if !newID.isEmpty {
-//                viewModel.senderID = newID
-//                viewModel.fetchChatRooms()
-//            }
-//        }
+        .onChange(of: loginViewModel.user.id) { newID in
+            if !newID.isEmpty {
+                viewModel.senderID = newID
+                viewModel.fetchChatRooms()
+            }
+        }
     }
     
     private func createNewChat() {
@@ -134,7 +128,7 @@ struct StartMessageView: View {
             "profileImageURL": "",
             "latestMessage": "환영합니다!",
             "latestTimestamp": Timestamp(date: Date()),
-            "unreadCount": 2,
+            "unreadCount": [loginViewModel.user.id: 0],
             "participants": [loginViewModel.user.id]
         ]
         

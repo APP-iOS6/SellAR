@@ -17,21 +17,27 @@ import Firebase
 struct ChatRoomRow: View {
     let chatRoom: ChatRoom
     let currentUserID: String
+    @ObservedObject var chatViewModel: ChatViewModel
     
     var body: some View {
         HStack(spacing: 15) {
-            AsyncImage(url: URL(string: chatRoom.profileImageURL)) { image in
-                image.resizable()
-            } placeholder: {
-                Circle().fill(Color.gray)
+            // Get other user's profile and use their image
+            if let otherUser = chatRoom.getOtherUserProfile(currentUserID: currentUserID, users: chatViewModel.chatUsers) {
+                AsyncImage(url: URL(string: otherUser.profileImageUrl ?? "")) { image in
+                    image.resizable()
+                } placeholder: {
+                    Circle().fill(Color.gray)
+                }
+                .frame(width: 50, height: 50)
+                .clipShape(Circle())
             }
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: 5) {
-                Text(chatRoom.name)
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                if let otherUser = chatRoom.getOtherUserProfile(currentUserID: currentUserID, users: chatViewModel.chatUsers) {
+                    Text(otherUser.username)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                }
                 
                 Text(chatRoom.latestMessage)
                     .font(.subheadline)
