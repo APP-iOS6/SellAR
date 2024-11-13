@@ -48,10 +48,14 @@ struct MainView: View {
 
     private var searchField: some View {
         HStack {
-            TextField("검색어를 입력하세요", text: $vm.searchText)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
                 .padding(.leading, 8)
-
+            
+            TextField("검색어를 입력하세요", text: $vm.searchText)
+                .textFieldStyle(PlainTextFieldStyle())
+                .padding(.leading, 4)
+            
             if !vm.searchText.isEmpty {
                 Button(action: {
                     vm.searchText = ""
@@ -62,10 +66,12 @@ struct MainView: View {
                 .padding(.trailing, 8)
             }
         }
+        .padding(8)
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .shadow(radius: 1)
     }
+
 
     private var addButton: some View {
         Button(action: {
@@ -84,7 +90,7 @@ struct MainView: View {
 
 struct ListItemView: View {
     let item: Items
-    let status: Bool  // Bool 타입으로 수정
+    let status: Bool
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -107,7 +113,7 @@ struct ListItemView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 
-                // 판매 상태 표시
+               
                 Text(status ? "판매 완료" : "판매 중")
                     .font(.subheadline)
                     .foregroundColor(status ? .gray : .red)
