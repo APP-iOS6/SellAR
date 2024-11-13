@@ -3,7 +3,7 @@ import FirebaseCore
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @ObservedObject private var viewModel = LoginViewModel()
     @StateObject private var keyboardViewModel = KeyboardViewModel()
     @StateObject private var errorViewModel = LoginErrorViewModel()
     @State private var email = ""
@@ -82,10 +82,10 @@ struct LoginView: View {
                                 } else {
                                     viewModel.loginWithEmailPassword(email: email, password: password) { success in
                                         if success {
-                                            errorViewModel.handleLoginError(nil)
+                                            if let user = Auth.auth().currentUser {
+                                                viewModel.userID = user.uid
+                                            }
                                             isMainViewActive = true
-                                        } else {
-                                            errorViewModel.handleLoginError(.incorrectPassword)
                                         }
                                     }
                                 }
