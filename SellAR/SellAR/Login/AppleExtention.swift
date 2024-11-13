@@ -1,4 +1,3 @@
-//
 //  AppleExtention.swift
 //  SellAR
 //
@@ -36,15 +35,13 @@ extension LoginViewModel: ASAuthorizationControllerDelegate {
             if let firebaseUser = authResult?.user {
                 self.getUserDocument(uid: firebaseUser.uid) { document, error in
                     if let document = document, document.exists {
-                        // 기존 사용자의 경우
-                        print("애플로 로그인 성공")
+                        print("애플로 로그인 성공 - 기존 사용자")
                         let email = document.get("email") as? String ?? ""
-                        self.user.email = email  // 사용자 이메일 업데이트
+                        self.user.email = email  // Update the user's email
                         self.saveUserID(firebaseUser.uid, loginMethod: "apple")
                         self.isMainViewActive = true
                         self.completionHandler?(true)
                     } else {
-                        // 새로운 사용자의 경우
                         var email = ""
                         
                         if let appleEmail = appleIDCredential.email {
@@ -63,9 +60,9 @@ extension LoginViewModel: ASAuthorizationControllerDelegate {
                         print("저장될 이메일: \(email)")
                         
                         self.saveUserToFirestore(uid: firebaseUser.uid,
-                                              email: email,
-                                              username: username,
-                                              profileImageUrl: nil)
+                                                  email: email,
+                                                  username: username,
+                                                  profileImageUrl: nil)
                         
                         self.user.email = email
                         self.user.username = username
@@ -79,11 +76,13 @@ extension LoginViewModel: ASAuthorizationControllerDelegate {
             }
         }
     }
-        func authorizationController(controller: ASAuthorizationController, didFailWithError error: Error){
-            print("애플 로그인 실패 \(error.localizedDescription)")
-            self.completionHandler?(false)
-        }
+
+    func authorizationController(controller: ASAuthorizationController, didFailWithError error: Error) {
+        print("애플 로그인 실패 \(error.localizedDescription)")
+        self.completionHandler?(false)
     }
+}
+
 // ASAuthorizationControllerPresentationContextProviding 구현
 extension LoginViewModel: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {

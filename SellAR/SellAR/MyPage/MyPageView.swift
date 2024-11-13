@@ -6,241 +6,226 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct MyPageView: View {
     
-    let userdata: UserData
-    //추후 데이터 연결 공간
-    //    @State private var id: String = UUID().uuidString
-    //    @State private var email: String = "aaaaaa@gmail.com"
-    //    @State private var username: String = "가나다"
-    //    @State private var profileImageUrl: String = "image"
-    //    @State private var intro: String = "자신을 소개해주세요."
-    //    @State private var userlocation: String = "서울시 강남구"
-    //    @State private var isLoggedIn: Bool = false //로그인상태 확인변수
     @ObservedObject var itemStore = ItemStore()
     @EnvironmentObject var loginViewModel: LoginViewModel
-    
-//    var body: some View {
-//        NavigationView {
-//            ZStack {
-//                Color.black.edgesIgnoringSafeArea(.all)
-//                
-//                if loginViewModel.isLoggedIn {
-//                    LoggedInContent(userdata: loginViewModel.user, itemStore: itemStore)
-//                } else {
-//                    NotLoggedInContent()
-//                }
-//            }
-//            .navigationTitle("마이페이지")
-//            .navigationBarTitleDisplayMode(.inline)
-//        }
-//    }
-//}
-//                
-//struct LoggedInContent: View {
-//    let userdata: User
-//    @ObservedObject var itemStore: ItemStore
-//    @EnvironmentObject var loginViewModel: LoginViewModel
+
+    @StateObject private var userDataManager = UserDataManager()
+    @State private var isLoading = true
+
     
     var body: some View {
-                VStack(spacing: 0) {
-                    HStack {
-                        Button(action: {
-                            //버튼기능 추가예정
-                        }) {
-                            Image(systemName: "chevron.left")
-                                .resizable()
-                                .frame(width: 11, height: 22)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                        
-                        //프로필 수정버튼
-                        NavigationLink(destination: ProfileFixView()) {
-                            Image(systemName: "square.and.pencil" )
-                                .resizable()
-                                .frame(width: 28, height: 28)
-                                .foregroundColor(.gray)
-                            
-                        }
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.bottom, 10)
+        VStack(spacing: 0) {
+            HStack {
+                Button(action: {
+                    //버튼기능 추가예정
+                }) {
+                    Image(systemName: "chevron.left")
+                        .resizable()
+                        .frame(width: 11, height: 22)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(.gray)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                if userDataManager.currentUser != nil {
+                    Text("마이페이지")
+                        .font(.system(size: 20))
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     
-                    
-                    ScrollView {
-                        Spacer()
-                            .frame(height: 5)
-                        // 프로필 사진과 닉네임/이메일을 병렬 배치
-                        HStack(alignment: .center, spacing: 20) {
-                            // 프로필 사진
-                            Image(systemName: "camera.fill")
-                            //Image("userdata.profileImageUrl")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .padding(30)
-                                .frame(width: 120, height: 120)
-                                .foregroundColor(.gray)
-                                .background(Color.white.opacity(0.1))
-                                .clipShape(Circle())
-                            
-                            // 닉네임 및 이메일
-                            VStack(alignment: .leading, spacing: 10) {
-                                HStack {
-                                    Text("닉네임")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                    Text(userdata.username)  // 닉네임 표시
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .lineLimit(1)
-                                        .font(.system(size: 14))
-                                }
-                                .padding(10)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
-                                
-                                HStack {
-                                    Text("이메일")
-                                        .font(.system(size: 15))
-                                        .foregroundColor(.white)
-                                    Text(userdata.email)  // 이메일 표시
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .lineLimit(1)
-                                        .font(.system(size: 14))
-                                }
-                                .padding(10)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
-                            }
-                        }
-                        Spacer()
-                            .frame(height: 50)
-                        
-                        VStack {
-                            HStack {
-                                Text("지역") //Text(userdata.userLocation) 데이터없어서 임시로 작성
-                                    .frame(width: 100, alignment: .leading)
-                                    .foregroundColor(.white)
-                                Image(systemName: "location.fill")
-                                    .foregroundColor(.white)
-                            }
-                            .padding(10)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(10)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 10)
-                            // 자기소개 구문 (텍스트만 출력하는 형태로 변경)
-                            Text("자기소개")//Text(userdata.intro) 데이터없어서 임시로 작성 
-                                .frame(maxWidth: .infinity, maxHeight: 150, alignment: .topLeading)  // 좌측 정렬
-                                .padding()
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
-                                .foregroundColor(.white)
-                        }
-                        .padding(.bottom, 20)
-                        
-                        // 게시물 및 계정 관리 버튼들
-                        VStack(spacing: 15) {
-                            Text("게시물")
-                                .font(.system(size: 20))
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            NavigationLink(destination: ItemListView(itemStore: itemStore)) {
-                                HStack {
-                                    Image(systemName: "list.bullet")
-                                    Text("내 글 목록")
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                }
-                                .padding(10)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
-                                .foregroundColor(.white)
-                            }
-                            Text("계정관리")
-                                .font(.system(size: 20))
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            Button(action: {
-//                                 로그아웃 액션
-                                loginViewModel.logout()
-                                
-                            }) {
-                                HStack {
-                                    Image(systemName: "person.fill")
-                                    Text("로그아웃")
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                }
-                                .foregroundColor(.white)
-                                .padding(10)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
-                            }
-                            
-                            Button(action: {
-                                // 회원 탈퇴 액션
-                            }) {
-                                HStack {
-                                    Image(systemName: "person.fill.xmark")
-                                    Text("회원 탈퇴")
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                }
-                                .foregroundColor(.white)
-                                .padding(10)
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(10)
-                            }
-                        }
+                    //프로필 수정버튼
+                    NavigationLink(destination: ProfileFixView(userDataManager: userDataManager)) {
+                        Image(systemName: "square.and.pencil" )
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .foregroundColor(.gray)
                     }
-                    .padding(10)
-                    .navigationTitle("")
-                    .navigationBarHidden(true) // 상단여백제거
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                } else {
+                    Spacer()
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.bottom, 10)
+            
+            if isLoading {
+                ProgressView()
+            } else if let user = userDataManager.currentUser {
+                loggedInView(user: user)
+            } else {
+                loggedOutView
+            }
+        }
+            .padding(10)
+            .navigationTitle("")
+            .navigationBarHidden(true) // 상단여백제거
+            .navigationBarBackButtonHidden(true) //네비게이션 시스템 백 버튼 젝
+            .onAppear {
+                userDataManager.fetchCurrentUser { _ in
+                    isLoading = false
                 }
             }
         }
-
-struct NotLoggedInContent: View {
-    var body: some View {
-        VStack {
-            Text("로그인이 필요합니다")
-                .foregroundColor(.white)
-                .font(.title)
-            
-            NavigationLink(destination: LoginView()) {
-                Text("로그인하기")
-                    .foregroundColor(.black)
-                    .padding()
-                    .background(Color.white)
+    
+    @ViewBuilder
+    func loggedInView(user: User) -> some View {
+        ScrollView {
+            Spacer()
+                .frame(height: 30)
+            VStack(alignment: .center, spacing: 20) {
+                // 프로필 사진
+                if let imageUrl = user.profileImageUrl, let url = URL(string: imageUrl) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 135, height: 135)
+                                .clipShape(Circle())
+                        case .success(let image):
+                            image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 135, height: 135)
+                            .clipShape(Circle())
+                        case .failure:
+                            Image(systemName: "person.circle.fill")
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 135, height: 135)
+                                .clipShape(Circle())
+                                .foregroundColor(.gray)
+                        @unknown default:
+                            EmptyView()
+                    }
+                }
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 135, height: 135)
+                    .foregroundColor(.gray)
+                                }
+                // 닉네임 및 이메일
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("이름")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack {
+                        Image(systemName: "person.text.rectangle")
+                        Text(user.username)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(10)
+                    .foregroundColor(.white)
+                    .background(Color.gray.opacity(0.2))
                     .cornerRadius(10)
+                }
+                .padding(.bottom, 20)
+                
+                // 게시물 및 계정 관리 버튼들
+                VStack(spacing: 15) {
+                    Text("게시물")
+                        .font(.system(size: 20))
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    NavigationLink(destination: ItemListView(itemStore: itemStore)) {
+                        HStack {
+                            Image(systemName: "list.bullet")
+                            Text("내 글 목록")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(10)
+                        .foregroundColor(.white)
+                    }
+                    .padding(.bottom, 20)
+                    
+                    Text("계정관리")
+                        .font(.system(size: 20))
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Button(action: {
+                        loginViewModel.logout()
+                        userDataManager.currentUser = nil
+                    }) {
+                        HStack {
+                            Image(systemName: "person.fill")
+                            Text("로그아웃")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(10)
+                    }
+                   // NavigationLink for returning to ContentView after logout
+                    NavigationLink(destination: ContentView(viewModel: loginViewModel).navigationBarBackButtonHidden(true), isActive: $loginViewModel.isMainViewActive) {
+                        EmptyView()
+                    }
+                    
+                    Button(action: {
+                        // 회원 탈퇴 액션
+                    }) {
+                        HStack {
+                            Image(systemName: "person.fill.xmark")
+                            Text("회원 탈퇴")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(10)
+                    }
+
+                }
             }
+            .padding(10)
+            .navigationTitle("")
+            .navigationBarHidden(true) // 상단여백제거
+        }
+    }
+
+    
+    var loggedOutView: some View {
+        ZStack {
+            VStack(alignment: .center, spacing: 20) {
+                
+                Image(systemName: "person.fill")
+//                Image("SellarLogoDark") 셀라아이콘 이미지 교체예정
+                    .resizable()
+                    .frame(width: 150, height: 150)
+
+                    .padding()
+                    .padding(.bottom,20)
+                Text("표시할 마이페이지가 없어요.")
+                    .foregroundColor(.white)
+                    .padding(.bottom,10)
+                Text("로그인하여 AR로 물건을 거래해보세요.")
+                    .foregroundColor(.white)
+                    .padding(.bottom,30)
+                
+                NavigationLink(destination: LoginView()) {
+                    Text("로그인하기")
+                        .frame(width: 150, height: 50)
+                        .padding(2)
+                        .foregroundColor(.white)
+                        .background(Color.blue)
+                        .cornerRadius(26.5)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
-//struct PostListView: View {
-//    var body: some View {
-//        Text("내 글 목록 화면")
-//            .navigationTitle("내 글 목록")
-//    }
-//}
-
-//struct ProfileFixView: View {
-//    var body: some View {
-//        Text("프로필 수정 화면")
-//            .navigationTitle("프로필 수정")
-//    }
-//}
-
-//#Preview {
-//    MyPageView(userdata: UserData(id: "12345", email: "aaaaaa@gmail.com", username: "가나다", profileImageUrl:nil, userLocation: "서울시 강남구", intro: "자신을 소개해주세요"))
-//}

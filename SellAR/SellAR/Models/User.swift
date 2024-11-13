@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct User: Identifiable {
+struct User: Identifiable, Codable {
     var id: String
     var email: String
     var username: String

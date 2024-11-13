@@ -17,7 +17,6 @@ struct ItemFormView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var showImagePicker = false
-    
     @State private var selectedUSDZFileURL: URL?
     
     var body: some View {
@@ -83,13 +82,13 @@ struct ItemFormView: View {
                 vm.selectedUSDZSource = .objectCapture
             }
         })
-        .sheet(isPresented: .init(get: {
+        .fullScreenCover(isPresented: .init(get: {
             vm.selectedUSDZSource == .objectCapture
         }, set: { _ in
             vm.selectedUSDZSource = nil
         }), content: {
             USDZScanner { url in
-                Task{ await vm.uploadUSDZ(fileURL: url) }
+                Task { await vm.uploadUSDZ(fileURL: url) }
                 vm.selectedUSDZSource = nil
             }
         })
@@ -98,12 +97,14 @@ struct ItemFormView: View {
         }), allowedContentTypes: [UTType.usdz], onCompletion: { result in
             switch result {
             case .success(let url):
-               // selectedUSDZFileURL = url
                 Task { await vm.uploadUSDZ(fileURL: url, isSecurityScopedResource: true)}
             case .failure(let error):
                 vm.error = error.localizedDescription
             }
         })
+        .sheet(isPresented: $showImagePicker) {
+            PhotoPickerView(selectedImages: $vm.selectedImages)
+        }
         .navigationTitle(vm.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -113,7 +114,6 @@ struct ItemFormView: View {
             TextField("제목", text: $vm.itemName)
             TextField("가격", text: $vm.price)
                 .keyboardType(.numberPad)
-            // 수정 필요
                 .onChange(of: vm.price) { newValue in
                     vm.price = newValue.filter { $0.isNumber }
                     if vm.price.isEmpty {
@@ -121,13 +121,28 @@ struct ItemFormView: View {
                     }
                 }
             
-            TextField("상품 설명", text: $vm.description)
+            ZStack(alignment: .topLeading) {
+                if vm.description.isEmpty {
+                    Text("상품 설명을 입력하세요")
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 8)
+                }
+                
+                TextEditor(text: $vm.description)
+                    .frame(minHeight: 100)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+                    .padding(.horizontal, -4)
+            }
+            
             TextField("지역", text: $vm.location)
         }
         .disabled(vm.loadingState != .none)
     }
     
-    //USDZ추가
     var arSection: some View {
         Section("AR 모델") {
             if let thumbnailURL = vm.thumbnailURL {
@@ -175,7 +190,6 @@ struct ItemFormView: View {
                     }
                 }
                 
-                // 선택된 파일 이름을 표시
                 if let selectedURL = selectedUSDZFileURL {
                     Text("선택된 파일: \(selectedURL.lastPathComponent)")
                         .font(.footnote)
@@ -195,7 +209,6 @@ struct ItemFormView: View {
         .disabled(vm.loadingState != .none)
     }
     
-    //이미지 추가
     var imageSection: some View {
         Section("이미지") {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -236,9 +249,6 @@ struct ItemFormView: View {
                 }
             }
         }
-        .sheet(isPresented: $showImagePicker) {
-            PhotoPickerView(selectedImages: $vm.selectedImages)  // `vm.selectedImages`에 바인딩
-        }
     }
 
     func viewAR(url: URL) {
@@ -255,7 +265,7 @@ struct PhotoPickerView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()
         config.filter = .images
-        config.selectionLimit = 0  // 여러 이미지 선택 가능, 필요 시 1로 설정하여 단일 선택으로 변경 가능
+        config.selectionLimit = 0
         
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = context.coordinator
@@ -278,15 +288,12 @@ struct PhotoPickerView: UIViewControllerRepresentable {
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             picker.dismiss(animated: true)
             
-            // 선택한 이미지가 없을 경우 종료
             guard !results.isEmpty else { return }
             
-            // 선택된 이미지를 비동기로 배열에 추가
             for result in results {
                 if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
                     result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
                         if let image = image as? UIImage {
-                            // 메인 스레드에서 배열에 추가
                             DispatchQueue.main.async {
                                 self?.parent.selectedImages.append(image)
                             }
