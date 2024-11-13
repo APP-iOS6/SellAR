@@ -80,15 +80,6 @@
 - Xcode 18.0
 - iOS 16.0
 
-# 실행 방법
-1. 이 프로젝트에서는 Firebase가 사용되었습니다. 때문에 GoogleService-Info.plist파일이 필요합니다.
-2. 먼저 파이어 베이스 콘솔에서 해당 앱에 연동하기 위해 프로젝트를 생성해야합니다.
-3. iOS프로젝트의 번들 id를 확인하고 파이어베이스 프로젝트에 추가해주세요 https://console.firebase.google.com/
-4. 파이어베이스에 iOS를 추가하였다면 파이어베이스 프로젝트 설정에서 
-5. GoogleService-Info.plist 파일을 다운 받아서 프로젝트 최상위 폴더 안에 넣어주세요
-6. 애플은 Xcode에서 SignIn을 추가하고 개발자 계정에서 앱을 등록해주세요.
-7. 빌드 하시면 됩니다.
-
 # Dependency
 - FirebaseAuth - Apache-2.0 license
 - FirebaseCore - Apache-2.0 license
