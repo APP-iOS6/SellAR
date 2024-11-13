@@ -12,40 +12,65 @@ struct ItemRowView: View {
     @Environment(\.colorScheme) var colorScheme
     @Binding var showDetailSheet: Bool
     @Binding var selectedItem: Item?
-
+    
     var body: some View {
         VStack {
             HStack {
                 // Image Section
-                AsyncImage(url: URL(string: item.thumbnailLink ?? "")) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .frame(width: 150, height: 150)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 150, height: 150)
-                            .clipped()
-                            .cornerRadius(12)
-                    case .failure:
-                        Image("placeholder")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 150, height: 150)
-                            .clipped()
-                            .cornerRadius(12)
-                    @unknown default:
-                        EmptyView()
+                if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
+                   let imageURL = URL(string: imageURLString) {
+                    // URL이 유효하면 AsyncImage로 이미지를 비동기적으로 로딩
+                    AsyncImage(url: imageURL) { phase in
+                        switch phase {
+                        case .empty:
+                            // 이미지 로딩 중
+                            ProgressView()
+                                .frame(width: 150, height: 150)
+                        case .success(let image):
+                            // 이미지 로딩 성공 시
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 150, height: 150)
+                                .clipped()
+                                .cornerRadius(12)
+                        case .failure:
+                            // 이미지를 불러오지 못했을 때 흰색 배경
+                            Color.white
+                                .frame(width: 150, height: 150)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+                    .padding(.leading, 12)
+                    .padding(.vertical, 10)
+                } else {
+                    // 이미지 URL이 비어있으면 "없음" 표시
+                    Color.white
+                        .frame(width: 150, height: 150)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                        )
+                        .overlay(
+                            Text("없음")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 16, weight: .bold))
+                        )
                 }
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                )
-                .padding(.leading, 12)
-                .padding(.vertical, 10)
+
+
+                
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 10) {
@@ -104,7 +129,7 @@ struct ItemListView: View {
     @ObservedObject var itemStore = ItemStore()
     
     @State private var selectedItem: Item?
-
+    
     var filteredItems: [Item] {
         if searchText.isEmpty {
             return itemStore.items
@@ -112,7 +137,7 @@ struct ItemListView: View {
             return itemStore.items.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
         }
     }
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
