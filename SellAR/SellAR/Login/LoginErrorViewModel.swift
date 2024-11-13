@@ -1,4 +1,3 @@
-//
 //  LoginErrorViewModel.swift
 //  SellAR
 //
@@ -10,13 +9,11 @@ import SwiftUI
 import Combine
 
 enum LoginError: Error {
-    case invalidEmail
     case emailNotFound
     case incorrectPassword
     case passwordTooShort
     case passwordMismatch
     case emptyFields
-    case invalidEmailFormat
 }
 
 final class LoginErrorViewModel: ObservableObject {
@@ -53,13 +50,8 @@ final class LoginErrorViewModel: ObservableObject {
         handleLoginError(nil)
         
         // 빈 필드 확인
-        if userName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty {
+        if email.isEmpty || password.isEmpty {
             handleLoginError(.emptyFields)
-        }
-        
-        // 이메일 형식 검증
-        if let error = validateEmailFormat(email) {
-            handleLoginError(error)
         }
         
         // 비밀번호 길이 검증
@@ -76,16 +68,6 @@ final class LoginErrorViewModel: ObservableObject {
         updateRegisterButtonState()
     }
     
-    // 이메일 형식 검사
-    func validateEmailFormat(_ email: String) -> LoginError? {
-        let emailRegEx = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-        if !emailTest.evaluate(with: email) {
-            return .invalidEmailFormat
-        }
-        return nil
-    }
-    
     // 가입 버튼 활성화 상태 업데이트
     private func updateRegisterButtonState() {
         // 이메일, 비밀번호, 비밀번호 확인, 닉네임 모두 유효해야만 버튼이 활성화됨
@@ -94,7 +76,6 @@ final class LoginErrorViewModel: ObservableObject {
                                   !confirmPassword.isEmpty &&
                                   !userName.isEmpty &&
                                   password.count >= 6 &&
-                                  validateEmailFormat(email) == nil &&
                                   password == confirmPassword
     }
     
@@ -105,10 +86,6 @@ final class LoginErrorViewModel: ObservableObject {
         nicknameError = ""
         
         switch error {
-        case .invalidEmail:
-            emailError = "유효한 이메일을 입력해주세요."
-        case .invalidEmailFormat:
-            emailError = "유효한 이메일 형식이 아닙니다."
         case .emailNotFound:
             emailError = "이메일을 찾을 수 없습니다."
         case .incorrectPassword:

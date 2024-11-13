@@ -12,8 +12,10 @@ struct MyPageView: View {
     
     @ObservedObject var itemStore = ItemStore()
     @EnvironmentObject var loginViewModel: LoginViewModel
+
     @StateObject private var userDataManager = UserDataManager()
     @State private var isLoading = true
+
     
     var body: some View {
         VStack(spacing: 0) {
@@ -168,6 +170,10 @@ struct MyPageView: View {
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
                     }
+                   // NavigationLink for returning to ContentView after logout
+                    NavigationLink(destination: ContentView(viewModel: loginViewModel).navigationBarBackButtonHidden(true), isActive: $loginViewModel.isMainViewActive) {
+                        EmptyView()
+                    }
                     
                     Button(action: {
                         // 회원 탈퇴 액션
@@ -182,10 +188,15 @@ struct MyPageView: View {
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
                     }
+
                 }
             }
+            .padding(10)
+            .navigationTitle("")
+            .navigationBarHidden(true) // 상단여백제거
         }
     }
+
     
     var loggedOutView: some View {
         ZStack {
@@ -195,6 +206,7 @@ struct MyPageView: View {
 //                Image("SellarLogoDark") 셀라아이콘 이미지 교체예정
                     .resizable()
                     .frame(width: 150, height: 150)
+
                     .padding()
                     .padding(.bottom,20)
                 Text("표시할 마이페이지가 없어요.")
