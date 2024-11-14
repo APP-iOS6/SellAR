@@ -18,50 +18,57 @@ struct MyPageView: View {
 
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Button(action: {
-                    //버튼기능 추가예정
-                }) {
-                    Image(systemName: "chevron.left")
-                        .resizable()
-                        .frame(width: 11, height: 22)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.gray)
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                if userDataManager.currentUser != nil {
-                    Text("마이페이지")
-                        .font(.system(size: 20))
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .center)
+        ZStack {
+            Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255).edgesIgnoringSafeArea(.all)
+            VStack(spacing: 0) {
+                HStack {
+                    //                Button(action: {
+                    //                    //버튼기능 추가예정
+                    //                }) {
+                    //                    Image(systemName: "chevron.left")
+                    //                        .resizable()
+                    //                        .frame(width: 11, height: 22)
+                    //                        .frame(maxWidth: .infinity, alignment: .leading)
+                    //                        .foregroundColor(.gray)
+                    //                }
+                    //                .buttonStyle(PlainButtonStyle())
                     
-                    //프로필 수정버튼
-                    NavigationLink(destination: ProfileFixView(userDataManager: userDataManager)) {
-                        Image(systemName: "square.and.pencil" )
-                            .resizable()
-                            .frame(width: 28, height: 28)
-                            .foregroundColor(.gray)
+                    if userDataManager.currentUser != nil {
+                        
+                        Spacer()
+                            .frame(maxWidth: .infinity, alignment: .leading) // 뒤로가기 버튼 대신한 여백생성으로 가운데 정렬
+                        
+                        Text("마이페이지")
+                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                            .font(.system(size: 20))
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        
+                        //프로필 수정버튼
+                        NavigationLink(destination: ProfileFixView(userDataManager: userDataManager)) {
+                            Image(systemName: "square.and.pencil" )
+                                .resizable()
+                                .frame(width: 28, height: 28)
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //연파랑
+                        }
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    } else {
+                        Spacer()
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                .padding(.horizontal, 10)
+                .padding(.bottom, 10)
+                
+                if isLoading {
+                    ProgressView()
+                } else if let user = userDataManager.currentUser {
+                    loggedInView(user: user)
                 } else {
-                    Spacer()
+                    loggedOutView
                 }
             }
-            .padding(.horizontal, 10)
-            .padding(.bottom, 10)
-            
-            if isLoading {
-                ProgressView()
-            } else if let user = userDataManager.currentUser {
-                loggedInView(user: user)
-            } else {
-                loggedOutView
-            }
-        }
             .padding(10)
             .navigationTitle("")
             .navigationBarHidden(true) // 상단여백제거
@@ -72,7 +79,7 @@ struct MyPageView: View {
                 }
             }
         }
-    
+    }
     @ViewBuilder
     func loggedInView(user: User) -> some View {
         ScrollView {
@@ -94,66 +101,73 @@ struct MyPageView: View {
                             .frame(width: 135, height: 135)
                             .clipShape(Circle())
                         case .failure:
-                            Image(systemName: "person.circle.fill")
+                            Image(systemName: "person")
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 135, height: 135)
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //연파랑
                                 .clipShape(Circle())
-                                .foregroundColor(.gray)
                         @unknown default:
                             EmptyView()
                     }
                 }
             } else {
-                Image(systemName: "person.circle.fill")
+                Image(systemName: "person")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .padding(40)
                     .frame(width: 135, height: 135)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                    .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                    .clipShape(Circle())
                                 }
                 // 닉네임 및 이메일
                 VStack(alignment: .leading, spacing: 10) {
                     Text("이름")
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack {
                         Image(systemName: "person.text.rectangle")
+                            .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         Text(user.username)
                     }
+                    .padding(15) // 검정칸 크기
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
-                    .foregroundColor(.white)
-                    .background(Color.gray.opacity(0.2))
+                    .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                    .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
                     .cornerRadius(10)
                 }
                 .padding(.bottom, 20)
                 
                 // 게시물 및 계정 관리 버튼들
-                VStack(spacing: 15) {
+                VStack(spacing: 10) {
                     Text("게시물")
                         .font(.system(size: 20))
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     NavigationLink(destination: ItemListView(itemStore: itemStore)) {
                         HStack {
                             Image(systemName: "list.bullet")
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                             Text("내 글 목록")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(10)
-                        .background(Color.gray.opacity(0.2))
+                        .padding(15)
+                        .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
                         .cornerRadius(10)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
                     }
                     .padding(.bottom, 20)
                     
                     Text("계정관리")
                         .font(.system(size: 20))
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Button(action: {
@@ -162,15 +176,18 @@ struct MyPageView: View {
                     }) {
                         HStack {
                             Image(systemName: "person.fill")
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                             Text("로그아웃")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                            
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .background(Color.gray.opacity(0.2))
+                        .padding(15) //검정칸 크기
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
                         .cornerRadius(10)
                     }
-                   // NavigationLink for returning to ContentView after logout
                     NavigationLink(destination: ContentView(viewModel: loginViewModel).navigationBarBackButtonHidden(true), isActive: $loginViewModel.isMainViewActive) {
                         EmptyView()
                     }
@@ -180,12 +197,15 @@ struct MyPageView: View {
                     }) {
                         HStack {
                             Image(systemName: "person.fill.xmark")
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                             Text("회원 탈퇴")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .background(Color.gray.opacity(0.2))
+                        .padding(15) //검정칸 크기
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
                         .cornerRadius(10)
                     }
 
@@ -202,17 +222,13 @@ struct MyPageView: View {
         ZStack {
             VStack(alignment: .center, spacing: 20) {
                 
-                Image(systemName: "person.fill")
-//                Image("SellarLogoDark") 셀라아이콘 이미지 교체예정
+               Image("SellarLogoDark")
                     .resizable()
                     .frame(width: 150, height: 150)
 
                     .padding()
-                    .padding(.bottom,20)
-                Text("표시할 마이페이지가 없어요.")
-                    .foregroundColor(.white)
                     .padding(.bottom,10)
-                Text("로그인하여 AR로 물건을 거래해보세요.")
+                Text("로그인이 필요합니다.")
                     .foregroundColor(.white)
                     .padding(.bottom,30)
                 
@@ -220,8 +236,8 @@ struct MyPageView: View {
                     Text("로그인하기")
                         .frame(width: 150, height: 50)
                         .padding(2)
-                        .foregroundColor(.white)
-                        .background(Color.blue)
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         .cornerRadius(26.5)
                 }
             }

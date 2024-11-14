@@ -1,4 +1,4 @@
-
+//
 //  File.swift
 //  SellAR
 //
@@ -27,10 +27,9 @@ struct StartMessageView: View {
             if loginViewModel.user.id.isEmpty {
                 // 로그인하지 않은 상태
                 VStack {
-                    Image(systemName: "iphone.gen1.slash")
+                    Image("SellarLogoWhite")
                         .resizable()
-                        .frame(width: 100, height: 100)
-                        .foregroundStyle(Color.cyan)
+                        .frame(width: 150, height: 150)
                         .padding(.bottom, 20)
                     Text("표시할 채팅이 없어요.")
                         .foregroundStyle(Color.gray)
@@ -49,7 +48,7 @@ struct StartMessageView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))
             } else {
                 // 로그인한 상태
                 NavigationView {
@@ -91,7 +90,7 @@ struct StartMessageView: View {
                                         currentUserID: loginViewModel.user.id,
                                         otherUserID: otherUserID
                                     )) {
-                                        ChatRoomRow(chatRoom: chatRoom, currentUserID: viewModel.senderID)
+                                        ChatRoomRow(chatRoom: chatRoom, currentUserID: viewModel.senderID, chatViewModel: viewModel)
                                     }
                                 }
                             }
@@ -111,19 +110,13 @@ struct StartMessageView: View {
                 }
             }
         }
-        .onAppear {
-                    if viewModel.senderID != loginViewModel.user.id {
-                        viewModel.senderID = loginViewModel.user.id
-                        viewModel.fetchChatRooms()
-                    }
-                }
         // loginViewModel.user.id가 변경될 때 ChatViewModel 업데이트
-//        .onChange(of: loginViewModel.user.id) { newID in
-//            if !newID.isEmpty {
-//                viewModel.senderID = newID
-//                viewModel.fetchChatRooms()
-//            }
-//        }
+        .onChange(of: loginViewModel.user.id) { newID in
+            if !newID.isEmpty {
+                viewModel.senderID = newID
+                viewModel.fetchChatRooms()
+            }
+        }
     }
     
     private func createNewChat() {
@@ -134,7 +127,7 @@ struct StartMessageView: View {
             "profileImageURL": "",
             "latestMessage": "환영합니다!",
             "latestTimestamp": Timestamp(date: Date()),
-            "unreadCount": 2,
+            "unreadCount": [loginViewModel.user.id: 0],
             "participants": [loginViewModel.user.id]
         ]
         
