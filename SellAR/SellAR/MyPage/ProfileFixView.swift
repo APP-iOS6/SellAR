@@ -20,7 +20,7 @@ struct ProfileFixView: View {
     
     var body: some View {
             ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+                Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255).edgesIgnoringSafeArea(.all)
                 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
@@ -30,22 +30,28 @@ struct ProfileFixView: View {
                             Image(systemName:"chevron.left")
                                 .resizable()
                                 .frame(width: 11, height: 22)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundColor(.gray)
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         }
                         .buttonStyle(PlainButtonStyle())
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         
                         
                         Text("프로필 수정")
-                            .font(.headline)
-                            .padding(.bottom, 15)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, alignment: .center)
+                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                            .font(.system(size: 20))
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         
                         Spacer()
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     .padding(.bottom, 20)
+                    .padding(.horizontal, 10)
+                    
+                    Spacer()
+                        .frame(height: 30)
                     
                     VStack(alignment: .center, spacing: 20) {
                         // 프로필 사진
@@ -58,19 +64,19 @@ struct ProfileFixView: View {
                         // 닉네임 및 이메일
                         VStack(alignment: .leading, spacing: 10) {
                             Text("이름")
-                                .font(.system(size: 20))
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             HStack {
                                 Image(systemName: "person.text.rectangle")
+                                    .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                                 TextField("", text: $username)
                             }
-                            .padding(10)
-                            .foregroundColor(.white)
+                            .padding(15)
+                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                            .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
                         }
                         .padding(.bottom, 20)
@@ -81,13 +87,13 @@ struct ProfileFixView: View {
                             Text("저장하기")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .foregroundColor(.black)
-                                .background(Color.white)
-                                .cornerRadius(10)
+                                .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                                .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                                .cornerRadius(26.5)
                         }
                     }
                 }
-                .padding(10)
+                .padding(20)
             }
             .navigationBarBackButtonHidden(true) // 상단 네비게이션 바, 버튼 제거
             .navigationBarHidden(true)
@@ -108,6 +114,7 @@ struct ProfileFixView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 135, height: 135)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .clipShape(Circle())
             } else if let imageUrl = userDataManager.currentUser?.profileImageUrl,
                       let url = URL(string: imageUrl) {
@@ -127,8 +134,8 @@ struct ProfileFixView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 135, height: 135)
-                            .clipShape(Circle())
                             .foregroundColor(.gray)
+                            .clipShape(Circle())
                     @unknown default:
                         EmptyView()
                     }
@@ -136,15 +143,16 @@ struct ProfileFixView: View {
             } else {
                 Image(systemName: "camera")
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(Circle())
-                    .padding(30)
+                    .aspectRatio(contentMode: .fit)
+                    .padding(40)
                     .frame(width: 135, height: 135)
                     .foregroundColor(.gray)
                     .background(Color.white.opacity(0.1))
+                    .clipShape(Circle())
             }
         }
     }
+    
     
     private func saveChange() {
         userDataManager.updateUserProfile(username: username, image: selectedImage) { result in
