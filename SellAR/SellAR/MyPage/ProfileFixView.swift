@@ -23,23 +23,29 @@ struct ProfileFixView: View {
                 Color.black.edgesIgnoringSafeArea(.all)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }) {
-                        Image(systemName:"chevron.left")
-                            .resizable()
-                            .frame(width: 11, height: 22)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(.gray)
+                    HStack {
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Image(systemName:"chevron.left")
+                                .resizable()
+                                .frame(width: 11, height: 22)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .foregroundColor(.gray)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                        
+                        Text("프로필 수정")
+                            .font(.headline)
+                            .padding(.bottom, 15)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        
+                        Spacer()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .buttonStyle(PlainButtonStyle())
                     .padding(.bottom, 20)
-                    
-                    Text("프로필 수정")
-                        .font(.headline)
-                        .padding(.bottom, 15)
-                        .foregroundColor(.white)
                     
                     VStack(alignment: .center, spacing: 20) {
                         // 프로필 사진

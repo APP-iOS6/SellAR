@@ -20,18 +20,22 @@ struct MyPageView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button(action: {
-                    //버튼기능 추가예정
-                }) {
-                    Image(systemName: "chevron.left")
-                        .resizable()
-                        .frame(width: 11, height: 22)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.gray)
-                }
-                .buttonStyle(PlainButtonStyle())
+//                Button(action: {
+//                    //버튼기능 추가예정
+//                }) {
+//                    Image(systemName: "chevron.left")
+//                        .resizable()
+//                        .frame(width: 11, height: 22)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                        .foregroundColor(.gray)
+//                }
+//                .buttonStyle(PlainButtonStyle())
                 
                 if userDataManager.currentUser != nil {
+                    
+                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading) // 뒤로가기 버튼 대신한 여백생성으로 가운데 정렬
+                    
                     Text("마이페이지")
                         .font(.system(size: 20))
                         .font(.title)
