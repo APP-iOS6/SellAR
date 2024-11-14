@@ -113,7 +113,7 @@ struct DetailItemView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    Text("가격: \(item.price) 원")
+                    Text("가격: \(formattedPriceInTenThousandWon)") // "원"을 추가하지 않음
                         .font(.title2)
                         .foregroundColor(.blue)
                     
@@ -220,6 +220,26 @@ struct DetailItemView: View {
                 Spacer()
             }
         )
+    }
+    
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(item.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+        }
     }
     
     // AR 보기 기능

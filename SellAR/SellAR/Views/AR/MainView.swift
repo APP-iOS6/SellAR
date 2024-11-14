@@ -10,15 +10,14 @@ struct MainView: View {
             ScrollView {
                 VStack(spacing: 12) {
                     searchField
-                        .padding(.horizontal)
-                        .padding(.top, 8)
+                        .padding(.horizontal, 10)
                     
                     LazyVStack(spacing: 8) {
                         ForEach(vm.filteredItems) { item in
                             NavigationLink(destination: DetailItemView(item: item)) {
                                 ListItemView(item: item, status: item.isSold)
                                     .contentShape(Rectangle())
-                                    .padding(.horizontal)
+                                    .padding(.horizontal, 10)
                             }
                             .buttonStyle(.plain)
                         }
@@ -26,7 +25,6 @@ struct MainView: View {
                     .padding(.top, 8)
                 }
             }
-            .navigationTitle("SellAR")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     addButton
@@ -35,15 +33,13 @@ struct MainView: View {
             .onAppear {
                 vm.listenToItems()
             }
-            .sheet(isPresented: $showAddItemView) {
+            .fullScreenCover(isPresented: $showAddItemView) {
                 if loginViewModel.user.id.isEmpty {
-                    // 로그인되지 않은 경우 로그인 화면으로 이동
-                    NavigationStack {
+                    NavigationView {
                         LoginView()
                     }
                 } else {
-                    // 로그인된 경우 아이템 추가 화면 표시
-                    NavigationStack {
+                    NavigationView {
                         ItemFormView(vm: .init(formType: .add))
                     }
                     .interactiveDismissDisabled()
@@ -76,6 +72,7 @@ struct MainView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .shadow(radius: 1)
+        .padding(.horizontal, 10)
     }
 
     private var addButton: some View {
@@ -98,37 +95,64 @@ struct ListItemView: View {
     let status: Bool
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            thumbnailView
-                .frame(width: 120, height: 120)
-                .cornerRadius(8)
-                .shadow(radius: 2)
+        ZStack(alignment: .bottomTrailing) {
+            HStack(alignment: .top, spacing: 12) {
+                thumbnailView
+                    .frame(width: 120, height: 120)
+                    .cornerRadius(8)
+                    .shadow(radius: 2)
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(item.itemName)
-                    .font(.headline)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(item.itemName)
+                        .font(.headline)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                Text("가격: \(item.price) 원")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    Text("가격: \(formattedPriceInTenThousandWon)") // "원"을 추가하지 않음
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
 
-                Text("지역: \(item.location)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    Text("지역: \(item.location)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
 
-                Text(status ? "판매 완료" : "판매 중")
-                    .font(.subheadline)
-                    .foregroundColor(status ? .gray : .red)
+                    Text(status ? "판매 완료" : "판매 중")
+                        .font(.subheadline)
+                        .foregroundColor(status ? .gray : .red)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 10)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .padding(.horizontal, 10)
+            .shadow(radius: 1)
+
+            if item.usdzLink != nil {
+                arIcon
+                    .padding(10)
+            }
         }
-        .padding(.vertical, 10)
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-        .padding(.horizontal, 10)
-        .shadow(radius: 1)
+    }
+
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(item.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+        }
     }
 
     private var thumbnailView: some View {
@@ -159,5 +183,16 @@ struct ListItemView: View {
             }
         }
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+    }
+
+    private var arIcon: some View {
+        Text("AR")
+            .font(.caption)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(6)
+            .background(Color.white.opacity(0.8))
+            .clipShape(Circle())
+            .shadow(radius: 2)
     }
 }

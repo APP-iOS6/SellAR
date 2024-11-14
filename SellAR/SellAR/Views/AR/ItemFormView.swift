@@ -13,11 +13,12 @@ import PhotosUI
 
 struct ItemFormView: View {
     
-    @StateObject var vm = ItemFormVM()
+    @ObservedObject var vm = ItemFormVM()
     @Environment(\.dismiss) var dismiss
     
     @State private var showImagePicker = false
     @State private var selectedUSDZFileURL: URL?
+    @State private var formattedPrice: String = "0"  // 천 단위 쉼표 포맷팅을 위한 상태 변수
     
     var body: some View {
         Form {
@@ -112,14 +113,15 @@ struct ItemFormView: View {
     var inputSection: some View {
         Section {
             TextField("제목", text: $vm.itemName)
-            TextField("가격", text: $vm.price)
+            
+            TextField("가격", text: $formattedPrice)
                 .keyboardType(.numberPad)
-                .onChange(of: vm.price) { newValue in
+                .onChange(of: formattedPrice) { newValue in
                     vm.price = newValue.filter { $0.isNumber }
-                    if vm.price.isEmpty {
-                        vm.price = "0"
-                    }
+                    formatPrice()
                 }
+            
+            Text("가격: \(formattedPriceInTenThousandWon)") // "원"을 추가하지 않음
             
             ZStack(alignment: .topLeading) {
                 if vm.description.isEmpty {
@@ -176,7 +178,7 @@ struct ItemFormView: View {
                     }
                 }
                 
-                Button("USDZ 삭제", role:  .destructive) {
+                Button("USDZ 삭제", role: .destructive) {
                     Task { await vm.deleteUSDZ() }
                 }
                 
@@ -256,8 +258,37 @@ struct ItemFormView: View {
         let vc = UIApplication.shared.firstKeyWindow?.rootViewController?.presentedViewController ?? UIApplication.shared.firstKeyWindow?.rootViewController
         vc?.present(safariVC, animated: true)
     }
+    
+    func formatPrice() {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        if let priceNumber = Int(vm.price) {
+            formattedPrice = numberFormatter.string(from: NSNumber(value: priceNumber)) ?? "0"
+        } else {
+            formattedPrice = "0"
+        }
+    }
+    
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(vm.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+        }
+    }
 }
-
 
 struct PhotoPickerView: UIViewControllerRepresentable {
     @Binding var selectedImages: [UIImage]
@@ -306,7 +337,6 @@ struct PhotoPickerView: UIViewControllerRepresentable {
         }
     }
 }
-
 
 extension UIApplication {
     var firstKeyWindow: UIWindow? {
