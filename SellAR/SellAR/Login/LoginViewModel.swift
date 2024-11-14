@@ -19,6 +19,7 @@ class LoginViewModel: NSObject, ObservableObject {
     @Published var isMainViewActive = false
     @Published var isNicknameEntryActive = false
     @Published var isLoggedIn = false
+    @Published var userID: String? = nil
     
     @ObservedObject private var errorViewModel = LoginErrorViewModel()
     var completionHandler: ((Bool) -> Void)?
@@ -26,26 +27,32 @@ class LoginViewModel: NSObject, ObservableObject {
     private var db = Firestore.firestore()
     private var storage = Storage.storage().reference()
     
+    private var isLoginPrinted = false
+    
     // MARK: UserDefaults에서 userID 불러오기
     override init() {
-        super.init()
-        if let savedUserID = UserDefaults.standard.string(forKey: "userID") {
-            self.user.id = savedUserID
-            print("유지된 로그인: userID = \(savedUserID)")
-        }
-        if let savedGoogleUserID = UserDefaults.standard.string(forKey: "googleUserID") {
-            self.user.id = savedGoogleUserID
-            print("유지된 구글 로그인: userID = \(savedGoogleUserID)")
-        }
-        if let savedAppleUserID = UserDefaults.standard.string(forKey: "appleUserID") {
-            self.user.id = savedAppleUserID
-            print("유지된 애플 로그인: userID = \(savedAppleUserID)")
-        }
-    }
+            super.init()
+            
+                if let savedUserID = UserDefaults.standard.string(forKey: "userID"), user.id.isEmpty, !isLoginPrinted {
+                    self.user.id = savedUserID
+                    print("유지된 로그인: userID = \(savedUserID)")
+                    isLoginPrinted = true
+                }
+                
+                if let savedGoogleUserID = UserDefaults.standard.string(forKey: "googleUserID"), user.id.isEmpty, !isLoginPrinted {
+                    self.user.id = savedGoogleUserID
+                    print("유지된 구글 로그인: userID = \(savedGoogleUserID)")
+                    isLoginPrinted = true
+                }
+                
+                if let savedAppleUserID = UserDefaults.standard.string(forKey: "appleUserID"), user.id.isEmpty, !isLoginPrinted {
+                    self.user.id = savedAppleUserID
+                    print("유지된 애플 로그인: userID = \(savedAppleUserID)")
+                    isLoginPrinted = true
+                }
+            }
     // 로그인 성공 시 userID 저장
     func saveUserID(_ userID: String, loginMethod: String) {
-        self.isLoggedIn = true
-        print("로그인 됨\(isLoggedIn)")
         switch loginMethod {
         case "email":
             // 이메일로 로그인 시 구글과 애플 ID 지우기
@@ -174,20 +181,21 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     
     // 로그인 메서드
-    func loginWithEmailPassword(email: String, password: String) {
+    func loginWithEmailPassword(email: String, password: String, completion: @escaping (Bool) -> Void = { _ in }) {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 print("로그인 실패 \(error.localizedDescription)")
-                // 오류 코드에 따라 적절한 오류 메시지 처리
+                
                 if (error as NSError).code == AuthErrorCode.invalidEmail.rawValue {
-                    self.errorViewModel.handleLoginError(.invalidEmail)
+                    self.errorViewModel.handleLoginError(.emailNotFound)
                 } else if (error as NSError).code == AuthErrorCode.userNotFound.rawValue {
                     self.errorViewModel.handleLoginError(.emailNotFound)
                 } else if (error as NSError).code == AuthErrorCode.wrongPassword.rawValue {
                     self.errorViewModel.handleLoginError(.incorrectPassword)
                 } else {
-                    self.errorViewModel.handleLoginError(nil)
+                    self.errorViewModel.handleLoginError(.emailNotFound)
                 }
+                completion(false)
                 return
             }
 
@@ -199,6 +207,7 @@ class LoginViewModel: NSObject, ObservableObject {
                 self.saveUserID(firebaseUser.uid, loginMethod: "email")
                 self.isLoggedIn = true
             }
+            completion(true)
         }
     }
 
@@ -208,61 +217,60 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     // MARK: 구글 로그인 메서드
     func loginWithGoogle(completion: @escaping (Bool) -> Void) {
-         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-         let config = GIDConfiguration(clientID: clientID)
-         GIDSignIn.sharedInstance.configuration = config
-         
-         guard let presentingVC = UIApplication.shared.connectedScenes
-             .compactMap({ $0 as? UIWindowScene })
-             .flatMap({ $0.windows })
-             .first(where: { $0.isKeyWindow })?.rootViewController else {
-             print("Root View Controller를 찾을 수 없습니다.")
-             completion(false)
-             return
-         }
-         
-         GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
-             if let error = error {
-                 print("구글 로그인 실패 \(error.localizedDescription)")
-                 completion(false)
-                 return
-             }
-             
-             guard let idToken = signInResult?.user.idToken?.tokenString,
-                   let accessToken = signInResult?.user.accessToken.tokenString else {
-                 print("ID 토큰 또는 액세스 토큰을 가져올 수 없습니다.")
-                 completion(false)
-                 return
-             }
-             
-             let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-             
-             Auth.auth().signIn(with: credential) { authResult, error in
-                 if let error = error {
-                     print("Firebase Google 인증 실패 \(error.localizedDescription)")
-                     completion(false)
-                 } else if let firebaseUser = authResult?.user {
-                     self.saveUserID(firebaseUser.uid, loginMethod: "google")
-                     print("Google 로그인 성공!")
-                     
-                     let email = signInResult?.user.profile?.email ?? ""
-                     self.checkIfUserExists(uid: firebaseUser.uid) { exists in
-                         DispatchQueue.main.async {
-                             if !exists {
-                                 let email = signInResult?.user.profile?.email ?? ""
-                                 let username = signInResult?.user.profile?.name ?? "New User"
-                                 self.saveUserToFirestore(uid: firebaseUser.uid, email: email, username: username, profileImageUrl: nil)
-                                 self.isNicknameEntryActive = true
-                             } else {
-                                 self.isMainViewActive = true
-                             }
-                             completion(true)
-                         }
-                     }
-                 }
-             }
-         }
-     }
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        guard let presentingVC = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow })?.rootViewController else {
+            print("Root View Controller를 찾을 수 없습니다.")
+            completion(false)
+            return
+        }
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: presentingVC) { signInResult, error in
+            if let error = error {
+                print("구글 로그인 실패 \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let idToken = signInResult?.user.idToken?.tokenString,
+                  let accessToken = signInResult?.user.accessToken.tokenString else {
+                print("ID 토큰 또는 액세스 토큰을 가져올 수 없습니다.")
+                completion(false)
+                return
+            }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+            
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    print("Firebase Google 인증 실패 \(error.localizedDescription)")
+                    completion(false)
+                } else if let firebaseUser = authResult?.user {
+                    self.saveUserID(firebaseUser.uid, loginMethod: "google")
+                    print("Google 로그인 성공!")
+                    
+                    self.checkIfUserExists(uid: firebaseUser.uid) { exists in
+                        DispatchQueue.main.async {
+                            if !exists {
+                                let email = signInResult?.user.profile?.email ?? ""
+                                let username = signInResult?.user.profile?.name ?? "New User"
+                                self.saveUserToFirestore(uid: firebaseUser.uid, email: email, username: username, profileImageUrl: nil)
+                                self.isNicknameEntryActive = true
+                            } else {
+                                self.isMainViewActive = true
+                            }
+                            completion(true)
+                        }
+                    }
+                }
+            }
+        }
+    }
      
     // MARK: 애플 로그인 메서드 세부 코드는 AppleExtention.swift에서 구현
     
@@ -300,34 +308,28 @@ class LoginViewModel: NSObject, ObservableObject {
     func getUserDocument(uid: String, completion: @escaping (DocumentSnapshot?, Error?) -> Void) {
         db.collection("users").document(uid).getDocument(completion: completion)
     }
-    
-    // MARK: 로그아웃 버튼 클릭 시 로그아웃 되는 함수
-        func logout() {
-            // Firebase에서 현재 로그인 상태 확인
-            if Auth.auth().currentUser == nil {
-                print("이미 로그아웃 상태입니다.")
-                return  // 이미 로그아웃 상태이면 함수 종료
-            }
+
+// MARK: 로그아웃 버튼 클릭 시 로그아웃 되는 함수
+    func logout() {
+        if Auth.auth().currentUser == nil {
+            print("이미 로그아웃 상태입니다.")
+            return
+        }
+        
+        do {
+            try Auth.auth().signOut()
+            self.isLoggedIn = false
+            UserDefaults.standard.removeObject(forKey: "userID")
+            UserDefaults.standard.removeObject(forKey: "googleUserID")
+            UserDefaults.standard.removeObject(forKey: "appleUserID")
             
-            do {
-                // Firebase 로그아웃
-                try Auth.auth().signOut()
-                
-                self.isLoggedIn = false
-                
-                // UserDefaults에서 저장된 로그인 정보 삭제
-                UserDefaults.standard.removeObject(forKey: "userID")
-                UserDefaults.standard.removeObject(forKey: "googleUserID")
-                UserDefaults.standard.removeObject(forKey: "appleUserID")
-                
-                // 뷰 상태 초기화
-                self.user = User(id: "", email: "", username: "", profileImageUrl: nil)
-                self.isMainViewActive = false
-                self.isNicknameEntryActive = false
-                
-                print("로그아웃 성공")
-            } catch let signOutError as NSError {
-                print("로그아웃 실패: \(signOutError.localizedDescription)")
-            }
+            self.user = User(id: "", email: "", username: "", profileImageUrl: nil)
+            self.isMainViewActive = true // ContentView로 이동
+            self.isNicknameEntryActive = false
+            print("로그아웃 성공")
+        } catch let signOutError as NSError {
+            print("로그아웃 실패: \(signOutError.localizedDescription)")
         }
     }
+
+}

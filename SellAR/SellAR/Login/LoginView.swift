@@ -1,28 +1,21 @@
-//
-//  LoginView.swift
-//  SellAR
-//
-//  Created by Mac on 11/1/24.
-//
-
 import FirebaseAuth
 import FirebaseCore
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @ObservedObject private var viewModel = LoginViewModel()
     @StateObject private var keyboardViewModel = KeyboardViewModel()
     @StateObject private var errorViewModel = LoginErrorViewModel()
     @State private var email = ""
     @State private var password = ""
     @State private var isNicknameEntryActive = false
+    @State private var isMainViewActive = false
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(colorScheme == .dark ? Color("#242427") : .white)
+                Color(colorScheme == .dark ? Color(red: 0.14, green: 0.14, blue: 0.15) : .white)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -30,12 +23,11 @@ struct LoginView: View {
                 
                 GeometryReader { geometry in
                     VStack(spacing: 20) {
-                        Image(systemName: "person.fill")
+                        Image(colorScheme == .dark ? "SellarLogoDark" : "SellarLogoWhite")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: min(geometry.size.width * 0.3, geometry.size.height * 0.16),
-                                   height: min(geometry.size.width * 0.3, geometry.size.height * 0.16))
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .frame(width: min(geometry.size.width * 0.4, geometry.size.height * 0.185),
+                                   height: min(geometry.size.width * 0.4, geometry.size.height * 0.185))
                             .padding(.top, 40)
                         
                         VStack(alignment: .leading, spacing: 5) {
@@ -47,11 +39,12 @@ struct LoginView: View {
                             
                             TextField("이메일을 입력해 주세요", text: $email)
                                 .padding()
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .foregroundColor(.black)
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.white : Color("F3F2F8"))
+                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
                                 .cornerRadius(10)
                                 .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .autocapitalization(.none)
                             
                             Text(errorViewModel.emailError)
                                 .foregroundColor(.red)
@@ -70,8 +63,8 @@ struct LoginView: View {
                             SecureField("비밀번호를 입력해 주세요", text: $password)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(colorScheme == .dark ? Color.white : Color("#F3F2F8"))
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             
@@ -86,25 +79,22 @@ struct LoginView: View {
                             Button(action: {
                                 if email.isEmpty || password.isEmpty {
                                     errorViewModel.handleLoginError(.emptyFields)
-                                } else if (errorViewModel.validateEmailFormat(email) == nil) {
-                                    errorViewModel.handleLoginError(.invalidEmail)
-                                } else if password.count < 6 {
-                                    errorViewModel.handleLoginError(.passwordTooShort)
                                 } else {
-                                    viewModel.loginWithEmailPassword(email: email, password: password)
-                                    
-                                    if viewModel.isLoggedIn {
-                                        presentationMode.wrappedValue.dismiss() // 로그인 성공 후 뷰 닫기
-                                    } else {
-                                        errorViewModel.handleLoginError(.incorrectPassword)
+                                    viewModel.loginWithEmailPassword(email: email, password: password) { success in
+                                        if success {
+                                            if let user = Auth.auth().currentUser {
+                                                viewModel.userID = user.uid
+                                            }
+                                            isMainViewActive = true
+                                        }
                                     }
                                 }
                             }) {
                                 Text("로그인")
                                     .frame(width: geometry.size.width * 0.34, height: geometry.size.height / 50)
                                     .padding()
-                                    .background(Color("#1BD6F5"))
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .background(Color(red: 0.30, green: 0.50, blue: 0.78))
+                                    .foregroundColor(colorScheme == .dark ? .white : .white)
                                     .cornerRadius(10)
                                     .bold()
                                     .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -114,8 +104,8 @@ struct LoginView: View {
                                 Text("회원가입")
                                     .frame(width: geometry.size.width * 0.34, height: geometry.size.height / 50)
                                     .padding()
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                    .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                                    .foregroundColor(.black)
+                                    .background(Color(red: 0.95, green: 0.95, blue: 0.97))
                                     .cornerRadius(10)
                                     .bold()
                                     .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -144,19 +134,20 @@ struct LoginView: View {
                         Button(action: {
                             viewModel.loginWithGoogle { success in
                                 if success {
-                                    presentationMode.wrappedValue.dismiss()
+                                    isMainViewActive = viewModel.isMainViewActive
+                                    isNicknameEntryActive = viewModel.isNicknameEntryActive
                                 }
                             }
                         }) {
                             HStack {
-                                Image(systemName: "globe")
+                                Image("GoogleIcon")
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
                                 Text("Google로 로그인")
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
                             }
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
                             .padding()
-                            .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                            .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
                             .cornerRadius(10)
                             .bold()
                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -166,7 +157,8 @@ struct LoginView: View {
                         Button(action: {
                             viewModel.loginWithApple { success in
                                 if success {
-                                    presentationMode.wrappedValue.dismiss()
+                                    isMainViewActive = viewModel.isMainViewActive
+                                    isNicknameEntryActive = !viewModel.isMainViewActive
                                 }
                             }
                         }) {
@@ -179,7 +171,7 @@ struct LoginView: View {
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
                             .padding()
                             .bold()
-                            .background(colorScheme == .dark ? Color.black : Color("#F3F2F8"))
+                            .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
                             .cornerRadius(10)
                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                         }
@@ -191,14 +183,13 @@ struct LoginView: View {
                     EmptyView()
                 }
             )
+            .background(
+                NavigationLink(destination: ContentView(viewModel: viewModel).navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
+                    EmptyView()
+                }
+            )
         }
     }
-}
-
-func isValidEmail(_ email: String) -> Bool {
-    let validDomains = ["naver.com", "gmail.com", "daum.net", "hotmail.com", "nate.com"]
-    guard let domain = email.split(separator: "@").last else { return false }
-    return validDomains.contains(String(domain))
 }
 
 #Preview {
