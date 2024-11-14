@@ -13,6 +13,7 @@ struct ProfileFixView: View {
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented = false
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     
     init(userDataManager: UserDataManager) {
         self._userDataManager = ObservedObject(wrappedValue: userDataManager)
@@ -20,7 +21,9 @@ struct ProfileFixView: View {
     
     var body: some View {
             ZStack {
-                Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255).edgesIgnoringSafeArea(.all)
+                Color(colorScheme == .dark ?
+                      Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255) : Color(red: 255 / 255, green: 255 / 255, blue: 255 / 255)) // 진회색:순백
+                    .edgesIgnoringSafeArea(.all)
                 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
@@ -37,7 +40,8 @@ struct ProfileFixView: View {
                         
                         
                         Text("프로필 수정")
-                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                            .foregroundColor(colorScheme == .dark ?
+                                Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
                             .font(.system(size: 20))
                             .font(.title)
                             .fontWeight(.bold)
@@ -65,7 +69,8 @@ struct ProfileFixView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("이름")
                                 .font(.headline)
-                                .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                                .foregroundColor(colorScheme == .dark ?
+                                    Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
                             HStack {
@@ -74,8 +79,10 @@ struct ProfileFixView: View {
                                 TextField("", text: $username)
                             }
                             .padding(15)
-                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
-                            .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                            .foregroundColor(colorScheme == .dark ?
+                                Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
+                            .background(colorScheme == .dark ?
+                                Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .cornerRadius(10)
                         }
@@ -146,7 +153,8 @@ struct ProfileFixView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding(40)
                     .frame(width: 135, height: 135)
-                    .foregroundColor(.gray)
+                    .background(colorScheme == .dark ?
+                        Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                     .background(Color.white.opacity(0.1))
                     .clipShape(Circle())
             }

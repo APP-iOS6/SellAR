@@ -15,11 +15,15 @@ struct MyPageView: View {
 
     @StateObject private var userDataManager = UserDataManager()
     @State private var isLoading = true
-
+    @Environment(\.colorScheme) var colorScheme // 다크모드/라이트모드 관련
     
     var body: some View {
         ZStack {
-            Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255).edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ?
+                  Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255) : Color(red: 255 / 255, green: 255 / 255, blue: 255 / 255))
+                .edgesIgnoringSafeArea(.all)
+            // 진회색 : 순백색
+            // 다크모드 : 라이트모드 순서
             VStack(spacing: 0) {
                 HStack {
                     //                Button(action: {
@@ -39,7 +43,8 @@ struct MyPageView: View {
                             .frame(maxWidth: .infinity, alignment: .leading) // 뒤로가기 버튼 대신한 여백생성으로 가운데 정렬
                         
                         Text("마이페이지")
-                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                            .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                             .font(.system(size: 20))
                             .font(.title)
                             .fontWeight(.bold)
@@ -117,14 +122,16 @@ struct MyPageView: View {
                     .padding(40)
                     .frame(width: 135, height: 135)
                     .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
-                    .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                    .background(colorScheme == .dark ?
+                        Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                     .clipShape(Circle())
                                 }
                 // 닉네임 및 이메일
                 VStack(alignment: .leading, spacing: 10) {
                     Text("이름")
                         .font(.headline)
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .foregroundColor(colorScheme == .dark ?
+                        Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack {
@@ -134,8 +141,10 @@ struct MyPageView: View {
                     }
                     .padding(15) // 검정칸 크기
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
-                    .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                    .foregroundColor(colorScheme == .dark ?
+                        Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
+                    .background(colorScheme == .dark ?
+                        Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                     .cornerRadius(10)
                 }
                 .padding(.bottom, 20)
@@ -145,7 +154,8 @@ struct MyPageView: View {
                     Text("게시물")
                         .font(.system(size: 20))
                         .font(.headline)
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     NavigationLink(destination: ItemListView(itemStore: itemStore)) {
@@ -158,16 +168,19 @@ struct MyPageView: View {
                                 .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         }
                         .padding(15)
-                        .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                        .background(colorScheme == .dark ?
+                            Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                         .cornerRadius(10)
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
                     }
                     .padding(.bottom, 20)
                     
                     Text("계정관리")
                         .font(.system(size: 20))
                         .font(.headline)
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     Button(action: {
@@ -184,8 +197,10 @@ struct MyPageView: View {
                             
                         }
                         .padding(15) //검정칸 크기
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
-                        .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                        .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
+                        .background(colorScheme == .dark ?
+                            Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                         .cornerRadius(10)
                     }
                     NavigationLink(destination: ContentView(viewModel: loginViewModel).navigationBarBackButtonHidden(true), isActive: $loginViewModel.isMainViewActive) {
@@ -204,8 +219,11 @@ struct MyPageView: View {
                                 .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         }
                         .padding(15) //검정칸 크기
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
-                        .background(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) //검정
+                        .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
+                        .background(colorScheme == .dark ?
+                            Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
+                        
                         .cornerRadius(10)
                     }
 
@@ -222,21 +240,23 @@ struct MyPageView: View {
         ZStack {
             VStack(alignment: .center, spacing: 20) {
                 
-               Image("SellarLogoDark")
+                Image(colorScheme == .dark ? "SellarLogoDark" : "SellarLogoWhite")
                     .resizable()
                     .frame(width: 150, height: 150)
-
                     .padding()
                     .padding(.bottom,10)
+                
                 Text("로그인이 필요합니다.")
-                    .foregroundColor(.white)
+                    .fontWeight(.bold)
+                    .foregroundColor(colorScheme == .dark ?
+                        Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                     .padding(.bottom,30)
                 
                 NavigationLink(destination: LoginView()) {
                     Text("로그인하기")
                         .frame(width: 150, height: 50)
                         .padding(2)
-                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흐린흰색
                         .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         .cornerRadius(26.5)
                 }

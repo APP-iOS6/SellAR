@@ -85,9 +85,9 @@ struct ItemRowView: View {
                     Text(item.location)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Text(item.isSold ? "판매 완료" : "판매 중")
+                    Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : .red)
+                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
                 }
                 .padding(.leading, 12)
                 
