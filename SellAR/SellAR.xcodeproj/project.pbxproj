@@ -13,6 +13,9 @@
 		04DF4A382CD85DF100B5B637 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04DF4A372CD85DF100B5B637 /* GoogleService-Info.plist */; };
 		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
+		E069407F2CE4991A000D1161 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E069407E2CE4991A000D1161 /* FirebaseAnalytics */; };
+		E06940812CE49920000D1161 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E06940802CE49920000D1161 /* FirebaseMessaging */; };
+		E06940832CE49924000D1161 /* FirebaseInAppMessaging-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = E06940822CE49924000D1161 /* FirebaseInAppMessaging-Beta */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +51,9 @@
 			files = (
 				0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */,
 				B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */,
+				E06940812CE49920000D1161 /* FirebaseMessaging in Frameworks */,
+				E06940832CE49924000D1161 /* FirebaseInAppMessaging-Beta in Frameworks */,
+				E069407F2CE4991A000D1161 /* FirebaseAnalytics in Frameworks */,
 				0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */,
 				049CC3512CD48C7400C331E7 /* FirebaseAuth in Frameworks */,
 				B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */,
@@ -107,6 +113,9 @@
 				049CC3502CD48C7400C331E7 /* FirebaseAuth */,
 				0484022B2CD8506200C3CF8E /* GoogleSignIn */,
 				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
+				E069407E2CE4991A000D1161 /* FirebaseAnalytics */,
+				E06940802CE49920000D1161 /* FirebaseMessaging */,
+				E06940822CE49924000D1161 /* FirebaseInAppMessaging-Beta */,
 			);
 			productName = SellAR;
 			productReference = B8482C5C2CD1F1CB009DDA02 /* SellAR.app */;
@@ -422,6 +431,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		E069407E2CE4991A000D1161 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		E06940802CE49920000D1161 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		E06940822CE49924000D1161 /* FirebaseInAppMessaging-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseInAppMessaging-Beta";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
