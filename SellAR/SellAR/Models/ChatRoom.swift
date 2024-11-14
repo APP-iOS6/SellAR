@@ -10,7 +10,7 @@ import SwiftUI
 struct ChatRoom: Identifiable {
     var id: String
     var name: String
-    var profileImageURL: String
+//    var profileImageURL: String
     var latestMessage: String
     var timestamp: Date
     var participants: [String] // 참여자 ID 배열 추가
@@ -25,5 +25,11 @@ struct ChatRoom: Identifiable {
     // 현재 사용자의 unreadCount만 반환하는 계산 프로퍼티
     func getUnreadCount(for userID: String) -> Int {
         return unreadCount[userID] ?? 0
+    }
+    func getOtherUserProfile(currentUserID: String, users: [String: User]) -> User? {
+        if let otherUserID = participants.first(where: { $0 != currentUserID }) {
+            return users[otherUserID]
+        }
+        return nil
     }
 }
