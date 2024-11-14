@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022B2CD8506200C3CF8E /* GoogleSignIn */; };
 		0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022D2CD8506200C3CF8E /* GoogleSignInSwift */; };
+		B84595752CE5ED7100750E4E /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B84595742CE5ED7100750E4E /* Localizable.xcstrings */; };
 		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
 		B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46942CD884620076BE39 /* FirebaseAuth */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B84595742CE5ED7100750E4E /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		B86F46342CD7F85C0076BE39 /* SellAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06942FC2CE5E232000D1161 /* sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,6 +68,7 @@
 		B8482C532CD1F1CB009DDA02 = {
 			isa = PBXGroup;
 			children = (
+				B84595742CE5ED7100750E4E /* Localizable.xcstrings */,
 				B8482C5E2CD1F1CB009DDA02 /* SellAR */,
 				B8482C6E2CD213DC009DDA02 /* Frameworks */,
 				B8482C5D2CD1F1CB009DDA02 /* Products */,
@@ -142,6 +145,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = B8482C532CD1F1CB009DDA02;
 			minimizedProjectReferenceProxies = 1;
@@ -166,6 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E06942FD2CE5E232000D1161 /* sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json in Resources */,
+				B84595752CE5ED7100750E4E /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +246,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -297,6 +303,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
