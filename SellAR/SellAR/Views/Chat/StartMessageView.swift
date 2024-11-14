@@ -27,10 +27,9 @@ struct StartMessageView: View {
             if loginViewModel.user.id.isEmpty {
                 // 로그인하지 않은 상태
                 VStack {
-                    Image(systemName: "iphone.gen1.slash")
+                    Image("SellarLogoWhite")
                         .resizable()
-                        .frame(width: 100, height: 100)
-                        .foregroundStyle(Color.cyan)
+                        .frame(width: 150, height: 150)
                         .padding(.bottom, 20)
                     Text("표시할 채팅이 없어요.")
                         .foregroundStyle(Color.gray)
