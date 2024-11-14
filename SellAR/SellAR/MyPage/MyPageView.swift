@@ -240,13 +240,14 @@ struct MyPageView: View {
         ZStack {
             VStack(alignment: .center, spacing: 20) {
                 
-               Image("SellarLogoDark")
+                Image(colorScheme == .dark ? "SellarLogoDark" : "SellarLogoWhite")
                     .resizable()
                     .frame(width: 150, height: 150)
-
                     .padding()
                     .padding(.bottom,10)
+                
                 Text("로그인이 필요합니다.")
+                    .fontWeight(.bold)
                     .foregroundColor(colorScheme == .dark ?
                         Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                     .padding(.bottom,30)
