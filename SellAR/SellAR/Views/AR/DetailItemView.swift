@@ -117,9 +117,13 @@ struct DetailItemView: View {
                         .font(.title2)
                         .foregroundColor(.blue)
                     
-                    Text(item.isSold ? "판매 완료" : "판매 중")  // 판매 상태 표시
+//                    Text(item.isSold ? "판매 완료" : "판매 중")  // 판매 상태 표시
+//                        .font(.subheadline)
+//                        .foregroundColor(item.isSold ? .gray : .red)
+                    
+                    Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : .red)
+                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
 
                     Text("\(item.description)")
                         .font(.body)
