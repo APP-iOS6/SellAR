@@ -5,64 +5,75 @@
 //  Created by 박범규 on 11/12/24.
 //
 
+
+
 import Foundation
+import Firebase
 import FirebaseMessaging
+import GoogleSignIn
+import FirebaseAuth
 
 class FCMNotificationService {
     static let shared = FCMNotificationService()
-    private let baseURL = "https://fcm.googleapis.com/v1/projects/sellar-4fc83/messages:send"
     
-    private var accessToken: String?
-    private var tokenExpirationDate: Date?
+    private init() {}
     
-    private func refreshAccessToken() async throws -> String {
-        // Firebase Admin SDK의 서비스 계정 인증 정보를 사용하여
-        // Google OAuth2 토큰을 얻는 로직 구현
-        // https://developers.google.com/identity/protocols/oauth2/service-account
-        return "116344996691347980864"
-    }
+    // V1 API 엔드포인트
+    private let fcmURL = "https://fcm.googleapis.com/v1/projects/sellar-4fc83/messages:send"
     
-    private func getValidAccessToken() async throws -> String {
-        if let token = accessToken,
-           let expirationDate = tokenExpirationDate,
-           expirationDate > Date() {
-            return token
+    func sendNotification(to token: String, title: String, body: String, data: [String: String]) async throws {
+        // 현재 Firebase 앱의 설정에서 프로젝트 ID 가져오기
+        guard let projectID = FirebaseApp.app()?.options.projectID else {
+            throw NSError(domain: "FCMError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Project ID not found"])
         }
         
-        let newToken = try await refreshAccessToken()
-        accessToken = newToken
-        tokenExpirationDate = Date().addingTimeInterval(3600) // 1시간
-        return newToken
-    }
-    
-    func sendNotification(to fcmToken: String, title: String, body: String, data: [String: String]) async throws {
-        let token = try await getValidAccessToken()
+        // FCM V1 API 엔드포인트 구성
+        let urlString = "https://fcm.googleapis.com/v1/projects/\(projectID)/messages:send"
+        guard let url = URL(string: urlString) else {
+            throw NSError(domain: "FCMError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+        }
         
-        var request = URLRequest(url: URL(string: baseURL)!)
+        // Firebase 인증 토큰 가져오기
+        guard let token = try? await Auth.auth().currentUser?.getIDToken() else {
+            throw NSError(domain: "FCMError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to get Firebase token"])
+        }
+        
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
+        // FCM V1 API 메시지 형식
         let message: [String: Any] = [
             "message": [
-                "token": fcmToken,
+                "token": token,
                 "notification": [
                     "title": title,
                     "body": body
                 ],
-                "data": data
+                "data": data,
+                "android": [
+                    "priority": "high"
+                ],
+                "apns": [
+                    "payload": [
+                        "aps": [
+                            "sound": "default",
+                            "badge": 1
+                        ]
+                    ]
+                ]
             ]
         ]
         
-        request.httpBody = try JSONSerialization.data(withJSONObject: message)
+        let jsonData = try JSONSerialization.data(withJSONObject: message)
+        request.httpBody = jsonData
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (_, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse,
               (200...299).contains(httpResponse.statusCode) else {
-            throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "FCM API 요청 실패"])
+            throw NSError(domain: "FCMError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to send notification"])
         }
-        
-        print("알림 전송 성공: \(String(data: data, encoding: .utf8) ?? "")")
     }
 }
