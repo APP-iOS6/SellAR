@@ -116,9 +116,9 @@ struct ListItemView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
 
-                    Text(status ? "판매 완료" : "판매 중")
+                    Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
-                        .foregroundColor(status ? .gray : .red)
+                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -153,11 +153,6 @@ struct ListItemView: View {
         } else {
             return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
         }
-        .padding(.vertical, 10)
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-        .padding(.horizontal, 10)
-        .shadow(radius: 1)
     }
 
     private var thumbnailView: some View {
