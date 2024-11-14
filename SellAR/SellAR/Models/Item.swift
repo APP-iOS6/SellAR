@@ -40,7 +40,7 @@ struct Items: Identifiable, Codable, Equatable {
     // var category: String
      var location: String
     var isSold: Bool = false
-    
+    var isReserved: Bool = false  // 예약 상태 추가    
 }
     // 이정민이 추가한 Item
     struct Item: Identifiable, Codable, Equatable {
@@ -54,6 +54,7 @@ struct Items: Identifiable, Codable, Equatable {
         var category: String
         var location: String
         var isSold: Bool
+        var isReserved: Bool  // 예약 상태 추가
         var createdAt: Date?
         var updatedAt: Date?
         var thumbnailLink: String?
@@ -78,6 +79,7 @@ struct Items: Identifiable, Codable, Equatable {
             self.category = document["category"] as? String ?? "카테고리" // 기본 카테고리 설정
             self.location = document["location"] as? String ?? ""
             self.isSold = document["isSold"] as? Bool ?? false
+            self.isReserved = document["isReserved"] as? Bool ?? false // Firestore에서 가져오기
             self.createdAt = (document["createdAt"] as? Timestamp)?.dateValue() ?? Date()
             self.updatedAt = (document["updatedAT"] as? Timestamp)?.dateValue() ?? Date()
             self.thumbnailLink = document["thumbnailLink"] as? String ?? ""

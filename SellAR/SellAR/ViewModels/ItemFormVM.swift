@@ -31,6 +31,7 @@ class ItemFormVM: ObservableObject {
     @Published var location = ""
     @Published var selectedImages: [UIImage] = []
     @Published var imageURLs: [URL] = []
+    @Published var isReserved: Bool = false
     
     let byteCountFormatter: ByteCountFormatter = {
         let f = ByteCountFormatter()
@@ -111,7 +112,8 @@ class ItemFormVM: ObservableObject {
                 description: description,
                 price: price,
                 images: imageURLs.map { $0.absoluteString },  // URL 문자열 배열로 변환
-                location: location
+                location: location,
+                isReserved: isReserved
             )
         case .edit(let existingItem):
             item = existingItem
