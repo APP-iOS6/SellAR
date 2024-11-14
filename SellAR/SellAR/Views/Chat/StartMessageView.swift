@@ -49,7 +49,7 @@ struct StartMessageView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))
             } else {
                 // 로그인한 상태
                 NavigationView {

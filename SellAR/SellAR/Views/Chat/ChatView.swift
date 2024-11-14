@@ -21,8 +21,9 @@ struct ChatRoomRow: View {
     
     var body: some View {
         HStack(spacing: 15) {
-            // Get other user's profile and use their image
-            if let otherUser = chatRoom.getOtherUserProfile(currentUserID: currentUserID, users: chatViewModel.chatUsers) {
+            // 상대방의 프로필을 가져오기
+            if let otherUserID = chatRoom.participants.first(where: { $0 != currentUserID }),
+               let otherUser = chatViewModel.chatUsers[otherUserID] {
                 AsyncImage(url: URL(string: otherUser.profileImageUrl ?? "")) { image in
                     image.resizable()
                 } placeholder: {
@@ -30,36 +31,34 @@ struct ChatRoomRow: View {
                 }
                 .frame(width: 50, height: 50)
                 .clipShape(Circle())
-            }
-            
-            VStack(alignment: .leading, spacing: 5) {
-                if let otherUser = chatRoom.getOtherUserProfile(currentUserID: currentUserID, users: chatViewModel.chatUsers) {
+                
+                VStack(alignment: .leading, spacing: 5) {
                     Text(otherUser.username)
                         .font(.headline)
                         .foregroundColor(.primary)
+                    
+                    Text(chatRoom.latestMessage)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .lineLimit(1)
                 }
                 
-                Text(chatRoom.latestMessage)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .lineLimit(1)
-            }
-            
-            Spacer()
-            
-            VStack {
-                Text(chatRoom.formattedTime)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                Spacer()
                 
-                let unreadCount = chatRoom.getUnreadCount(for: currentUserID)
-                if unreadCount > 0 {
-                    Text("\(unreadCount)")
+                VStack {
+                    Text(chatRoom.formattedTime)
                         .font(.caption)
-                        .foregroundColor(.white)
-                        .frame(minWidth: 20, minHeight: 20)
-                        .background(Color.red)
-                        .clipShape(Circle())
+                        .foregroundColor(.gray)
+                    
+                    let unreadCount = chatRoom.getUnreadCount(for: currentUserID)
+                    if unreadCount > 0 {
+                        Text("\(unreadCount)")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                            .frame(minWidth: 20, minHeight: 20)
+                            .background(Color.red)
+                            .clipShape(Circle())
+                    }
                 }
             }
         }
@@ -185,6 +184,7 @@ struct ChatInputView: View {
     var body: some View {
         HStack {
             TextField("메시지를 입력하세요", text: $messageContent)
+                .frame(height: 35) // TextField의 높이를 늘림
                 .padding(.horizontal, 15)
                 .foregroundColor(Color.primary)
                 .overlay {
@@ -193,7 +193,7 @@ struct ChatInputView: View {
                 }
                 .padding(.vertical, 10)
             
-            Spacer().frame(width: 10)
+            Spacer().frame(width: 15) // 간격을 10에서 15로 늘림
             
             Button(action: {
                 guard !messageContent.isEmpty else { return }
@@ -202,7 +202,8 @@ struct ChatInputView: View {
             }) {
                 Image(systemName: "paperplane.fill")
                     .foregroundColor(.blue)
-                    .padding(.trailing)
+                    .padding(.trailing, 5) // 오른쪽 패딩을 추가
+                    .frame(width: 40, height: 40) // 버튼 영역을 명확하게 지정
             }
         }
         .padding(.horizontal, 16)
