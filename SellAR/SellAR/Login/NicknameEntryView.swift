@@ -23,11 +23,11 @@ struct NicknameEntryView: View {
     var body: some View {
         VStack {
             if isNicknameSaved {
-                MainView()
+                ContentView()
             } else {
                 NavigationStack {
                     ZStack {
-                        Color(colorScheme == .dark ? Color(red: 0.14, green: 0.14, blue: 0.15) : .white)
+                        Color(colorScheme == .dark ? Color(red: 0.15, green: 0.20, blue: 0.31) : Color(red: 0.80, green: 0.85, blue: 0.93))
                             .edgesIgnoringSafeArea(.all)
                             .onTapGesture {
                                 hideKeyboard()
@@ -41,7 +41,7 @@ struct NicknameEntryView: View {
                                 ) {
                                     ZStack {
                                         Circle()
-                                            .fill(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                                            .fill(Color(red: 0.95, green: 0.95, blue: 0.97))
                                             .frame(width: 120, height: 120)
                                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                                         
@@ -83,7 +83,8 @@ struct NicknameEntryView: View {
                                 TextField("닉네임을 입력해 주세요", text: $nickname)
                                     .padding()
                                     .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                    .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                                    .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                    .foregroundColor(.black)
                                     .cornerRadius(10)
                                     .padding(.horizontal, 10)
                                     .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -120,7 +121,7 @@ struct NicknameEntryView: View {
                                         .disabled(nickname.isEmpty)
                                 }
                                 
-                                NavigationLink(destination: MainView().navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
+                                NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
                                     EmptyView()
                                 }
                             }

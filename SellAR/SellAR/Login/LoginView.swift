@@ -21,7 +21,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(colorScheme == .dark ? Color(red: 0.14, green: 0.14, blue: 0.15) : .white)
+                Color(colorScheme == .dark ? Color(red: 0.15, green: 0.20, blue: 0.31) : Color(red: 0.80, green: 0.85, blue: 0.93))
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -102,7 +102,7 @@ struct LoginView: View {
                                     .frame(width: geometry.size.width * 0.34, height: geometry.size.height / 50)
                                     .padding()
                                     .background(Color(red: 0.30, green: 0.50, blue: 0.78))
-                                    .foregroundColor(colorScheme == .dark ? .white : .white)
+                                    .foregroundColor(.white)
                                     .cornerRadius(10)
                                     .bold()
                                     .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -150,13 +150,12 @@ struct LoginView: View {
                         }) {
                             HStack {
                                 Image("GoogleIcon")
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                 Text("Google로 로그인")
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .foregroundColor(.white)
                             }
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
                             .padding()
-                            .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                            .background(Color(red: 0.30, green: 0.50, blue: 0.78))
                             .cornerRadius(10)
                             .bold()
                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
@@ -173,14 +172,14 @@ struct LoginView: View {
                         }) {
                             HStack {
                                 Image(systemName: "applelogo")
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .foregroundColor(.white)
                                 Text("Apple로 로그인")
-                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .foregroundColor(.white)
                             }
                             .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
                             .padding()
                             .bold()
-                            .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                            .background(Color(red: 0.30, green: 0.50, blue: 0.78))
                             .cornerRadius(10)
                             .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                         }
@@ -188,7 +187,7 @@ struct LoginView: View {
                 }
             }
             .background(
-                NavigationLink(destination: MainView().navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
+                NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
                     EmptyView()
                 }
             )
