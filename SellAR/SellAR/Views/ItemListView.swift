@@ -15,32 +15,29 @@ struct ItemRowView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                // Image Section
+            HStack(alignment: .top, spacing: 12) {
+                // Thumbnail View Section
                 if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
                    let imageURL = URL(string: imageURLString) {
-                    // URL이 유효하면 AsyncImage로 이미지를 비동기적으로 로딩
                     AsyncImage(url: imageURL) { phase in
                         switch phase {
                         case .empty:
-                            // 이미지 로딩 중
                             ProgressView()
-                                .frame(width: 150, height: 150)
+                                .frame(width: 120, height: 120)
                         case .success(let image):
-                            // 이미지 로딩 성공 시
                             image
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 150, height: 150)
+                                .frame(width: 120, height: 120)
                                 .clipped()
-                                .cornerRadius(12)
+                                .cornerRadius(8)
+                                .shadow(radius: 2)
                         case .failure:
-                            // 이미지를 불러오지 못했을 때 흰색 배경
                             Color.white
-                                .frame(width: 150, height: 150)
-                                .cornerRadius(12)
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: 8)
                                         .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                                 )
                         @unknown default:
@@ -48,18 +45,15 @@ struct ItemRowView: View {
                         }
                     }
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 8)
                             .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                     )
-                    .padding(.leading, 12)
-                    .padding(.vertical, 10)
                 } else {
-                    // 이미지 URL이 비어있으면 "없음" 표시
                     Color.white
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(12)
+                        .frame(width: 120, height: 120)
+                        .cornerRadius(8)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: 8)
                                 .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                         )
                         .overlay(
@@ -68,31 +62,27 @@ struct ItemRowView: View {
                                 .font(.system(size: 16, weight: .bold))
                         )
                 }
-
-
-                
                 
                 // Item Info Section
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("\(formattedPriceInTenThousandWon)")
-                        .font(.title2.bold())
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
+                VStack(alignment: .leading, spacing: 6) {
                     Text(item.itemName)
                         .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                    Text(item.location)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    Text("가격: \(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                    
+                    Text("지역: \(item.location)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
                     Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
+                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red))
                 }
-                .padding(.leading, 12)
-                
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // Ellipsis Button
                 Button(action: {
@@ -104,38 +94,31 @@ struct ItemRowView: View {
                         .padding(8)
                         .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                 }
-                .padding(.top, -70)
-                .padding(.trailing, 12)
             }
+            .padding(.vertical, 10)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .shadow(radius: 1)
+            .padding(.horizontal, 16)
         }
-        .frame(maxWidth: .infinity, maxHeight: 200)
-        .padding(.vertical, 8)
-        .background(
-            colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white
-        )
-        .cornerRadius(15)
-        .shadow(color: colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.2), radius: 5, x: 0, y: 2)
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
     }
-    
-    private var formattedPriceInTenThousandWon: String {
-        let priceNumber = Int(item.price) ?? 0
-        let tenThousandUnit = priceNumber / 10000
-        let remaining = priceNumber % 10000
-        
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        
-        if tenThousandUnit > 0 {
-            if remaining == 0 {
-                return "\(tenThousandUnit)만원"
-            } else {
-                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
-                return "\(tenThousandUnit)만 \(remainingStr)원"
-            }
-        } else {
-            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+             private var formattedPriceInTenThousandWon: String {
+                let priceNumber = Int(item.price) ?? 0
+                let tenThousandUnit = priceNumber / 10000
+                let remaining = priceNumber % 10000
+                
+                let formatter = NumberFormatter()
+                formatter.numberStyle = .decimal
+                
+                if tenThousandUnit > 0 {
+                    if remaining == 0 {
+                        return "\(tenThousandUnit)만원"
+                    } else {
+                        let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                        return "\(tenThousandUnit)만 \(remainingStr)원"
+                    }
+                } else {
+                    return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
         }
     }
 }
@@ -155,7 +138,7 @@ struct ItemListView: View {
         if searchText.isEmpty {
             return itemStore.items
         } else {
-            return itemStore.items.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+            return itemStore.items.filter { $0.itemName.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
