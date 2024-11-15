@@ -84,15 +84,23 @@ struct ItemRowView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // Ellipsis Button
-                Button(action: {
-                    selectedItem = item
-                    showDetailSheet = true
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(colorScheme == .dark ? .black : .white)
-                        .padding(8)
-                        .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+                VStack {
+                    // Ellipsis Button
+                    Button(action: {
+                        selectedItem = item
+                        showDetailSheet = true
+                    }) {
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(colorScheme == .dark ? .black : .white)
+                            .padding(8)
+                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+                    }
+                    Spacer()
+                    
+                    if !item.usdzLink.isEmpty {
+                        arIcon
+                    }
+                    
                 }
             }
             .padding(.vertical, 10)
@@ -121,6 +129,17 @@ struct ItemRowView: View {
                     return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
         }
     }
+    
+    private var arIcon: some View {
+        Text("AR")
+            .font(.caption)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(6)
+            .background(Color.white.opacity(0.8))
+            .clipShape(Circle())
+            .shadow(radius: 2)
+    }
 }
 
 
@@ -144,7 +163,7 @@ struct ItemListView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 6) {
                 // Search Bar
                 HStack {
                     TextField("상품 이름을 입력해주세요.", text: $searchText)
@@ -167,6 +186,7 @@ struct ItemListView: View {
                 }
                 .padding(.top, 15)
                 .padding(.horizontal, 16)
+                .padding(.bottom,15)
                 
                 // Item Rows
                 ForEach(filteredItems) { item in
