@@ -15,7 +15,7 @@ struct MainView: View {
                     
                     LazyVStack(spacing: 8) {
                         ForEach(vm.filteredItems) { item in
-                            NavigationLink(destination: DetailItemView(item: item)) {
+                            NavigationLink(destination: DetailItemView(item: item, currentUserID: loginViewModel.user.id)) {
                                 ListItemView(item: item, status: item.isSold)
                                     .contentShape(Rectangle())
                                     .padding(.horizontal)

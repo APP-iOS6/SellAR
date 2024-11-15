@@ -11,9 +11,17 @@ import SafariServices
 struct DetailItemView: View {
     let item: Items
     @StateObject private var userVM = UserViewModel()
+    @StateObject private var chatViewModel: ChatViewModel
+    @State private var navigateToChatRoom = false
+    @State private var chatRoomID: String?
     @State private var showAlert = false
     @State private var showUserItems = false
     @State private var showReportConfirmation = false  // 추가: 신고 완료 메시지 표시 여부
+    
+    init(item: Items, currentUserID: String) {
+          self.item = item
+          _chatViewModel = StateObject(wrappedValue: ChatViewModel(senderID: currentUserID))
+      }
     
     var body: some View {
         ScrollView {
@@ -178,6 +186,23 @@ struct DetailItemView: View {
             }
             .hidden()
         )
+        .background(
+            NavigationLink(
+                destination: Group {
+                    if let chatRoomID = chatRoomID {
+                        ChatContentView(
+                            chatViewModel: chatViewModel,
+                            chatRoomID: chatRoomID,
+                            currentUserID: chatViewModel.senderID,
+                            otherUserID: item.userId
+                        )
+                    }
+                },
+                isActive: $navigateToChatRoom
+            ) {
+                EmptyView()
+            }
+        )
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -231,8 +256,34 @@ struct DetailItemView: View {
     
     // 채팅 시작 기능
     func startChat() {
-        // 채팅 화면으로 이동하는 로직을 여기에 추가
+        // 판매자 정보로 User 객체 생성
+        let seller = User(
+            id: item.userId,
+            email: "", // 이메일은 필요하지 않으므로 빈 문자열
+            username: userVM.user?.username ?? "알 수 없음",
+            profileImageUrl: userVM.user?.profileImageUrl
+        )
+        
+        // 기존 채팅방이 있는지 확인
+        if let existingChatRoom = chatViewModel.chatRooms.first(where: { room in
+            room.participants.contains(item.userId) && room.participants.contains(chatViewModel.senderID)
+        }) {
+            self.chatRoomID = existingChatRoom.id
+            self.navigateToChatRoom = true
+        } else {
+            chatViewModel.createNewChatRoom(with: seller)
+            // 채팅방 목록을 다시 불러온 후 새로 생성된 채팅방으로 이동
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if let newChatRoom = chatViewModel.chatRooms.first(where: { room in
+                    room.participants.contains(item.userId) && room.participants.contains(chatViewModel.senderID)
+                }) {
+                    self.chatRoomID = newChatRoom.id
+                    self.navigateToChatRoom = true
+                }
+            }
+        }
     }
+    
     
     // 신고하기 기능
     func reportItem() {
