@@ -187,7 +187,7 @@ struct LoginView: View {
                 }
             }
             .background(
-                NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
+                NavigationLink(destination: ContentView(viewModel: viewModel).navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
                     EmptyView()
                 }
             )

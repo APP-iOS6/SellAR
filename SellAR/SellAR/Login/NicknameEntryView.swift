@@ -23,7 +23,7 @@ struct NicknameEntryView: View {
     var body: some View {
         VStack {
             if isNicknameSaved {
-                ContentView()
+                ContentView(viewModel: viewModel)
             } else {
                 NavigationStack {
                     ZStack {
@@ -120,8 +120,7 @@ struct NicknameEntryView: View {
                                         .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                                         .disabled(nickname.isEmpty)
                                 }
-                                
-                                NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
+                                NavigationLink(destination: ContentView(viewModel: viewModel).navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
                                     EmptyView()
                                 }
                             }

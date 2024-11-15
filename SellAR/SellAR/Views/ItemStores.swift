@@ -78,6 +78,28 @@ class ItemStore: ObservableObject {
                     }
                 }
         }
+    // 유저별 아이템 확인용
+    func fetchAllItems() {
+            db.collection("items")
+                .order(by: "createdAt", descending: true)
+                .addSnapshotListener { (snapshot, error) in
+                    if let error = error {
+                        print("아이템을 가져오는 중 오류 발생: \(error.localizedDescription)")
+                        return
+                    }
+
+                    guard let documents = snapshot?.documents else {
+                        print("아이템이 없습니다.")
+                        return
+                    }
+
+                    self.items = documents.compactMap { doc in
+                        let data = doc.data()
+                        return Item(document: data)
+                    }
+                    print("Fetched all items:", self.items)
+                }
+        }
 
 
 //    func fetchItems() {
@@ -108,6 +130,7 @@ class ItemStore: ObservableObject {
             "title": item.title,
             "description": item.description,
             "price": item.price,
+            "images": item.images
             // 필요한 경우 다른 필드도 추가
         ]) { error in
             if let error = error {
@@ -119,12 +142,13 @@ class ItemStore: ObservableObject {
         }
     }
     
-    func updateItemStatus(itemId: String, isSold: Bool) {
+    func updateItemStatus(itemId: String, isSold: Bool, isReserved: Bool) {
         let db = Firestore.firestore()
         let itemRef = db.collection("items").document(itemId)
         
         itemRef.updateData([
-            "isSold": isSold
+            "isSold": isSold,
+            "isReserved": isReserved
         ]) { error in
             if let error = error {
                 print("문서 업데이트 중 오류 발생: \(error)")
