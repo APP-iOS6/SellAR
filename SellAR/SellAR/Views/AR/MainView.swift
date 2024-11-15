@@ -25,6 +25,13 @@ struct MainView: View {
                     .padding(.top, 8)
                 }
             }
+            .background(
+                Color(UIColor {
+                    $0.userInterfaceStyle == .dark ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1) :
+                                                     UIColor(red: 203 / 255, green: 217 / 255, blue: 238 / 255, alpha: 1)
+                }).ignoresSafeArea()
+            )
+
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     addButton
@@ -90,6 +97,7 @@ struct MainView: View {
     }
 }
 
+
 struct ListItemView: View {
     let item: Items
     let status: Bool
@@ -119,6 +127,11 @@ struct ListItemView: View {
                     Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
                         .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
+                    
+                    Text(" \(item.formattedCreatedAt)")  // 생성 시간 표시
+                                                .font(.footnote)
+                                                .foregroundColor(.gray)
+                    
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
