@@ -67,6 +67,9 @@ struct NicknameEntryView: View {
                                     Task {
                                         if let data = try? await newItem?.loadTransferable(type: Data.self) {
                                             selectedItemData = data
+                                            if let image = UIImage(data: data)?.croppedToSquare() {
+                                                selectedItemData = image.jpegData(compressionQuality: 1.0)
+                                            }
                                         }
                                     }
                                 }
