@@ -74,10 +74,11 @@ struct ItemRowView: View {
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("\(item.price) 원")
+                    Text("\(formattedPriceInTenThousandWon)")
                         .font(.title2.bold())
                         .foregroundColor(.primary)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                     Text(item.itemName)
                         .font(.headline)
                         .foregroundColor(.primary)
@@ -116,6 +117,26 @@ struct ItemRowView: View {
         .shadow(color: colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.2), radius: 5, x: 0, y: 2)
         .padding(.horizontal, 16)
         .padding(.top, 8)
+    }
+    
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(item.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+        }
     }
 }
 
