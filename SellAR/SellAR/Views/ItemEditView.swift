@@ -34,6 +34,7 @@ struct ItemEditView: View {
             get: { selectedItem?.itemName ?? "" },
             set: { selectedItem?.itemName = $0 }
         ))
+        .foregroundStyle(Color.black)
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
         .focused($textFocused, equals: .textTitle)
@@ -43,6 +44,7 @@ struct ItemEditView: View {
     
     private var descriptionTextEditor: some View {
         TextEditor(text: $description)
+            .foregroundStyle(Color.black)
             .onChange(of: description) { newValue in
                 selectedItem?.description = newValue
             }
@@ -74,6 +76,7 @@ struct ItemEditView: View {
                     .padding(.trailing, 5)
             }
             .frame(maxWidth: .infinity, maxHeight: 25)
+            .foregroundStyle(Color.black)
             .focused($textFocused, equals: .textPrice)
             .textFieldStyle(.plain)
             .padding(.vertical, 10)
@@ -116,7 +119,8 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("촬영하기")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "camera")
                     .foregroundColor(Color.cyan)
             }
@@ -127,7 +131,8 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("올리기")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "square.and.arrow.up")
                     .foregroundColor(Color.cyan)
             }
@@ -139,7 +144,8 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("이미지")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "photo")
                     .foregroundColor(Color.cyan)
             }
@@ -148,14 +154,16 @@ struct ItemEditView: View {
             
             Button(action: { print("지역설정") }) {
                 Text("지역설정")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "map")
                     .foregroundColor(Color.cyan)
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+        .background(Color.white)
+//        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
         .cornerRadius(8).overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.gray, lineWidth: 1)
@@ -243,6 +251,7 @@ struct ItemEditView: View {
                             VStack {
                                 HStack {
                                     Text("제목")
+                                        .foregroundStyle(Color.black)
                                         .font(.system(size: 20, weight: .bold))
                                         .padding(.leading, 5)
                                     
@@ -260,7 +269,8 @@ struct ItemEditView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+                            .background(Color.white)
+//                            .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
                             .cornerRadius(8)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
