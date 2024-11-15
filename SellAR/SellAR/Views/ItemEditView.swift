@@ -14,6 +14,7 @@ struct ItemEditView: View {
         case textTitle
         case textdescription
         case textPrice
+        case location
     }
     
     @Binding var selectedItem: Item?
@@ -41,6 +42,20 @@ struct ItemEditView: View {
         .padding(.vertical, 5)
         .padding(.leading, 10)
     }
+    
+    private var locationTextField: some View {
+        TextField("위치를 입력해 주세요", text: Binding(
+            get: { selectedItem?.location ?? "" },
+            set: { selectedItem?.location = $0 }
+        ))
+        .foregroundStyle(Color.black)
+        .frame(maxWidth: .infinity, maxHeight: 25)
+        .textFieldStyle(.plain)
+        .focused($textFocused, equals: .location)
+        .padding(.vertical, 5)
+        .padding(.leading, 5)
+    }
+    
     
     private var descriptionTextEditor: some View {
         TextEditor(text: $description)
@@ -150,17 +165,17 @@ struct ItemEditView: View {
                     .foregroundColor(Color.cyan)
             }
             
-            Divider()
+//            Divider()
             
-            Button(action: { print("지역설정") }) {
-                Text("지역설정")
-                    .foregroundStyle(Color.black)
-//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                Image(systemName: "map")
-                    .foregroundColor(Color.cyan)
-            }
+//            Button(action: { print("지역설정") }) {
+//                Text("지역설정")
+//                    .foregroundStyle(Color.black)
+////                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+//                Image(systemName: "map")
+//                    .foregroundColor(Color.cyan)
+//            }
         }
-        .frame(maxWidth: .infinity)
+        .frame(width: .infinity)
         .padding()
         .background(Color.white)
 //        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
@@ -256,6 +271,13 @@ struct ItemEditView: View {
                                         .padding(.leading, 5)
                                     
                                     titleTextField
+                                    
+                                    Text("위치")
+                                        .foregroundStyle(Color.black)
+                                        .font(.system(size: 20, weight: .bold))
+                                        .padding(.leading, 5)
+                                    
+                                    locationTextField
                                 }
                                 
                                 Divider()
