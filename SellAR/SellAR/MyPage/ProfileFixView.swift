@@ -22,8 +22,8 @@ struct ProfileFixView: View {
     var body: some View {
             ZStack {
                 Color(colorScheme == .dark ?
-                      Color(red: 36 / 255, green: 36 / 255, blue: 39 / 255) : Color(red: 255 / 255, green: 255 / 255, blue: 255 / 255)) // 진회색:순백
-                    .edgesIgnoringSafeArea(.all)
+                      Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+                    .edgesIgnoringSafeArea(.all) // 남색 : 하늘색
                 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
@@ -33,7 +33,9 @@ struct ProfileFixView: View {
                             Image(systemName:"chevron.left")
                                 .resizable()
                                 .frame(width: 11, height: 22)
-                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+//                                .foregroundColor(colorScheme == .dark ?
+//                                    Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
+                                .foregroundColor(colorScheme == .dark ? Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255) : Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255))
                         }
                         .buttonStyle(PlainButtonStyle())
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -43,7 +45,6 @@ struct ProfileFixView: View {
                             .foregroundColor(colorScheme == .dark ?
                                 Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
                             .font(.system(size: 20))
-                            .font(.title)
                             .fontWeight(.bold)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -66,27 +67,27 @@ struct ProfileFixView: View {
                         }
                         
                         // 닉네임 및 이메일
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("이름")
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .dark ?
-                                    Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
+//                            Text("이름")
+//                                .font(.headline)
+//                                .foregroundColor(colorScheme == .dark ?
+//                                    Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255))//흐린흰색:검정
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                            
                             HStack {
                                 Image(systemName: "person.text.rectangle")
                                     .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                                    .padding(.trailing, 6)
                                 TextField("", text: $username)
+                                    .fontWeight(.bold)
+                                    .font(.system(size: 14))
+                                    .fontWeight(.bold)
+                                    .frame(maxWidth:.infinity, alignment: .leading)
                             }
-                            .padding(15)
-                            .foregroundColor(colorScheme == .dark ?
-                                Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
-                            .background(colorScheme == .dark ?
-                                Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
+                            .padding(15) // 검정칸 크기
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255))
+                            .background(.white)
                             .cornerRadius(10)
-                        }
-                        .padding(.bottom, 20)
                         
                         Spacer()
                         
@@ -100,7 +101,8 @@ struct ProfileFixView: View {
                         }
                     }
                 }
-                .padding(20)
+                .frame(maxHeight:.infinity , alignment: .leading)
+                .padding(10)
             }
             .navigationBarBackButtonHidden(true) // 상단 네비게이션 바, 버튼 제거
             .navigationBarHidden(true)
@@ -153,9 +155,8 @@ struct ProfileFixView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding(40)
                     .frame(width: 135, height: 135)
-                    .background(colorScheme == .dark ?
-                        Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255) : Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
-                    .background(Color.white.opacity(0.1))
+                    .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //연파랑
+                    .background(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
                     .clipShape(Circle())
             }
         }
