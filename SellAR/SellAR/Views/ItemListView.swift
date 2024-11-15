@@ -15,32 +15,31 @@ struct ItemRowView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                // Image Section
+            HStack(alignment: .top, spacing: 12) {
+                // Thumbnail View Section
                 if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
                    let imageURL = URL(string: imageURLString) {
-                    // URL이 유효하면 AsyncImage로 이미지를 비동기적으로 로딩
                     AsyncImage(url: imageURL) { phase in
                         switch phase {
                         case .empty:
-                            // 이미지 로딩 중
                             ProgressView()
-                                .frame(width: 150, height: 150)
+                                .frame(width: 120, height: 120)
+                                .background(Color.gray)
+                                .cornerRadius(8)
                         case .success(let image):
-                            // 이미지 로딩 성공 시
                             image
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 150, height: 150)
+                                .frame(width: 120, height: 120)
                                 .clipped()
-                                .cornerRadius(12)
+                                .cornerRadius(8)
+                                .shadow(radius: 2)
                         case .failure:
-                            // 이미지를 불러오지 못했을 때 흰색 배경
                             Color.white
-                                .frame(width: 150, height: 150)
-                                .cornerRadius(12)
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: 8)
                                         .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                                 )
                         @unknown default:
@@ -48,18 +47,16 @@ struct ItemRowView: View {
                         }
                     }
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 8)
                             .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                     )
-                    .padding(.leading, 12)
-                    .padding(.vertical, 10)
+                    .padding(.leading, 10)
                 } else {
-                    // 이미지 URL이 비어있으면 "없음" 표시
                     Color.white
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(12)
+                        .frame(width: 120, height: 120)
+                        .cornerRadius(8)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: 8)
                                 .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                         )
                         .overlay(
@@ -67,55 +64,92 @@ struct ItemRowView: View {
                                 .foregroundColor(.gray)
                                 .font(.system(size: 16, weight: .bold))
                         )
+                        .padding(.leading, 10)
                 }
-
-
-                
                 
                 // Item Info Section
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("\(item.price) 원")
-                        .font(.title2.bold())
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
+                VStack(alignment: .leading, spacing: 6) {
                     Text(item.itemName)
                         .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                    Text(item.location)
+                        .foregroundStyle(Color.black)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    Text("가격: \(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(Color.gray)
+                    
+                    Text("지역: \(item.location)")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.gray)
+                    
                     Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
+                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red))
+                    
+//                    Text("\(item.createdAt ?? Date())")
+//                        .font(.subheadline)
+//                        .foregroundStyle(Color.gray)
+//                        .lineLimit(1)
                 }
-                .padding(.leading, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Spacer()
-                
-                // Ellipsis Button
-                Button(action: {
-                    selectedItem = item
-                    showDetailSheet = true
-                }) {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(colorScheme == .dark ? .black : .white)
-                        .padding(8)
-                        .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+                VStack {
+                    // Ellipsis Button
+                    Button(action: {
+                        selectedItem = item
+                        showDetailSheet = true
+                    }) {
+                        Image(systemName: "ellipsis")
+                            .foregroundStyle(Color.black)
+//                            .foregroundColor(colorScheme == .dark ? .black : .white)
+                            .padding(8)
+//                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+                    }
+                    Spacer()
+                    
+                    if !item.usdzLink.isEmpty {
+                        arIcon
+                    }
+                    
                 }
-                .padding(.top, -70)
-                .padding(.trailing, 12)
             }
+            .padding(.vertical, 10)
+            .background(Color(.white))
+            .cornerRadius(12)
+            .shadow(radius: 1)
+            .padding(.horizontal, 16)
         }
-        .frame(maxWidth: .infinity, maxHeight: 200)
-        .padding(.vertical, 8)
-        .background(
-            colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white
-        )
-        .cornerRadius(15)
-        .shadow(color: colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.2), radius: 5, x: 0, y: 2)
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
+    }
+             private var formattedPriceInTenThousandWon: String {
+                let priceNumber = Int(item.price) ?? 0
+                let tenThousandUnit = priceNumber / 10000
+                let remaining = priceNumber % 10000
+                
+                let formatter = NumberFormatter()
+                formatter.numberStyle = .decimal
+                
+                if tenThousandUnit > 0 {
+                    if remaining == 0 {
+                        return "\(tenThousandUnit)만원"
+                    } else {
+                        let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                        return "\(tenThousandUnit)만 \(remainingStr)원"
+                    }
+                } else {
+                    return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+        }
+    }
+    
+    private var arIcon: some View {
+        Text("AR")
+            .font(.caption)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(6)
+            .background(Color.white.opacity(0.8))
+            .clipShape(Circle())
+            .shadow(radius: 2)
     }
 }
 
@@ -134,42 +168,52 @@ struct ItemListView: View {
         if searchText.isEmpty {
             return itemStore.items
         } else {
-            return itemStore.items.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+            return itemStore.items.filter { $0.itemName.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                // Search Bar
-                HStack {
-                    TextField("상품 이름을 입력해주세요.", text: $searchText)
-                        .padding(12)
-                        .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
-                        .foregroundColor(.primary)
-                        .focused($isSearchTextFocused)
-                        .font(.body)
-                    
-                    if !searchText.isEmpty {
-                        Button(action: {
-                            searchText = ""
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.red)
-                                .padding(.trailing, 10)
+        ZStack {
+            Color(colorScheme == .dark ?
+                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+                .edgesIgnoringSafeArea(.all)
+            ScrollView {
+                VStack(spacing: 6) {
+                    // Search Bar
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+                            .padding(.leading, 6)
+                        
+                        TextField("상품 이름을 입력해주세요.", text: $searchText)
+                            .padding(8)
+                            .foregroundColor(.primary)
+                            .focused($isSearchTextFocused)
+                            .font(.body)
+                        
+                        if !searchText.isEmpty {
+                            Button(action: {
+                                searchText = ""
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+//                                    .font(.system(size: 18))
+                                    .foregroundStyle(Color.gray)
+                                    .padding(.trailing, 10)
+                            }
                         }
                     }
+                    .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                    .padding(.top, 15)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom,15)
+                    
+                    // Item Rows
+                    ForEach(filteredItems) { item in
+                        ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
+                    }
+                    
+                    Spacer()
                 }
-                .padding(.top, 15)
-                .padding(.horizontal, 16)
-                
-                // Item Rows
-                ForEach(filteredItems) { item in
-                    ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
-                }
-                
-                Spacer()
             }
         }
         .navigationTitle("내 상품 관리")

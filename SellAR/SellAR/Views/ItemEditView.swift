@@ -34,6 +34,7 @@ struct ItemEditView: View {
             get: { selectedItem?.itemName ?? "" },
             set: { selectedItem?.itemName = $0 }
         ))
+        .foregroundStyle(Color.black)
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
         .focused($textFocused, equals: .textTitle)
@@ -43,6 +44,7 @@ struct ItemEditView: View {
     
     private var descriptionTextEditor: some View {
         TextEditor(text: $description)
+            .foregroundStyle(Color.black)
             .onChange(of: description) { newValue in
                 selectedItem?.description = newValue
             }
@@ -74,6 +76,7 @@ struct ItemEditView: View {
                     .padding(.trailing, 5)
             }
             .frame(maxWidth: .infinity, maxHeight: 25)
+            .foregroundStyle(Color.black)
             .focused($textFocused, equals: .textPrice)
             .textFieldStyle(.plain)
             .padding(.vertical, 10)
@@ -101,7 +104,7 @@ struct ItemEditView: View {
             .cornerRadius(20)
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.gray, lineWidth: 2)
+                    .stroke(Color.gray, lineWidth: 1)
             )
         }
         .frame(maxWidth: .infinity)
@@ -116,7 +119,8 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("촬영하기")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "camera")
                     .foregroundColor(Color.cyan)
             }
@@ -127,7 +131,8 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("올리기")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "square.and.arrow.up")
                     .foregroundColor(Color.cyan)
             }
@@ -139,7 +144,8 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("이미지")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "photo")
                     .foregroundColor(Color.cyan)
             }
@@ -148,17 +154,19 @@ struct ItemEditView: View {
             
             Button(action: { print("지역설정") }) {
                 Text("지역설정")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(Color.black)
+//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "map")
                     .foregroundColor(Color.cyan)
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+        .background(Color.white)
+//        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
         .cornerRadius(8).overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.gray, lineWidth: 2)
+                .stroke(Color.gray, lineWidth: 1)
         )
         .padding(.top, 15)
     }
@@ -166,136 +174,145 @@ struct ItemEditView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack {
-                    // 아이템의 썸네일 이미지 표시
-                    if let item = selectedItem {
-                        // thumbnailLink가 없을 경우, item.images.first 사용
-                        let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink
+        ZStack {
+                Color(colorScheme == .dark ?
+                      Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+                    .edgesIgnoringSafeArea(.all)
+            
+                ScrollView {
+                    VStack {
+                        // 아이템의 썸네일 이미지 표시
+                        if let item = selectedItem {
+                            // thumbnailLink가 없을 경우, item.images.first 사용
+                            let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink
+                            
+                            if let imageURL = URL(string: imageURLString ?? "") {
+                                AsyncImage(url: imageURL) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        // 이미지 로딩 중
+                                        ProgressView()
+                                            .frame(width: 150, height: 150)
+                                            .background(Color.gray)
+                                            .cornerRadius(10)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .stroke(Color.gray, lineWidth: 1)
+                                            )
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 150, height: 150)
+                                            .clipped()
+                                            .cornerRadius(10)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .stroke(Color.gray, lineWidth: 1)
+                                            )
+                                    case .failure:
+                                        // 이미지 불러오기 실패 시 placeholder 이미지 표시
+                                        Image("placeholder")
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 150, height: 150)
+                                            .clipped()
+                                            .cornerRadius(10)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .stroke(Color.gray, lineWidth: 1)
+                                            )
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                                .padding(.top, 15)
+                            } else {
+                                // 이미지 URL이 비어있으면 "없음" 텍스트 표시
+                                Color.white
+                                    .frame(width: 150, height: 150)
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray, lineWidth: 1)
+                                    )
+                                    .overlay(
+                                        Text("없음")
+                                            .foregroundColor(.gray)
+                                            .font(.system(size: 16, weight: .bold))
+                                    )
+                            }
+                            
+                            
+                            
+                            
+                            actionButtons
+                            
+                            VStack {
+                                HStack {
+                                    Text("제목")
+                                        .foregroundStyle(Color.black)
+                                        .font(.system(size: 20, weight: .bold))
+                                        .padding(.leading, 5)
+                                    
+                                    titleTextField
+                                }
+                                
+                                Divider()
+                                
+                                descriptionTextEditor
+                                
+                                Divider()
+                                
+                                priceTextField
+                                
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.white)
+//                            .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color.gray, lineWidth: 1)
+                            )
+                            .padding(.top, 15)
+                            
+                            .onAppear {
+                                description = item.description
+                            }
+                        }
                         
-                        if let imageURL = URL(string: imageURLString ?? "") {
-                            AsyncImage(url: imageURL) { phase in
-                                switch phase {
-                                case .empty:
-                                    // 이미지 로딩 중
-                                    ProgressView()
-                                        .frame(width: 150, height: 150)
-                                        .cornerRadius(10)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .stroke(Color.gray, lineWidth: 2)
-                                        )
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 150, height: 150)
-                                        .clipped()
-                                        .cornerRadius(10)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .stroke(Color.gray, lineWidth: 2)
-                                        )
-                                case .failure:
-                                    // 이미지 불러오기 실패 시 placeholder 이미지 표시
-                                    Image("placeholder")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 150, height: 150)
-                                        .clipped()
-                                        .cornerRadius(10)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .stroke(Color.gray, lineWidth: 2)
-                                        )
-                                @unknown default:
-                                    EmptyView()
+                        Spacer()
+                        
+                    }
+                    .padding(.horizontal, 16)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        textFocused = nil
+                    }
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            HStack {
+                                Spacer()
+                                Button("완료") {
+                                    textFocused = nil
                                 }
                             }
-                            .padding(.top, 15)
-                        } else {
-                            // 이미지 URL이 비어있으면 "없음" 텍스트 표시
-                            Color.white
-                                .frame(width: 150, height: 150)
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray, lineWidth: 2)
-                                )
-                                .overlay(
-                                    Text("없음")
-                                        .foregroundColor(.gray)
-                                        .font(.system(size: 16, weight: .bold))
-                                )
-                        }
-                    
-
-
-                        
-                        actionButtons
-                        
-                        VStack {
-                            HStack {
-                                Text("제목")
-                                    .font(.system(size: 20, weight: .bold))
-                                    .padding(.leading, 5)
-                                
-                                titleTextField
-                            }
-                            
-                            Divider()
-                            
-                            descriptionTextEditor
-                            
-                            Divider()
-                            
-                            priceTextField
-                            
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.gray, lineWidth: 2)
-                        )
-                        .padding(.top, 15)
-                        
-                        .onAppear {
-                            description = item.description
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                }
-                .padding(.horizontal, 16)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    textFocused = nil
-                }
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        HStack {
-                            Spacer()
-                            Button("완료") {
-                                textFocused = nil
-                            }
                         }
                     }
                 }
-            }
-            .navigationTitle("상품 수정")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(leading: Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "xmark")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-            })
-            .sheet(isPresented: $isImagePickerPresented) {
-                ImagePicker(selectedImage: $selectedImage, isPresented: $isImagePickerPresented)
+                .navigationTitle("상품 수정")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarItems(leading: Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                })
+                .sheet(isPresented: $isImagePickerPresented) {
+                    ImagePicker(selectedImage: $selectedImage, isPresented: $isImagePickerPresented)
+                }
             }
         }
     }
