@@ -15,6 +15,19 @@ import Firebase
 struct StartMessageView: View {
     @ObservedObject var loginViewModel: LoginViewModel
     @ObservedObject private var viewModel: ChatViewModel
+    @Environment(\.colorScheme) var colorScheme
+    @State private var editMode = EditMode.inactive
+    @State private var selectedChatRooms: Set<String> = []
+
+    private var backgroundColor: Color {
+        colorScheme == .dark ?
+            Color(red: 23/255, green: 34/255, blue: 67/255) :
+            Color(red: 203/255, green: 217/255, blue: 238/255)
+    }
+    private var buttonColor: Color {
+        Color(red: 76/255, green: 127/255, blue: 200/255)
+    }
+   
     
     init(loginViewModel: LoginViewModel) {
         self.loginViewModel = loginViewModel
@@ -30,12 +43,10 @@ struct StartMessageView: View {
                     Image("SellarLogoWhite")
                         .resizable()
                         .frame(width: 150, height: 150)
-                        .padding(.bottom, 20)
-                    Text("표시할 채팅이 없어요.")
-                        .foregroundStyle(Color.gray)
-                        .padding(.bottom, 10)
-                    Text("로그인하여 AR로 물건을 거래해보세요.")
-                        .foregroundStyle(Color.gray)
+                        .padding(.bottom, 15)
+                    Text("로그인이 필요합니다.")
+                        .foregroundStyle(Color.primary)
+                        .bold()
                         .padding(.bottom, 30)
                     NavigationLink(destination: LoginView()) {
                         Text("로그인하기")
@@ -43,12 +54,13 @@ struct StartMessageView: View {
                             .foregroundColor(.white)
                             .bold()
                             .padding()
-                            .background(Color.cyan)
+                            .background(buttonColor)
                             .cornerRadius(25)
+                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))
+                .background(backgroundColor.ignoresSafeArea())
             } else {
                 // 로그인한 상태
                 NavigationView {
@@ -75,42 +87,91 @@ struct StartMessageView: View {
                                         .font(.body)
                                         .foregroundColor(.white)
                                         .padding()
-                                        .background(Color.blue)
+                                        .background(buttonColor)
                                         .cornerRadius(10)
                                 }
                                 .padding(.top, 20)
                             }
                         } else {
                             // 채팅방 목록 표시
-                            List(viewModel.chatRooms) { chatRoom in
-                                if let otherUserID = chatRoom.participants.first(where: { $0 != loginViewModel.user.id }) {
-                                    NavigationLink(destination: ChatContentView(
-                                        chatViewModel: viewModel,
-                                        chatRoomID: chatRoom.id,
-                                        currentUserID: loginViewModel.user.id,
-                                        otherUserID: otherUserID
-                                    )) {
-                                        ChatRoomRow(chatRoom: chatRoom, currentUserID: viewModel.senderID, chatViewModel: viewModel)
+                            List(selection: $selectedChatRooms) {
+                                ForEach(viewModel.chatRooms) { chatRoom in
+                                    if let otherUserID = chatRoom.participants.first(where: { $0 != loginViewModel.user.id }) {
+                                        ZStack {
+                                            NavigationLink(destination: ChatContentView(
+                                                chatViewModel: viewModel,
+                                                chatRoomID: chatRoom.id,
+                                                currentUserID: loginViewModel.user.id,
+                                                otherUserID: otherUserID
+                                            )) {
+                                                EmptyView()
+                                            }
+                                            .opacity(0)
+                                            
+                                            ChatRoomRow(
+                                                chatRoom: chatRoom,
+                                                currentUserID: viewModel.senderID,
+                                                chatViewModel: viewModel,
+                                                hasLeftChat: !chatRoom.participants.contains(otherUserID)
+                                            )
+                                        }
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                            Button(role: .destructive) {
+                                                viewModel.leaveChatRoom(chatRoomID: chatRoom.id)
+                                            } label: {
+                                                Text("나가기")
+                                            }
+                                        }
+                                        .tag(chatRoom.id) // Selection을 위한 태그 추가
                                     }
                                 }
                             }
                             .listStyle(PlainListStyle())
+                            .environment(\.editMode, $editMode)
+                            
+                            if editMode.isEditing && !selectedChatRooms.isEmpty {
+                                VStack {
+                                    Spacer()
+                                    Button(action: {
+                                        for chatRoomId in selectedChatRooms {
+                                            viewModel.leaveChatRoom(chatRoomID: chatRoomId)
+                                        }
+                                        selectedChatRooms.removeAll()
+                                        editMode = .inactive
+                                    }) {
+                                        Text("선택한 채팅방 나가기 (\(selectedChatRooms.count))")
+                                            .font(.body)
+                                            .foregroundColor(.white)
+                                            .padding()
+                                            .frame(maxWidth: .infinity)
+                                            .background(buttonColor)
+                                            .cornerRadius(10)
+                                    }
+                                    .padding()
+                                }
+                            }
                         }
                     }
+                    .background(backgroundColor.ignoresSafeArea())
                     .navigationTitle("채팅")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: UserListView(chatViewModel: viewModel)) {
-                                Image(systemName: "square.and.pencil")
-                                    .foregroundColor(.primary)
+                            Button(action: {
+                                withAnimation {
+                                    editMode = editMode.isEditing ? .inactive : .active
+                                    if !editMode.isEditing {
+                                        selectedChatRooms.removeAll()
+                                    }
+                                }
+                            }) {
+                                Text(editMode.isEditing ? "완료" : "편집")
                             }
                         }
                     }
                 }
             }
         }
-        // loginViewModel.user.id가 변경될 때 ChatViewModel 업데이트
         .onChange(of: loginViewModel.user.id) { newID in
             if !newID.isEmpty {
                 viewModel.senderID = newID
@@ -118,7 +179,6 @@ struct StartMessageView: View {
             }
         }
     }
-    
     private func createNewChat() {
         // 테스트용 채팅방 생성
         let db = Firestore.firestore()

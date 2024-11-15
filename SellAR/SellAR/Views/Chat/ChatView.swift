@@ -18,29 +18,54 @@ struct ChatRoomRow: View {
     let chatRoom: ChatRoom
     let currentUserID: String
     @ObservedObject var chatViewModel: ChatViewModel
+    let hasLeftChat: Bool
+    @Environment(\.colorScheme) var colorScheme
+    
+    private var backgroundColor: Color {
+        colorScheme == .dark ?
+        Color(red: 28/255, green: 28/255, blue: 30/255) :
+        Color.white
+    }
     
     var body: some View {
         HStack(spacing: 15) {
-            // 상대방의 프로필을 가져오기
-            if let otherUserID = chatRoom.participants.first(where: { $0 != currentUserID }),
-               let otherUser = chatViewModel.chatUsers[otherUserID] {
-                AsyncImage(url: URL(string: otherUser.profileImageUrl ?? "")) { image in
-                    image.resizable()
-                } placeholder: {
-                    Circle().fill(Color.gray)
-                }
-                .frame(width: 50, height: 50)
-                .clipShape(Circle())
-                
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(otherUser.username)
-                        .font(.headline)
-                        .foregroundColor(.primary)
+            if let otherUserID = chatRoom.participants.first(where: { $0 != currentUserID }) {
+                if let otherUser = chatViewModel.chatUsers[otherUserID] {
+                    // 사용자가 존재하는 경우
+                    AsyncImage(url: URL(string: otherUser.profileImageUrl ?? "")) { image in
+                        image.resizable()
+                    } placeholder: {
+                        Circle().fill(Color.gray)
+                    }
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
                     
-                    Text(chatRoom.latestMessage)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                        .lineLimit(1)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(hasLeftChat ? "\(otherUser.username) (나갔음)" : otherUser.username)
+                            .font(.headline)
+                            .foregroundColor(hasLeftChat ? .gray : .primary)
+                        
+                        Text(hasLeftChat ? "대화가 종료되었습니다." : chatRoom.latestMessage)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                    }
+                } else {
+                    // 사용자가 존재하지 않는 경우
+                    Circle()
+                        .fill(Color.gray)
+                        .frame(width: 50, height: 50)
+                    
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("알 수 없음")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                        
+                        Text("사용자가 존재하지 않습니다")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
+                    }
                 }
                 
                 Spacer()
@@ -50,14 +75,16 @@ struct ChatRoomRow: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                     
-                    let unreadCount = chatRoom.getUnreadCount(for: currentUserID)
-                    if unreadCount > 0 {
-                        Text("\(unreadCount)")
-                            .font(.caption)
-                            .foregroundColor(.white)
-                            .frame(minWidth: 20, minHeight: 20)
-                            .background(Color.red)
-                            .clipShape(Circle())
+                    if !hasLeftChat {
+                        let unreadCount = chatRoom.getUnreadCount(for: currentUserID)
+                        if unreadCount > 0 {
+                            Text("\(unreadCount)")
+                                .font(.caption)
+                                .foregroundColor(.white)
+                                .frame(minWidth: 20, minHeight: 20)
+                                .background(Color.red)
+                                .clipShape(Circle())
+                        }
                     }
                 }
             }
@@ -65,7 +92,6 @@ struct ChatRoomRow: View {
         .padding(.vertical, 8)
     }
 }
-
 // 채팅방 내용 View
 // ChatMessagesView - 메시지 목록을 표시하는 컴포넌트
 struct ChatMessagesView: View {
@@ -107,13 +133,19 @@ struct ChatMessagesView: View {
 struct ChatContentView: View {
     @ObservedObject var chatViewModel: ChatViewModel
     @State private var messageContent: String = ""
+    @Environment(\.colorScheme) var colorScheme
     var chatRoomID: String
     var currentUserID: String
     var otherUserID: String
     
+    private var backgroundColor: Color {
+        colorScheme == .dark ?
+            Color(red: 23/255, green: 34/255, blue: 67/255) :
+            Color(red: 203/255, green: 217/255, blue: 238/255)
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
-            // 메시지 목록
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 4) {
@@ -148,6 +180,7 @@ struct ChatContentView: View {
                 chatViewModel.sendMessage(content: content, to: chatRoomID)
             }
         }
+        .background(backgroundColor.ignoresSafeArea())
         .onAppear {
             // 채팅방 입장 시 호출
             chatViewModel.enterChatRoom(chatRoomID: chatRoomID, currentUserID: currentUserID)
@@ -164,7 +197,6 @@ struct ChatContentView: View {
         )
         .navigationTitle("채팅방")
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))
         .onTapGesture {
             // 빈 화면을 클릭하면 키보드 내리기
             hideKeyboard()
@@ -180,33 +212,39 @@ struct ChatContentView: View {
 struct ChatInputView: View {
     @Binding var messageContent: String
     var onSend: (String) -> Void
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            // 메시지 입력 필드
             TextField("메시지를 입력하세요", text: $messageContent)
-                .frame(height: 35) // TextField의 높이를 늘림
-                .padding(.horizontal, 15)
-                .foregroundColor(Color.primary)
-                .overlay {
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color(uiColor: .systemCyan), lineWidth: 2)
-                }
-                .padding(.vertical, 10)
+                        .fill(Color(.systemGray6))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                )
             
-            Spacer().frame(width: 15) // 간격을 10에서 15로 늘림
-            
+            // 전송 버튼
             Button(action: {
                 guard !messageContent.isEmpty else { return }
                 onSend(messageContent)
                 messageContent = ""
             }) {
                 Image(systemName: "paperplane.fill")
-                    .foregroundColor(.blue)
-                    .padding(.trailing, 5) // 오른쪽 패딩을 추가
-                    .frame(width: 40, height: 40) // 버튼 영역을 명확하게 지정
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(Circle().fill(Color.blue))
+                    .frame(width: 36, height: 36)
             }
+            .disabled(messageContent.isEmpty)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
+        .background(Color(UIColor.systemBackground))
     }
 }
