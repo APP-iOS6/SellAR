@@ -142,12 +142,13 @@ class ItemStore: ObservableObject {
         }
     }
     
-    func updateItemStatus(itemId: String, isSold: Bool) {
+    func updateItemStatus(itemId: String, isSold: Bool, isReserved: Bool) {
         let db = Firestore.firestore()
         let itemRef = db.collection("items").document(itemId)
         
         itemRef.updateData([
-            "isSold": isSold
+            "isSold": isSold,
+            "isReserved": isReserved
         ]) { error in
             if let error = error {
                 print("문서 업데이트 중 오류 발생: \(error)")

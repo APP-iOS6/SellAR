@@ -24,7 +24,7 @@ struct RegisterView: View {
     
     var body: some View {
             ZStack {
-                Color(colorScheme == .dark ? Color(red: 36/255, green: 36/255, blue: 39/255) : .white)
+                Color(colorScheme == .dark ? Color(red: 0.15, green: 0.20, blue: 0.31) : Color(red: 0.80, green: 0.85, blue: 0.93))
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -40,7 +40,8 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             TextField("이메일을 입력해 주세요", text: $errorViewModel.email)
                                 .padding()
-                                .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
@@ -60,7 +61,9 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             SecureField("비밀번호를 입력해 주세요", text: $errorViewModel.password)
                                 .padding()
-                                .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))                                .cornerRadius(10)
+                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .foregroundColor(.black)
+                                .cornerRadius(10)
                                 .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
                             
@@ -76,9 +79,10 @@ struct RegisterView: View {
                                 .bold()
                                 .foregroundColor(colorScheme == .dark ? .white : Color(red: 36/255, green: 36/255, blue: 39/255))
                                 .padding(.leading, 20)
-                            SecureField("비밀번호를 다시 입력해 주세요", text: $errorViewModel.confirmPassword)
+                            SecureField("비밀번호를 똑같이 입력해 주세요", text: $errorViewModel.confirmPassword)
                                 .padding()
-                                .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
@@ -97,7 +101,8 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             TextField("닉네임을 입력해 주세요", text: $errorViewModel.userName)
                                 .padding()
-                                .background(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
                                 .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
                                 .padding(.horizontal, 20)
@@ -117,7 +122,7 @@ struct RegisterView: View {
                             ) {
                                 ZStack {
                                     Circle()
-                                        .fill(colorScheme == .dark ? Color(red: 20/255, green: 20/255, blue: 20/255) : Color(red: 0.95, green: 0.95, blue: 0.97))
+                                        .fill(Color(red: 0.95, green: 0.95, blue: 0.97))
                                         .frame(width: 120, height: 120)
                                         .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
 
@@ -141,8 +146,9 @@ struct RegisterView: View {
                             }
                             .onChange(of: selectedItem) { newItem in
                                 Task {
-                                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                                        selectedItemData = data
+                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+                                       let image = UIImage(data: data)?.croppedToSquare() {
+                                        selectedItemData = image.jpegData(compressionQuality: 1.0)
                                     }
                                 }
                             }

@@ -16,9 +16,9 @@ class ItemListVM: ObservableObject {
     
     var filteredItems: [Items] {
         if searchText.isEmpty {
-            return items
+            return items.filter { !$0.isSold } // 판매 완료되지 않은 아이템만 반환
         } else {
-            return items.filter { $0.itemName.contains(searchText) || $0.location.contains(searchText) }
+            return items.filter { !$0.isSold && ($0.itemName.contains(searchText) || $0.location.contains(searchText)) }
         }
     }
     
@@ -43,4 +43,3 @@ class ItemListVM: ObservableObject {
             }
     }
 }
-
