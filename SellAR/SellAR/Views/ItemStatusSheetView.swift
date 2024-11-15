@@ -22,10 +22,10 @@ struct ItemStatusSheetView: View {
     
     var body: some View {
             NavigationStack {
-                ZStack {
-                    Color(colorScheme == .dark ?
-                          Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                        .edgesIgnoringSafeArea(.all)
+//                ZStack {
+//                    Color(colorScheme == .dark ?
+//                          Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+//                        .edgesIgnoringSafeArea(.all)
                 VStack {
                     Button(action: {
                         isEditing = true
@@ -64,7 +64,7 @@ struct ItemStatusSheetView: View {
                     }
                     .padding(.top, 10)
                 }
-            }
+//            }
                 
         }
         .alert(isPresented: $showAlert) {
@@ -87,7 +87,7 @@ struct ItemStatusSheetView: View {
                                  selectedItem: $selectedItem,  // 선택된 아이템을 바인딩으로 전달
                                  itemStore: itemStore)          // 아이템 저장소도 전달
                 .presentationDetents([.fraction(0.25)])
-                .background(colorScheme == .dark ?  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+//                .background(colorScheme == .dark ?  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
         }
 
     }

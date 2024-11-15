@@ -18,10 +18,10 @@ struct SalesStatusSheetView: View {
     @ObservedObject var itemStore: ItemStore
 
     var body: some View {
-        ZStack {    
-            Color(colorScheme == .dark ?
-                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                .edgesIgnoringSafeArea(.all)
+//        ZStack {    
+//            Color(colorScheme == .dark ?
+//                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+//                .edgesIgnoringSafeArea(.all)
             VStack {
                 Button(action: {
                     if let itemId = selectedItem?.id {
@@ -64,6 +64,6 @@ struct SalesStatusSheetView: View {
                 }
                 .padding(.top, 10)
             }
-        }
+//        }
     }
 }

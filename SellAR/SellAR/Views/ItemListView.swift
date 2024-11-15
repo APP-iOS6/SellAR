@@ -174,9 +174,12 @@ struct ItemListView: View {
                 VStack(spacing: 6) {
                     // Search Bar
                     HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+                            .padding(.leading, 6)
+                        
                         TextField("상품 이름을 입력해주세요.", text: $searchText)
-                            .padding(12)
-                            .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                            .padding(8)
                             .foregroundColor(.primary)
                             .focused($isSearchTextFocused)
                             .font(.body)
@@ -186,12 +189,13 @@ struct ItemListView: View {
                                 searchText = ""
                             }) {
                                 Image(systemName: "xmark.circle.fill")
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(Color.red)
+//                                    .font(.system(size: 18))
+                                    .foregroundStyle(Color.gray)
                                     .padding(.trailing, 10)
                             }
                         }
                     }
+                    .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
                     .padding(.top, 15)
                     .padding(.horizontal, 16)
                     .padding(.bottom,15)
