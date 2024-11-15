@@ -18,47 +18,52 @@ struct SalesStatusSheetView: View {
     @ObservedObject var itemStore: ItemStore
 
     var body: some View {
-        VStack {
-            Button(action: {
-                if let itemId = selectedItem?.id {
-                    itemStore.updateItemStatus(itemId: itemId, isSold: false, isReserved: false) // 판매 중으로 설정
+        ZStack {    
+            Color(colorScheme == .dark ?
+                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+                .edgesIgnoringSafeArea(.all)
+            VStack {
+                Button(action: {
+                    if let itemId = selectedItem?.id {
+                        itemStore.updateItemStatus(itemId: itemId, isSold: false, isReserved: false) // 판매 중으로 설정
+                    }
+                    showDetail = false
+                    print("판매 중")
+                }) {
+                    Text("판매 중")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 }
-                showDetail = false
-                print("판매 중")
-            }) {
-                Text("판매 중")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-            }
-            .padding()
-            
-            Divider()
-            
-            Button(action: {
-                if let itemId = selectedItem?.id {
-                    itemStore.updateItemStatus(itemId: itemId, isSold: true, isReserved: false) // 판매 완료로 설정
+                .padding()
+                
+                Divider()
+                
+                Button(action: {
+                    if let itemId = selectedItem?.id {
+                        itemStore.updateItemStatus(itemId: itemId, isSold: true, isReserved: false) // 판매 완료로 설정
+                    }
+                    showDetail = false
+                    print("판매 완료")
+                }) {
+                    Text("판매 완료")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 }
-                showDetail = false
-                print("판매 완료")
-            }) {
-                Text("판매 완료")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-            }
-            .padding()
-            
-            Divider()
-            
-            Button(action: {
-                // 예약 중 상태 업데이트 기능 추가
-                if let itemId = selectedItem?.id {
-                    itemStore.updateItemStatus(itemId: itemId, isSold: false, isReserved: true) // 예약 중 상태로 설정
+                .padding()
+                
+                Divider()
+                
+                Button(action: {
+                    // 예약 중 상태 업데이트 기능 추가
+                    if let itemId = selectedItem?.id {
+                        itemStore.updateItemStatus(itemId: itemId, isSold: false, isReserved: true) // 예약 중 상태로 설정
+                    }
+                    showDetail = false
+                    print("예약 중")
+                }) {
+                    Text("예약 중")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 }
-                showDetail = false
-                print("예약 중")
-            }) {
-                Text("예약 중")
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                .padding(.top, 10)
             }
-            .padding(.top, 10)
         }
     }
 }

@@ -48,6 +48,7 @@ struct ItemRowView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                     )
+                    .padding(.leading, 10)
                 } else {
                     Color.white
                         .frame(width: 120, height: 120)
@@ -61,22 +62,24 @@ struct ItemRowView: View {
                                 .foregroundColor(.gray)
                                 .font(.system(size: 16, weight: .bold))
                         )
+                        .padding(.leading, 10)
                 }
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 6) {
                     Text(item.itemName)
                         .font(.headline)
+                        .foregroundStyle(Color.black)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                     
                     Text("가격: \(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(Color.gray)
                     
                     Text("지역: \(item.location)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(Color.gray)
                     
                     Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
@@ -91,9 +94,10 @@ struct ItemRowView: View {
                         showDetailSheet = true
                     }) {
                         Image(systemName: "ellipsis")
-                            .foregroundColor(colorScheme == .dark ? .black : .white)
+                            .foregroundStyle(Color.black)
+//                            .foregroundColor(colorScheme == .dark ? .black : .white)
                             .padding(8)
-                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+//                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                     }
                     Spacer()
                     
@@ -104,7 +108,7 @@ struct ItemRowView: View {
                 }
             }
             .padding(.vertical, 10)
-            .background(Color(.systemGray6))
+            .background(Color(.white))
             .cornerRadius(12)
             .shadow(radius: 1)
             .padding(.horizontal, 16)
@@ -162,38 +166,43 @@ struct ItemListView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 6) {
-                // Search Bar
-                HStack {
-                    TextField("상품 이름을 입력해주세요.", text: $searchText)
-                        .padding(12)
-                        .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
-                        .foregroundColor(.primary)
-                        .focused($isSearchTextFocused)
-                        .font(.body)
-                    
-                    if !searchText.isEmpty {
-                        Button(action: {
-                            searchText = ""
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.red)
-                                .padding(.trailing, 10)
+        ZStack {
+            Color(colorScheme == .dark ?
+                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
+                .edgesIgnoringSafeArea(.all)
+            ScrollView {
+                VStack(spacing: 6) {
+                    // Search Bar
+                    HStack {
+                        TextField("상품 이름을 입력해주세요.", text: $searchText)
+                            .padding(12)
+                            .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                            .foregroundColor(.primary)
+                            .focused($isSearchTextFocused)
+                            .font(.body)
+                        
+                        if !searchText.isEmpty {
+                            Button(action: {
+                                searchText = ""
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(Color.red)
+                                    .padding(.trailing, 10)
+                            }
                         }
                     }
+                    .padding(.top, 15)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom,15)
+                    
+                    // Item Rows
+                    ForEach(filteredItems) { item in
+                        ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
+                    }
+                    
+                    Spacer()
                 }
-                .padding(.top, 15)
-                .padding(.horizontal, 16)
-                .padding(.bottom,15)
-                
-                // Item Rows
-                ForEach(filteredItems) { item in
-                    ItemRowView(item: item, showDetailSheet: $showDetailSheet, selectedItem: $selectedItem)
-                }
-                
-                Spacer()
             }
         }
         .navigationTitle("내 상품 관리")
