@@ -24,6 +24,8 @@ struct ItemRowView: View {
                         case .empty:
                             ProgressView()
                                 .frame(width: 120, height: 120)
+                                .cornerRadius(8)
+                                .background(Color.gray)
                         case .success(let image):
                             image
                                 .resizable()
@@ -84,6 +86,11 @@ struct ItemRowView: View {
                     Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
                         .font(.subheadline)
                         .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red))
+                    
+//                    Text("\(item.createdAt ?? Date())")
+//                        .font(.subheadline)
+//                        .foregroundStyle(Color.gray)
+//                        .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 

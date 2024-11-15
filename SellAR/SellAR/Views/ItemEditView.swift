@@ -186,6 +186,7 @@ struct ItemEditView: View {
                                         ProgressView()
                                             .frame(width: 150, height: 150)
                                             .cornerRadius(10)
+                                            .background(Color.gray)
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 10)
                                                     .stroke(Color.gray, lineWidth: 1)
