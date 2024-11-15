@@ -193,8 +193,8 @@ struct ItemEditView: View {
                                         // 이미지 로딩 중
                                         ProgressView()
                                             .frame(width: 150, height: 150)
-                                            .cornerRadius(10)
                                             .background(Color.gray)
+                                            .cornerRadius(10)
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 10)
                                                     .stroke(Color.gray, lineWidth: 1)

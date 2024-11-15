@@ -24,8 +24,8 @@ struct ItemRowView: View {
                         case .empty:
                             ProgressView()
                                 .frame(width: 120, height: 120)
-                                .cornerRadius(8)
                                 .background(Color.gray)
+                                .cornerRadius(8)
                         case .success(let image):
                             image
                                 .resizable()
