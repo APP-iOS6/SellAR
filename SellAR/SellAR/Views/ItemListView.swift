@@ -87,10 +87,14 @@ struct ItemRowView: View {
                         .font(.subheadline)
                         .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red))
                     
-//                    Text("\(item.createdAt ?? Date())")
-//                        .font(.subheadline)
-//                        .foregroundStyle(Color.gray)
-//                        .lineLimit(1)
+                    Text(" \(item.formattedCreatedAt)")  // 생성 시간 표시
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                    
+                    //                    Text("\(item.createdAt ?? Date())")
+                    //                        .font(.subheadline)
+                    //                        .foregroundStyle(Color.gray)
+                    //                        .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -102,9 +106,9 @@ struct ItemRowView: View {
                     }) {
                         Image(systemName: "ellipsis")
                             .foregroundStyle(Color.black)
-//                            .foregroundColor(colorScheme == .dark ? .black : .white)
+                        //                            .foregroundColor(colorScheme == .dark ? .black : .white)
                             .padding(8)
-//                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+                        //                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                     }
                     Spacer()
                     
@@ -121,23 +125,23 @@ struct ItemRowView: View {
             .padding(.horizontal, 16)
         }
     }
-             private var formattedPriceInTenThousandWon: String {
-                let priceNumber = Int(item.price) ?? 0
-                let tenThousandUnit = priceNumber / 10000
-                let remaining = priceNumber % 10000
-                
-                let formatter = NumberFormatter()
-                formatter.numberStyle = .decimal
-                
-                if tenThousandUnit > 0 {
-                    if remaining == 0 {
-                        return "\(tenThousandUnit)만원"
-                    } else {
-                        let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
-                        return "\(tenThousandUnit)만 \(remainingStr)원"
-                    }
-                } else {
-                    return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(item.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
         }
     }
     
@@ -176,7 +180,7 @@ struct ItemListView: View {
         ZStack {
             Color(colorScheme == .dark ?
                   Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                .edgesIgnoringSafeArea(.all)
+            .edgesIgnoringSafeArea(.all)
             ScrollView {
                 VStack(spacing: 6) {
                     // Search Bar
@@ -196,7 +200,7 @@ struct ItemListView: View {
                                 searchText = ""
                             }) {
                                 Image(systemName: "xmark.circle.fill")
-//                                    .font(.system(size: 18))
+                                //                                    .font(.system(size: 18))
                                     .foregroundStyle(Color.gray)
                                     .padding(.trailing, 10)
                             }

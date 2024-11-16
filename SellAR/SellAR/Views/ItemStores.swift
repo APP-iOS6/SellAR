@@ -130,7 +130,8 @@ class ItemStore: ObservableObject {
             "title": item.title,
             "description": item.description,
             "price": item.price,
-            "images": item.images
+            "images": item.images,
+            "location": item.location
             // 필요한 경우 다른 필드도 추가
         ]) { error in
             if let error = error {

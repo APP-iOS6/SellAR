@@ -23,6 +23,10 @@ struct ItemEditView: View {
     @State private var description: String = ""
     @State private var selectedImage: UIImage? = nil // 선택된 이미지를 저장할 상태
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
+    @State private var showEditItemView = false
+    @ObservedObject var vm = ItemFormVM()
+
+    
     
     let placeholder: String = "내용을 입력해 주세요."
     @ObservedObject var itemStore = ItemStore()
@@ -130,8 +134,17 @@ struct ItemEditView: View {
     
     private var actionButtons: some View {
         HStack {
+//            NavigationLink(
+//                       destination: ItemFormView(vm: ItemFormVM()), // ItemFormView로 이동
+//                       isActive: $showEditItemView
+//                   ) {
+//                       EmptyView() // 빈 뷰로 상태 연결
+//                   }
+//                   .hidden() // UI에 표시되지 않게 숨김
+            
             Button(action: {
                 textFocused = nil
+//                showEditItemView = true
             }) {
                 Text("촬영하기")
                     .foregroundStyle(Color.black)
