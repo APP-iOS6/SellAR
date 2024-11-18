@@ -31,6 +31,13 @@ struct UserItemsView: View {
             }
             .padding()
         }
+        .background(
+            Color(UIColor { traitCollection in
+                traitCollection.userInterfaceStyle == .dark
+                ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1)
+                : UIColor.white
+            }).ignoresSafeArea()
+        )
         .navigationTitle("판매자의 상품 목록")
         .onAppear {
             itemStore.fetchAllItems() // 모든 아이템을 가져옴
