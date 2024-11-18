@@ -1,10 +1,3 @@
-//
-//  NicknameEntryView.swift
-//  SellAR
-//
-//  Created by Mac on 11/4/24.
-//
-
 import SwiftUI
 import PhotosUI
 
@@ -27,7 +20,7 @@ struct NicknameEntryView: View {
             } else {
                 NavigationStack {
                     ZStack {
-                        Color(colorScheme == .dark ? Color(red: 0.15, green: 0.20, blue: 0.31) : Color(red: 0.80, green: 0.85, blue: 0.93))
+                        Color(colorScheme == .dark ? .black : .white)
                             .edgesIgnoringSafeArea(.all)
                             .onTapGesture {
                                 hideKeyboard()
@@ -41,9 +34,11 @@ struct NicknameEntryView: View {
                                 ) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                            .fill(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
                                             .frame(width: 120, height: 120)
-                                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                            .overlay(Circle()
+                                                .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                            )
                                         
                                         if let data = selectedItemData, let image = UIImage(data: data) {
                                             Image(uiImage: image)
@@ -58,6 +53,7 @@ struct NicknameEntryView: View {
                                                     .font(.caption)
                                                     .padding(.top, 5)
                                             }
+                                            .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
                                             .foregroundColor(Color(red: 0.30, green: 0.50, blue: 0.78))
                                             .bold()
                                         }
@@ -67,9 +63,6 @@ struct NicknameEntryView: View {
                                     Task {
                                         if let data = try? await newItem?.loadTransferable(type: Data.self) {
                                             selectedItemData = data
-                                            if let image = UIImage(data: data)?.croppedToSquare() {
-                                                selectedItemData = image.jpegData(compressionQuality: 1.0)
-                                            }
                                         }
                                     }
                                 }
@@ -85,12 +78,14 @@ struct NicknameEntryView: View {
                                 
                                 TextField("닉네임을 입력해 주세요", text: $nickname)
                                     .padding()
+                                    .foregroundColor(colorScheme == .dark ? .white : .black)
                                     .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                    .background(Color(red: 0.95, green: 0.95, blue: 0.97))
-                                    .foregroundColor(.black)
+                                    .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
                                     .cornerRadius(10)
-                                    .padding(.horizontal, 10)
-                                    .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                    .autocapitalization(.none)
+                                    .overlay(RoundedRectangle(cornerRadius: 10)
+                                        .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                    )
                                 
                                 Text(errorViewModel.nicknameError)
                                     .foregroundColor(.red)
@@ -120,9 +115,9 @@ struct NicknameEntryView: View {
                                         .foregroundColor(nickname.isEmpty ? .gray : .white)
                                         .cornerRadius(10)
                                         .bold()
-                                        .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                                         .disabled(nickname.isEmpty)
                                 }
+                                
                                 NavigationLink(destination: ContentView(viewModel: viewModel).navigationBarBackButtonHidden(true), isActive: $isNicknameSaved) {
                                     EmptyView()
                                 }

@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022B2CD8506200C3CF8E /* GoogleSignIn */; };
 		0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022D2CD8506200C3CF8E /* GoogleSignInSwift */; };
+
 		04C2C6252CE47E27004EC1FB /* USDZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 04C2C6242CE47E27004EC1FB /* USDZScanner */; };
+
 		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
 		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
 		B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46942CD884620076BE39 /* FirebaseAuth */; };
@@ -50,7 +52,9 @@
 				E0053C072CE1D73D006B1A9A /* FirebaseMessaging in Frameworks */,
 				E0053C052CE1D738006B1A9A /* FirebaseAnalytics in Frameworks */,
 				0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */,
+
 				04C2C6252CE47E27004EC1FB /* USDZScanner in Frameworks */,
+
 				B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */,
 				B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */,
 				0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */,
@@ -112,7 +116,9 @@
 				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
 				E0053C042CE1D738006B1A9A /* FirebaseAnalytics */,
 				E0053C062CE1D73D006B1A9A /* FirebaseMessaging */,
+
 				04C2C6242CE47E27004EC1FB /* USDZScanner */,
+
 			);
 			productName = SellAR;
 			productReference = B86F46342CD7F85C0076BE39 /* SellAR.app */;
@@ -145,7 +151,9 @@
 			packageReferences = (
 				B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+
 				04C2C6232CE47E27004EC1FB /* XCRemoteSwiftPackageReference "USDZScanner" */,
+
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B8482C5D2CD1F1CB009DDA02 /* Products */;
@@ -395,7 +403,9 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+
 		04C2C6232CE47E27004EC1FB /* XCRemoteSwiftPackageReference "USDZScanner" */ = {
+
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/alfianlosari/USDZScanner.git";
 			requirement = {
@@ -424,9 +434,11 @@
 			package = 0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
 		};
+
 		04C2C6242CE47E27004EC1FB /* USDZScanner */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 04C2C6232CE47E27004EC1FB /* XCRemoteSwiftPackageReference "USDZScanner" */;
+
 			productName = USDZScanner;
 		};
 		B8482C6F2CD213DC009DDA02 /* FirebaseStorage */ = {
