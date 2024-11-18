@@ -18,12 +18,8 @@ struct StartMessageView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var editMode = EditMode.inactive
     @State private var selectedChatRooms: Set<String> = []
+    
 
-    private var backgroundColor: Color {
-        colorScheme == .dark ?
-            Color(red: 23/255, green: 34/255, blue: 67/255) :
-            Color(red: 203/255, green: 217/255, blue: 238/255)
-    }
     private var buttonColor: Color {
         Color(red: 76/255, green: 127/255, blue: 200/255)
     }
@@ -39,28 +35,32 @@ struct StartMessageView: View {
         Group {
             if loginViewModel.user.id.isEmpty {
                 // 로그인하지 않은 상태
-                VStack {
-                    Image("SellarLogoWhite")
+                VStack(alignment: .center, spacing: 20) {
+                    Image(colorScheme == .dark ? "SellarLogoDark" : "SellarLogoWhite")
                         .resizable()
                         .frame(width: 150, height: 150)
-                        .padding(.bottom, 15)
+                        .padding(.bottom, 10)
+                    
                     Text("로그인이 필요합니다.")
-                        .foregroundStyle(Color.primary)
+                        .fontWeight(.bold)
+                        .foregroundColor(colorScheme == .dark ?
+                            Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
+                        .padding(.top, 30)
+                        .padding(.bottom,40)
                         .bold()
-                        .padding(.bottom, 30)
+                    
                     NavigationLink(destination: LoginView()) {
                         Text("로그인하기")
-                            .font(.body)
-                            .foregroundColor(.white)
+                            .frame(width: 150, height: 50)
+                            .padding(2)
                             .bold()
-                            .padding()
-                            .background(buttonColor)
-                            .cornerRadius(25)
-                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                            .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흐린흰색
+                            .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                            .cornerRadius(26.5)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(backgroundColor.ignoresSafeArea())
+//                .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))
             } else {
                 // 로그인한 상태
                 NavigationView {
@@ -115,6 +115,7 @@ struct StartMessageView: View {
                                                 hasLeftChat: !chatRoom.participants.contains(otherUserID)
                                             )
                                         }
+                                        .listRowBackground(Color.clear)
                                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                             Button(role: .destructive) {
                                                 viewModel.leaveChatRoom(chatRoomID: chatRoom.id)
@@ -152,8 +153,7 @@ struct StartMessageView: View {
                             }
                         }
                     }
-                    .background(backgroundColor.ignoresSafeArea())
-                    .navigationTitle("채팅")
+                    .background(Color(UIColor.systemBackground).edgesIgnoringSafeArea(.all))                    .navigationTitle("채팅")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {

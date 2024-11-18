@@ -9,19 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var viewModel: LoginViewModel
+    @StateObject private var chatViewModel: ChatViewModel
 
-    let userdata = User(
-        id: "12345",
-        email: "aaaaaa@gmail.com",
-        username: "가나다",
-        profileImageUrl: nil
-    )
-
+    
+    init(viewModel: LoginViewModel) {
+        self.viewModel = viewModel
+        // viewModel.userID를 사용하여 ChatViewModel 초기화
+        _chatViewModel = StateObject(wrappedValue: ChatViewModel(senderID: viewModel.userID ?? ""))
+    }
+    
     var body: some View {
         TabView {
-            MainView(loginViewModel: viewModel) 
+            MainView(loginViewModel: viewModel)
                 .tabItem {
-                    Image(systemName: "1.square.fill")
+                    Image(systemName: "house.fill")
                     Text("홈")
                 }
             
@@ -30,13 +31,21 @@ struct ContentView: View {
                     Image(systemName: "2.square.fill")
                     Text("채팅")
                 }
-
+                .badge(chatViewModel.totalUnreadCount > 0 ? chatViewModel.totalUnreadCount : 0)
+            
             MyPageView()
                 .tabItem {
                     Image(systemName: "3.square.fill")
                     Text("마이페이지")
                 }
                 .environmentObject(viewModel)
+        }
+        .onChange(of: viewModel.userID ?? "") { userID in
+            // userID가 변경될 때 ChatViewModel의 senderID 업데이트
+            chatViewModel.senderID = userID ?? ""
+            if !userID.isEmpty {
+                chatViewModel.fetchChatRooms()
+            }
         }
     }
 }

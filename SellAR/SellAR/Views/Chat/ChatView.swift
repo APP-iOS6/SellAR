@@ -21,12 +21,6 @@ struct ChatRoomRow: View {
     let hasLeftChat: Bool
     @Environment(\.colorScheme) var colorScheme
     
-    private var backgroundColor: Color {
-        colorScheme == .dark ?
-        Color(red: 28/255, green: 28/255, blue: 30/255) :
-        Color.white
-    }
-    
     var body: some View {
         HStack(spacing: 15) {
             if let otherUserID = chatRoom.participants.first(where: { $0 != currentUserID }) {
@@ -133,19 +127,15 @@ struct ChatMessagesView: View {
 struct ChatContentView: View {
     @ObservedObject var chatViewModel: ChatViewModel
     @State private var messageContent: String = ""
+    @State private var otherUserName: String = "채팅방"
     @Environment(\.colorScheme) var colorScheme
     var chatRoomID: String
     var currentUserID: String
     var otherUserID: String
     
-    private var backgroundColor: Color {
-        colorScheme == .dark ?
-            Color(red: 23/255, green: 34/255, blue: 67/255) :
-            Color(red: 203/255, green: 217/255, blue: 238/255)
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
+            
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 4) {
@@ -180,10 +170,15 @@ struct ChatContentView: View {
                 chatViewModel.sendMessage(content: content, to: chatRoomID)
             }
         }
-        .background(backgroundColor.ignoresSafeArea())
+        .background(Color(UIColor.systemBackground))
         .onAppear {
             // 채팅방 입장 시 호출
             chatViewModel.enterChatRoom(chatRoomID: chatRoomID, currentUserID: currentUserID)
+            
+            // 상대방 유저 이름 설정
+            if let otherUser = chatViewModel.chatUsers[otherUserID] {
+                otherUserName = otherUser.username
+            }
         }
         .onDisappear {
             // 채팅방 퇴장 시 호출
@@ -195,7 +190,7 @@ struct ChatContentView: View {
                 chatViewModel.resetUnreadCount(for: chatRoomID, userID: currentUserID)
             }
         )
-        .navigationTitle("채팅방")
+        .navigationTitle(otherUserName)  
         .navigationBarTitleDisplayMode(.inline)
         .onTapGesture {
             // 빈 화면을 클릭하면 키보드 내리기
@@ -207,6 +202,7 @@ struct ChatContentView: View {
         UIApplication.shared.windows.first { $0.isKeyWindow }?.endEditing(true)
     }
 }
+
 
 // 메시지 입력을 위한 ChatInputView
 struct ChatInputView: View {

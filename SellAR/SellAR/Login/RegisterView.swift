@@ -24,7 +24,7 @@ struct RegisterView: View {
     
     var body: some View {
             ZStack {
-                Color(colorScheme == .dark ? Color(red: 0.15, green: 0.20, blue: 0.31) : Color(red: 0.80, green: 0.85, blue: 0.93))
+                Color(colorScheme == .dark ? .black : .white)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -40,10 +40,14 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             TextField("이메일을 입력해 주세요", text: $errorViewModel.email)
                                 .padding()
-                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
-                                .foregroundColor(.black)
+                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
+                                .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .cornerRadius(10)
-                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .keyboardType(.emailAddress)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                )
                                 .padding(.horizontal, 20)
                                 .autocapitalization(.none)
                             
@@ -61,10 +65,13 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             SecureField("비밀번호를 입력해 주세요", text: $errorViewModel.password)
                                 .padding()
-                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
-                                .foregroundColor(.black)
+                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
+                                .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .cornerRadius(10)
-                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                )
                                 .padding(.horizontal, 20)
                             
                             Text(errorViewModel.passwordError)
@@ -81,10 +88,13 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             SecureField("비밀번호를 똑같이 입력해 주세요", text: $errorViewModel.confirmPassword)
                                 .padding()
-                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
-                                .foregroundColor(.black)
+                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
+                                .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .cornerRadius(10)
-                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                )
                                 .padding(.horizontal, 20)
                             
                             Text(errorViewModel.confirmPasswordError)
@@ -101,10 +111,13 @@ struct RegisterView: View {
                                 .padding(.leading, 20)
                             TextField("닉네임을 입력해 주세요", text: $errorViewModel.userName)
                                 .padding()
-                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
-                                .foregroundColor(.black)
+                                .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
+                                .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .cornerRadius(10)
-                                .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                )
                                 .padding(.horizontal, 20)
                             
                             Text(errorViewModel.nicknameError)
@@ -122,9 +135,11 @@ struct RegisterView: View {
                             ) {
                                 ZStack {
                                     Circle()
-                                        .fill(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                        .fill(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
                                         .frame(width: 120, height: 120)
-                                        .shadow(color: .black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                        .overlay(Circle()
+                                            .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                        )
 
                                     if let data = selectedItemData, let image = UIImage(data: data) {
                                         Image(uiImage: image)
@@ -139,6 +154,7 @@ struct RegisterView: View {
                                                 .font(.caption)
                                                 .padding(.top,3)
                                         }
+                                        .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
                                         .foregroundColor(Color(red: 0.30, green: 0.50, blue: 0.78))
                                         .bold()
                                     }
@@ -146,9 +162,8 @@ struct RegisterView: View {
                             }
                             .onChange(of: selectedItem) { newItem in
                                 Task {
-                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
-                                       let image = UIImage(data: data)?.croppedToSquare() {
-                                        selectedItemData = image.jpegData(compressionQuality: 1.0)
+                                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                        selectedItemData = data
                                     }
                                 }
                             }
@@ -179,10 +194,12 @@ struct RegisterView: View {
                                 }) {
                                     ZStack {
                                         Rectangle()
-                                            .fill(errorViewModel.isRegisterButtonEnabled ? Color(red: 0.30, green: 0.50, blue: 0.78) : Color(red: 243/255, green: 242/255, blue: 248/255))
+                                            .fill(errorViewModel.isRegisterButtonEnabled ? Color(red: 0.30, green: 0.50, blue: 0.78) : .white)
                                             .frame(width: geometry.size.width * 0.5, height: geometry.size.height / 15)
                                             .cornerRadius(10)
-                                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                            .overlay(RoundedRectangle(cornerRadius: 10)
+                                                .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                            )
                                         
                                         Text("가입완료")
                                             .foregroundColor(errorViewModel.isRegisterButtonEnabled ? .white : .black)
