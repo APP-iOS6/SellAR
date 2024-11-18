@@ -8,6 +8,9 @@
 import SwiftUI
 import FirebaseFirestore
 import PhotosUI
+import UniformTypeIdentifiers
+import SafariServices
+import USDZScanner
 
 struct ItemEditView: View {
     enum KeyboardDone: Hashable {
@@ -21,7 +24,7 @@ struct ItemEditView: View {
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var textFocused: KeyboardDone?
     @State private var description: String = ""
-    @State private var selectedImage: UIImage? = nil // 선택된 이미지를 저장할 상태
+    @State private var selectedImages: [UIImage] = [] // 선택된 이미지를 저장할 상태
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     @State private var showEditItemView = false
     @ObservedObject var vm = ItemFormVM()
@@ -143,15 +146,45 @@ struct ItemEditView: View {
 //                   .hidden() // UI에 표시되지 않게 숨김
             
             Button(action: {
+                vm.showUSDZSource = true
                 textFocused = nil
-//                showEditItemView = true
             }) {
                 Text("촬영하기")
                     .foregroundStyle(Color.black)
-//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "camera")
                     .foregroundColor(Color.cyan)
             }
+            .confirmationDialog("USDZ 추가 및 수정", isPresented: $vm.showUSDZSource, titleVisibility: .visible) {
+                Button("파일 선택") {
+                    vm.selectedUSDZSource = .fileImporter
+                }
+                Button("오브젝트 캡쳐") {
+                    vm.selectedUSDZSource = .objectCapture
+                }
+                Button("취소", role: .cancel) {}
+            }
+            .fullScreenCover(isPresented: .init(get: {
+                vm.selectedUSDZSource == .objectCapture
+            }, set: { _ in
+                vm.selectedUSDZSource = nil
+            }), content: {
+                USDZScanner { url in
+                    Task { await vm.uploadUSDZ(fileURL: url) }
+                    // 업로드 후 상태 초기화
+                    vm.selectedUSDZSource = nil
+                }
+            })
+            .fileImporter(isPresented: .init(get: { vm.selectedUSDZSource == .fileImporter }, set: { _ in
+                vm.selectedUSDZSource = nil
+            }), allowedContentTypes: [UTType.usdz], onCompletion: { result in
+                switch result {
+                case .success(let url):
+                    Task { await vm.uploadUSDZ(fileURL: url, isSecurityScopedResource: true) }
+                case .failure(let error):
+                    vm.error = error.localizedDescription
+                }
+            })
+
             
             Divider()
             
@@ -176,6 +209,9 @@ struct ItemEditView: View {
 //                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 Image(systemName: "photo")
                     .foregroundColor(Color.cyan)
+            }
+            .sheet(isPresented: $isImagePickerPresented) {
+                PhotoPickerView(selectedImages: $vm.selectedImages)
             }
             
 //            Divider()
@@ -345,58 +381,7 @@ struct ItemEditView: View {
                     Image(systemName: "xmark")
                         .foregroundColor(Color.white)
                 })
-                .sheet(isPresented: $isImagePickerPresented) {
-                    ImagePicker(selectedImage: $selectedImage, isPresented: $isImagePickerPresented)
-                }
             }
         }
     }
-}
-
-
-// PHPickerViewController를 SwiftUI에서 사용하기 위한 래퍼
-struct ImagePicker: UIViewControllerRepresentable {
-    class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        var parent: ImagePicker
-        
-        init(parent: ImagePicker) {
-            self.parent = parent
-        }
-        
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            // 선택된 이미지가 있을 경우
-            if let selectedItem = results.first {
-                selectedItem.itemProvider.loadObject(ofClass: UIImage.self) { (image, error) in
-                    if let image = image as? UIImage {
-                        // 부모 뷰로 이미지를 전달
-                        DispatchQueue.main.async {
-                            self.parent.selectedImage = image
-                        }
-                    }
-                }
-            }
-            
-            picker.dismiss(animated: true)
-        }
-    }
-    
-    @Binding var selectedImage: UIImage?  // 선택된 이미지를 바인딩
-    var isPresented: Binding<Bool>          // 선택기가 표시될지 여부
-    
-    func makeCoordinator() -> Coordinator {
-        return Coordinator(parent: self)
-    }
-    
-    func makeUIViewController(context: Context) -> PHPickerViewController {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 0 // 여러 이미지 선택을 허용하려면 이 값을 변경
-        configuration.filter = .images // 이미지만 필터링
-        
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = context.coordinator
-        
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
 }

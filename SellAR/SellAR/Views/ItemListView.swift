@@ -69,27 +69,53 @@ struct ItemRowView: View {
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(item.itemName)
-                        .font(.headline)
-                        .foregroundStyle(Color.black)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                    HStack {
+                        Text(item.itemName)
+                            .font(.system(size: 20, weight: .regular))
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                        Spacer()
+                        
+                        Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
+                            .font(.subheadline)
+                            .foregroundColor(item.isSold ? .white : (item.isReserved ? .white : .white))
+                            .padding(4)
+                            .background(item.isSold ? .red : (item.isReserved ? .indigo : .green))
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                            )
+                        
+                    }
                     
-                    Text("가격: \(formattedPriceInTenThousandWon)")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.gray)
+                    Text("\(formattedPriceInTenThousandWon)")
+                        .font(.system(size: 17, weight: .regular, design: .default))
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .padding(.bottom, 4)
                     
-                    Text("지역: \(item.location)")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.gray)
+                    Divider()
                     
-                    Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
-                        .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red))
+                    HStack {
+                        Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        
+                        Divider()
+                        
+                        Text("\(item.location)")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.gray)
+                    }
+                    .frame(height: 25)
+                    .padding(.top, 5)
+                    .padding(.leading, 3)
                     
-                    Text(" \(item.formattedCreatedAt)")  // 생성 시간 표시
-                        .font(.footnote)
-                        .foregroundColor(.gray)
+                    
+                    
+                    
                     
                     //                    Text("\(item.createdAt ?? Date())")
                     //                        .font(.subheadline)
@@ -105,21 +131,23 @@ struct ItemRowView: View {
                         showDetailSheet = true
                     }) {
                         Image(systemName: "ellipsis")
-                            .foregroundStyle(Color.black)
-                        //                            .foregroundColor(colorScheme == .dark ? .black : .white)
+//                            .foregroundStyle(Color.black)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .padding(8)
-                        //                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+//                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                     }
                     Spacer()
                     
-                    if !item.usdzLink.isEmpty {
+                    if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
                         arIcon
                     }
+
                     
                 }
+                .padding(.trailing, 4)
             }
             .padding(.vertical, 10)
-            .background(Color(.white))
+            .background(colorScheme == .dark ? .black : .white)
             .cornerRadius(12)
             .shadow(radius: 1)
             .padding(.horizontal, 16)

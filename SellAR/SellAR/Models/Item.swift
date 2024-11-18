@@ -75,7 +75,15 @@ struct Item: Identifiable, Codable, Equatable {
     var createdAt: Date?
     var updatedAt: Date?
     var thumbnailLink: String?
-    var usdzLink: String
+//    var thumbnailURL: URL? {
+//        guard let thumbnailLink else { return nil }
+//        return URL(string: thumbnailLink)
+//    }
+    var usdzLink: String?
+//    var usdzURL: URL? {
+//        guard let usdzLink else { return nil }
+//        return URL(string: usdzLink)
+//    }
 
     init?(document: [String: Any]) {
         print("Document data: \(document)") // 데이터 출력

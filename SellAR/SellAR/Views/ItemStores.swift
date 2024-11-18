@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseStorage
 
 class ItemStore: ObservableObject {
     @Published var items: [Item] = []
@@ -131,7 +132,10 @@ class ItemStore: ObservableObject {
             "description": item.description,
             "price": item.price,
             "images": item.images,
-            "location": item.location
+            "location": item.location,
+//            "usdzLink": item.usdzLink ?? "", // USDZ 파일 링크 추가
+//            "thumbnailLink": item.thumbnailLink ?? "" // 썸네일 링크 추가
+
             // 필요한 경우 다른 필드도 추가
         ]) { error in
             if let error = error {
