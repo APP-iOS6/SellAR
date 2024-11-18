@@ -8,7 +8,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 4) { // 간격 조정
+                VStack(spacing: 4) {
                     logoView
                     
                     searchField
@@ -30,8 +30,8 @@ struct MainView: View {
             .background(
                 Color(UIColor { traitCollection in
                     traitCollection.userInterfaceStyle == .dark
-                        ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1)
-                        : UIColor.white
+                    ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1)
+                    : UIColor.white
                 }).ignoresSafeArea()
             )
             .toolbar {
@@ -54,21 +54,21 @@ struct MainView: View {
                     .interactiveDismissDisabled()
                 }
             }
+            .dismissKeyboardOnTap(insideScrollViewOnly: true) 
         }
-        .navigationBarTitleDisplayMode(.inline) // 타이틀 모드를 인라인으로 설정
-        .dismissKeyboardOnTap() // 키보드 내리기 적용
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     private var logoView: some View {
         HStack {
-            Image("Logo") // 이미지 이름에 맞게 수정
+            Image("Logo")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 120, height: 120) // 크기 유지
-                .padding(.leading, 5) // 왼쪽 간격
-            Spacer() // 오른쪽 여백 추가
+                .frame(width: 120, height: 120)
+                .padding(.leading, 5)
+            Spacer()
         }
-        .padding(.top, -70) // 툴바와 간격 제거
+        .padding(.top, -70)
     }
     
     private var searchField: some View {
@@ -95,7 +95,7 @@ struct MainView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .shadow(radius: 1)
-        .padding(.top, -16) // 로고와의 간격 줄이기
+        .padding(.top, -16)
         .padding(.horizontal, 10)
     }
     
@@ -114,29 +114,23 @@ struct MainView: View {
     }
 }
 
-
-
-
-
 extension View {
-    func dismissKeyboardOnTap() -> some View {
-        self.onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        }
-    }
-}
-
-
-struct DismissKeyboardOnTap: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .background(
-                TapGestureView()
-            )
+    func dismissKeyboardOnTap(insideScrollViewOnly: Bool = false) -> some View {
+        self.background(
+            Group {
+                if insideScrollViewOnly {
+                    TapGestureView(isLimitedToScrollView: true)
+                } else {
+                    TapGestureView(isLimitedToScrollView: false)
+                }
+            }
+        )
     }
 }
 
 struct TapGestureView: UIViewRepresentable {
+    let isLimitedToScrollView: Bool
+    
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
         let gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.dismissKeyboard))
@@ -144,7 +138,7 @@ struct TapGestureView: UIViewRepresentable {
         view.addGestureRecognizer(gesture)
         return view
     }
-
+    
     func updateUIView(_ uiView: UIView, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
@@ -158,9 +152,6 @@ struct TapGestureView: UIViewRepresentable {
     }
 }
 
-
-
-
 struct ListItemView: View {
     let item: Items
     let status: Bool
@@ -173,7 +164,6 @@ struct ListItemView: View {
                     .cornerRadius(8)
                     .shadow(radius: 2)
                     .padding()
-                
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Spacer()
@@ -198,15 +188,13 @@ struct ListItemView: View {
                             .padding(6)
                     }
                     
-                    // 가격
                     Text("\(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
                         .padding(.top, 0)
                     
-                    // 디바이더를 명확히 보이도록 수정
                     Divider()
-                        .frame(height: 1) // 명시적으로 높이를 설정
-                        .background(Color.gray) // 디바이더 색상 명시
+                        .frame(height: 1)
+                        .background(Color.gray)
                         .padding(.vertical, 4)
                         .padding(.trailing, 16)
                     
@@ -215,9 +203,9 @@ struct ListItemView: View {
                             .font(.footnote)
                             .foregroundColor(.secondary)
                         
-                        Divider() // 이 디바이더는 세로선
-                            .frame(width: 1, height: 14) // 높이 명시
-                            .background(Color.gray) // 색상 명시
+                        Divider()
+                            .frame(width: 1, height: 14)
+                            .background(Color.gray)
                         
                         Text("\(item.location)")
                             .font(.footnote)
@@ -226,7 +214,6 @@ struct ListItemView: View {
                     
                     Spacer()
                 }
-                
                 .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -242,9 +229,6 @@ struct ListItemView: View {
             }
         }
     }
-    
-    
-    
     
     private var formattedPriceInTenThousandWon: String {
         let priceNumber = Int(item.price) ?? 0
