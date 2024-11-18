@@ -15,10 +15,12 @@
 		B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46942CD884620076BE39 /* FirebaseAuth */; };
 		E0053C052CE1D738006B1A9A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E0053C042CE1D738006B1A9A /* FirebaseAnalytics */; };
 		E0053C072CE1D73D006B1A9A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E0053C062CE1D73D006B1A9A /* FirebaseMessaging */; };
+		E06945E52CEB3748000D1161 /* sellar-4fc83-443414279180.json in Resources */ = {isa = PBXBuildFile; fileRef = E06945E42CEB3748000D1161 /* sellar-4fc83-443414279180.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B86F46342CD7F85C0076BE39 /* SellAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E06945E42CEB3748000D1161 /* sellar-4fc83-443414279180.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "sellar-4fc83-443414279180.json"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -67,6 +69,7 @@
 				B8482C5E2CD1F1CB009DDA02 /* SellAR */,
 				B8482C6E2CD213DC009DDA02 /* Frameworks */,
 				B8482C5D2CD1F1CB009DDA02 /* Products */,
+				E06945E42CEB3748000D1161 /* sellar-4fc83-443414279180.json */,
 			);
 			sourceTree = "<group>";
 		};
@@ -162,6 +165,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E06945E52CEB3748000D1161 /* sellar-4fc83-443414279180.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
