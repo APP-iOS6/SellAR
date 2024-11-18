@@ -14,6 +14,7 @@ struct ProfileFixView: View {
     @State private var isImagePickerPresented = false
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.colorScheme) var colorScheme
+    @State private var isSaving = false
     
     init(userDataManager: UserDataManager) {
         self._userDataManager = ObservedObject(wrappedValue: userDataManager)
@@ -21,9 +22,8 @@ struct ProfileFixView: View {
     
     var body: some View {
             ZStack {
-                Color(colorScheme == .dark ?
-                      Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                    .edgesIgnoringSafeArea(.all) // 남색 : 하늘색
+                Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
+                // 다크모드 : 라이트모드 순서 검정:밝은회색
                 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
@@ -33,17 +33,14 @@ struct ProfileFixView: View {
                             Image(systemName:"chevron.left")
                                 .resizable()
                                 .frame(width: 11, height: 22)
-//                                .foregroundColor(colorScheme == .dark ?
-//                                    Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
-                                .foregroundColor(colorScheme == .dark ? Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255) : Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255))
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // 흰색:검정
                         }
                         .buttonStyle(PlainButtonStyle())
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
                         
                         Text("프로필 수정")
-                            .foregroundColor(colorScheme == .dark ?
-                                Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // 흰색:검정
                             .font(.system(size: 20))
                             .fontWeight(.bold)
                             .lineLimit(1)
@@ -85,20 +82,27 @@ struct ProfileFixView: View {
                             }
                             .padding(15) // 검정칸 크기
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundColor(Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255))
-                            .background(.white)
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
                             .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
                         
                         Spacer()
                         
                         Button(action: saveChange) {
-                            Text("저장하기")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
-                                .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
-                                .cornerRadius(26.5)
+                            if isSaving {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint:.white))
+                            } else {
+                                Text("저장하기")
+                            }
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
+                        .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                        .cornerRadius(26.5)
+                        .disabled(isSaving)
                     }
                 }
                 .frame(maxHeight:.infinity , alignment: .leading)
@@ -115,7 +119,7 @@ struct ProfileFixView: View {
             imagePicker(image: $selectedImage)
         }
     }
-    
+
     private var profileImage: some View {
         Group {
             if let selectedImage = selectedImage {
@@ -155,22 +159,27 @@ struct ProfileFixView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding(40)
                     .frame(width: 135, height: 135)
-                    .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //연파랑
-                    .background(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) //검정:연회색
+                    .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
                     .clipShape(Circle())
+                    .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
             }
         }
     }
     
     
     private func saveChange() {
+        guard !isSaving else { return } // 이미 저장중일경우 함수 종료
+        isSaving = true
         userDataManager.updateUserProfile(username: username, image: selectedImage) { result in
-            switch result {
-            case .success:
-                print("프로필 업데이트 성공")
-                presentationMode.wrappedValue.dismiss()
-            case .failure(let error):
-                print("프로필 업데이트 실패: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    print("프로필 업데이트 성공")
+                    presentationMode.wrappedValue.dismiss()
+                case .failure(let error):
+                    print("프로필 업데이트 실패: \(error.localizedDescription)")
+                }
+                self.isSaving = false
             }
         }
     }
