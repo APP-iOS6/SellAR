@@ -4,7 +4,7 @@ struct MainView: View {
     @StateObject var vm = ItemListVM()
     @State private var showAddItemView = false
     @ObservedObject var loginViewModel: LoginViewModel
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
@@ -12,7 +12,7 @@ struct MainView: View {
                     searchField
                         .padding(.horizontal, 10)
                     
-                    LazyVStack(spacing: 8) {
+                    VStack(spacing: 8) {
                         ForEach(vm.filteredItems) { item in
                             NavigationLink(destination: DetailItemView(item: item, currentUserID: loginViewModel.user.id)) {
                                 ListItemView(item: item, status: item.isSold)
@@ -28,10 +28,10 @@ struct MainView: View {
             .background(
                 Color(UIColor {
                     $0.userInterfaceStyle == .dark ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1) :
-                                                     UIColor(red: 203 / 255, green: 217 / 255, blue: 238 / 255, alpha: 1)
+                    UIColor(red: 203 / 255, green: 217 / 255, blue: 238 / 255, alpha: 1)
                 }).ignoresSafeArea()
             )
-
+            
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     addButton
@@ -54,7 +54,7 @@ struct MainView: View {
             }
         }
     }
-
+    
     private var searchField: some View {
         HStack {
             Image(systemName: "magnifyingglass")
@@ -81,7 +81,7 @@ struct MainView: View {
         .shadow(radius: 1)
         .padding(.horizontal, 10)
     }
-
+    
     private var addButton: some View {
         Button(action: {
             showAddItemView = true
@@ -104,35 +104,67 @@ struct ListItemView: View {
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: 2) {
                 thumbnailView
                     .frame(width: 120, height: 120)
                     .cornerRadius(8)
                     .shadow(radius: 2)
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(item.itemName)
-                        .font(.headline)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text("가격: \(formattedPriceInTenThousandWon)") // "원"을 추가하지 않음
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-
-                    Text("지역: \(item.location)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-
-                    Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
-                        .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red)) // 상태에 따른 색상 설정
+                    .padding()
+                
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Spacer()
                     
-                    Text(" \(item.formattedCreatedAt)")  // 생성 시간 표시
-                                                .font(.footnote)
-                                                .foregroundColor(.gray)
+                    HStack {
+                        Text(item.itemName)
+                            .font(.headline)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                        Spacer()
+                        
+                        Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(item.isSold ? Color.gray : (item.isReserved ? Color.orange : Color(red: 0.0, green: 0.6, blue: 0.2)))
+                            )
+                            .foregroundColor(.white)
+                            .padding(6)
+                    }
                     
+                    // 가격
+                    Text("\(formattedPriceInTenThousandWon)")
+                        .font(.subheadline)
+                        .padding(.top, 0)
+                    
+                    // 디바이더를 명확히 보이도록 수정
+                    Divider()
+                        .frame(height: 1) // 명시적으로 높이를 설정
+                        .background(Color.gray) // 디바이더 색상 명시
+                        .padding(.vertical, 4)
+                        .padding(.trailing, 16)
+                    
+                    HStack(spacing: 4) {
+                        Text("\(item.formattedCreatedAt)")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        
+                        Divider() // 이 디바이더는 세로선
+                            .frame(width: 1, height: 14) // 높이 명시
+                            .background(Color.gray) // 색상 명시
+                        
+                        Text("\(item.location)")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
                 }
+                
+                .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, 10)
@@ -140,14 +172,17 @@ struct ListItemView: View {
             .cornerRadius(12)
             .padding(.horizontal, 10)
             .shadow(radius: 1)
-
+            
             if item.usdzLink != nil {
                 arIcon
-                    .padding(10)
+                    .padding(15)
             }
         }
     }
-
+    
+    
+    
+    
     private var formattedPriceInTenThousandWon: String {
         let priceNumber = Int(item.price) ?? 0
         let tenThousandUnit = priceNumber / 10000
@@ -167,7 +202,7 @@ struct ListItemView: View {
             return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
         }
     }
-
+    
     private var thumbnailView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
@@ -197,7 +232,7 @@ struct ListItemView: View {
         }
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
     }
-
+    
     private var arIcon: some View {
         Text("AR")
             .font(.caption)
