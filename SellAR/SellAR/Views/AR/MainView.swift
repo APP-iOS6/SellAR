@@ -8,30 +8,32 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 12) {
+                VStack(spacing: 4) { // 간격 조정
+                    logoView
+                    
                     searchField
                         .padding(.horizontal, 10)
-                    
-                    VStack(spacing: 8) {
-                        ForEach(vm.filteredItems) { item in
-                            NavigationLink(destination: DetailItemView(item: item, currentUserID: loginViewModel.user.id)) {
-                                ListItemView(item: item, status: item.isSold)
-                                    .contentShape(Rectangle())
-                                    .padding(.horizontal, 10)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(.top, 8)
                 }
+                
+                VStack(spacing: 8) {
+                    ForEach(vm.filteredItems) { item in
+                        NavigationLink(destination: DetailItemView(item: item, currentUserID: loginViewModel.user.id)) {
+                            ListItemView(item: item, status: item.isSold)
+                                .contentShape(Rectangle())
+                                .padding(.horizontal, 10)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.top, 8)
             }
             .background(
-                Color(UIColor {
-                    $0.userInterfaceStyle == .dark ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1) :
-                    UIColor(red: 203 / 255, green: 217 / 255, blue: 238 / 255, alpha: 1)
+                Color(UIColor { traitCollection in
+                    traitCollection.userInterfaceStyle == .dark
+                        ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1)
+                        : UIColor.white
                 }).ignoresSafeArea()
             )
-            
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     addButton
@@ -53,6 +55,20 @@ struct MainView: View {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline) // 타이틀 모드를 인라인으로 설정
+        .dismissKeyboardOnTap() // 키보드 내리기 적용
+    }
+    
+    private var logoView: some View {
+        HStack {
+            Image("Logo") // 이미지 이름에 맞게 수정
+                .resizable()
+                .scaledToFit()
+                .frame(width: 120, height: 120) // 크기 유지
+                .padding(.leading, 5) // 왼쪽 간격
+            Spacer() // 오른쪽 여백 추가
+        }
+        .padding(.top, -70) // 툴바와 간격 제거
     }
     
     private var searchField: some View {
@@ -79,6 +95,7 @@ struct MainView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .shadow(radius: 1)
+        .padding(.top, -16) // 로고와의 간격 줄이기
         .padding(.horizontal, 10)
     }
     
@@ -96,6 +113,52 @@ struct MainView: View {
         }
     }
 }
+
+
+
+
+
+extension View {
+    func dismissKeyboardOnTap() -> some View {
+        self.onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+    }
+}
+
+
+struct DismissKeyboardOnTap: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(
+                TapGestureView()
+            )
+    }
+}
+
+struct TapGestureView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        let gesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.dismissKeyboard))
+        gesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(gesture)
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    class Coordinator {
+        @objc func dismissKeyboard() {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+    }
+}
+
+
 
 
 struct ListItemView: View {
