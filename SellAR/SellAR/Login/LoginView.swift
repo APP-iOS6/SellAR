@@ -21,7 +21,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(colorScheme == .dark ? Color(red: 0.15, green: 0.20, blue: 0.31) : Color(red: 0.80, green: 0.85, blue: 0.93))
+                Color(colorScheme == .dark ? .black : .white)
                     .edgesIgnoringSafeArea(.all)
                     .onTapGesture {
                         hideKeyboard()
@@ -45,17 +45,19 @@ struct LoginView: View {
                             
                             TextField("이메일을 입력해 주세요", text: $email)
                                 .padding()
-                                .foregroundColor(.black)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
                                 .cornerRadius(10)
-                                .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .keyboardType(.emailAddress)
                                 .autocapitalization(.none)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                )
                             
                             Text(errorViewModel.emailError)
                                 .foregroundColor(.red)
                                 .font(.caption)
-                                .padding(.top, 5)
                         }
                         .padding(.horizontal, 20)
                         
@@ -69,15 +71,16 @@ struct LoginView: View {
                             SecureField("비밀번호를 입력해 주세요", text: $password)
                                 .padding()
                                 .frame(width: geometry.size.width * 0.9, height: max(geometry.size.height / 15, 50))
-                                .background(Color(red: 0.95, green: 0.95, blue: 0.97))
-                                .foregroundColor(.black)
+                                .background(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .white)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                                 .cornerRadius(10)
-                                .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(colorScheme == .dark ? Color(red: 0.21, green: 0.23, blue: 0.25) : .black, lineWidth: 0.5)
+                                )
                             
                             Text(errorViewModel.passwordError)
                                 .foregroundColor(.red)
                                 .font(.caption)
-                                .padding(.top, 5)
                         }
                         .padding(.horizontal, 20)
                         
@@ -105,89 +108,83 @@ struct LoginView: View {
                                     .foregroundColor(.white)
                                     .cornerRadius(10)
                                     .bold()
-                                    .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             }
                             
                             NavigationLink(destination: RegisterView()) {
                                 Text("회원가입")
                                     .frame(width: geometry.size.width * 0.34, height: geometry.size.height / 50)
                                     .padding()
-                                    .foregroundColor(.black)
-                                    .background(Color(red: 0.95, green: 0.95, blue: 0.97))
+                                    .background(Color(red: 0.30, green: 0.50, blue: 0.78))
+                                    .foregroundColor(.white)
                                     .cornerRadius(10)
                                     .bold()
-                                    .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                             }
                         }
                         
                         VStack {
                             HStack {
                                 VStack {
-                                    Divider()
-                                        .frame(height: 1)
-                                        .background(Color.gray)
                                 }
-                                Text("또는")
-                                    .foregroundColor(.gray)
+                                Text("다음으로 로그인: ")
                                 VStack {
-                                    Divider()
-                                        .frame(height: 1)
-                                        .background(Color.gray)
                                 }
                             }
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
-                        
-                        // 소셜 로그인 버튼
-                        Button(action: {
-                            viewModel.loginWithGoogle { success in
-                                if success {
-                                    isMainViewActive = viewModel.isMainViewActive
-                                    isNicknameEntryActive = viewModel.isNicknameEntryActive
+                        HStack(spacing: 20) {
+                            Button(action: {
+                                viewModel.loginWithGoogle { success in
+                                    if success {
+                                        isMainViewActive = viewModel.isMainViewActive
+                                        isNicknameEntryActive = viewModel.isNicknameEntryActive
+                                    }
                                 }
-                            }
-                        }) {
-                            HStack {
-                                Image("GoogleIcon")
-                                Text("Google로 로그인")
-                                    .foregroundColor(.white)
-                            }
-                            .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
-                            .padding()
-                            .background(Color(red: 0.30, green: 0.50, blue: 0.78))
-                            .cornerRadius(10)
-                            .bold()
-                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
-                        }
-                        .padding(.top, 20)
-                        
-                        Button(action: {
-                            viewModel.loginWithApple { success in
-                                if success {
-                                    isMainViewActive = viewModel.isMainViewActive
-                                    isNicknameEntryActive = !viewModel.isMainViewActive
+                            }) {
+                                HStack {
+                                    Image("GoogleIcon")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40, height: 40)
                                 }
+                                .frame(width: 70, height: 70)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color(colorScheme == .light ?.black : .clear), lineWidth: 0.5)
+                                )
                             }
-                        }) {
-                            HStack {
-                                Image(systemName: "applelogo")
-                                    .foregroundColor(.white)
-                                Text("Apple로 로그인")
-                                    .foregroundColor(.white)
+
+                            Button(action: {
+                                viewModel.loginWithApple { success in
+                                    if success {
+                                        isMainViewActive = viewModel.isMainViewActive
+                                        isNicknameEntryActive = !viewModel.isMainViewActive
+                                    }
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "applelogo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 40, height: 40)
+                                }
+                                .frame(width: 70, height: 70)
+                                .background(Color.white)
+                                .foregroundColor(.black)
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color(colorScheme == .light ? .black : .clear), lineWidth: 0.5)
+                                )
                             }
-                            .frame(width: geometry.size.width * 0.8, height: geometry.size.height / 50)
-                            .padding()
-                            .bold()
-                            .background(Color(red: 0.30, green: 0.50, blue: 0.78))
-                            .cornerRadius(10)
-                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                         }
                     }
                 }
             }
             .background(
-                NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isMainViewActive) {
+                NavigationLink(destination: ContentView(), isActive: $isMainViewActive) {
                     EmptyView()
                 }
             )

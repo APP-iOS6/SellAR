@@ -97,9 +97,9 @@ final class LoginErrorViewModel: ObservableObject {
         case .passwordMismatch:
             confirmPasswordError = "비밀번호가 일치하지 않습니다."
         case .emptyFields:
-            emailError = email.isEmpty ? "아이디를 입력해주세요." : ""
-            passwordError = password.isEmpty ? "비밀번호를 입력해주세요." : ""
-            nicknameError = userName.isEmpty ? "닉네임을 입력해주세요." : ""
+            emailError = email.isEmpty ? "" : ""
+            passwordError = password.isEmpty ? "" : ""
+            nicknameError = userName.isEmpty ? "" : ""
         case .invalidEmailFormat:
             emailError = "올바른 이메일 형식만 가능합니다."
         case .none:
