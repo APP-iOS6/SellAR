@@ -29,9 +29,8 @@ struct QAView: View {
     
     var body: some View {
         ZStack {
-            Color(colorScheme == .dark ?
-                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-            .edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
+            // 다크모드 : 라이트모드 순서 검정:밝은회색
             
                 VStack(spacing:0) {
                     Spacer()
@@ -43,15 +42,14 @@ struct QAView: View {
                             Image(systemName:"chevron.left")
                                 .resizable()
                                 .frame(width: 11, height: 22)
-                                .foregroundColor(colorScheme == .dark ? Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255) : Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255))
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // 흰색:검정
                         }
                         .buttonStyle(PlainButtonStyle())
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
                         
                         Text("자주묻는 질문")
-                            .foregroundColor(colorScheme == .dark ?
-                                             Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흰색:검정
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // 흰:검
                             .font(.system(size: 20))
                             .fontWeight(.bold)
                             .lineLimit(1)
@@ -74,14 +72,19 @@ struct QAView: View {
                                 }
                             }) {
                                 Text(category)
-                                    .foregroundColor(Color.black)
                             }
                             .frame(maxWidth : .infinity, alignment: .center)
+                            .foregroundColor(selectedCategory == category ?
+                                (colorScheme == .dark ? Color.black : Color.white) : (colorScheme == .dark ? Color.white : Color.black))
                             .padding(.vertical, 10)
                             .background(selectedCategory == category ?
-                                Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255) : // 선택한 버튼 색상
-                                Color(red:243 / 255, green: 242 / 255, blue: 248 / 255)   // 선택안한 버튼 색상
+                                (colorScheme == .dark ? // 선택한 버튼 색상 ( 다크모드 : 라이트모드)
+                                    Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255) : Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255)):
+                                (colorScheme == .dark ? // 선택안한 버튼 색상 ( 다크모드 : 라이트모드)
+                                        Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
                             )
+                            .overlay(RoundedRectangle(cornerRadius: 26.5)
+                                .stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
                             .cornerRadius(26.5)
                         }
                     }
@@ -95,12 +98,11 @@ struct QAView: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else {
                         ScrollView {
-                            VStack(spacing: 20) {
+                            VStack(spacing: 0) {
                                 ForEach(filteredQA) { qa in
                                     QAItem(question: qa.question, answer: qa.answer)
                                 }
                             }
-                            .padding(.horizontal, 10)
                         }
                     }
                     // 여기까지
@@ -131,24 +133,29 @@ struct QAView: View {
     }
 }
         
-        struct QAItem: View {
-            let question: String
-            let answer: String
-            
-            var body: some View {
-                VStack(alignment: .leading) {
-                    Text("Q. \(question)")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(Color.black)
-                        .padding(.bottom, 10)
-                    
-                    Text("A. \(answer)")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(Color.black)
-                }
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255))
-                .cornerRadius(10)
+struct QAItem: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    let question: String
+    let answer: [String]
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Q. \(question)")
+                .font(.system(size: 18, weight: .bold))
+                .padding(.bottom, 10)
+            HStack {
+                Text("A.")
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
+                Text("\(answer.joined(separator: "\n"))")
+                    .lineSpacing(3)
             }
+            .font(.system(size: 12, weight: .bold))
         }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
+        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+    }
+}
