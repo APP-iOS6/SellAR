@@ -71,7 +71,7 @@ struct ItemRowView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(item.itemName)
-                            .font(.system(size: 20, weight: .regular))
+                            .font(.headline)
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
@@ -79,35 +79,39 @@ struct ItemRowView: View {
                         Spacer()
                         
                         Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
-                            .font(.subheadline)
-                            .foregroundColor(item.isSold ? .white : (item.isReserved ? .white : .white))
-                            .padding(4)
-                            .background(item.isSold ? .red : (item.isReserved ? .indigo : .green))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(style: StrokeStyle(lineWidth: 1))
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(item.isSold ? Color.gray : (item.isReserved ? Color.orange : Color(red: 0.0, green: 0.6, blue: 0.2)))
                             )
-                        
+                            .foregroundColor(.white)
+                            .padding(6)
                     }
                     
                     Text("\(formattedPriceInTenThousandWon)")
-                        .font(.system(size: 17, weight: .regular, design: .default))
+                        .font(.subheadline)
                         .foregroundColor(colorScheme == .dark ? .white : .black)
-                        .padding(.bottom, 4)
+                        .padding(.top, 0)
                     
                     Divider()
+                        .frame(height: 1)
+                        .background(Color.gray)
+                        .padding(.vertical, 4)
                     
-                    HStack {
+                    HStack(spacing: 4) {
                         Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
                         
                         Divider()
+                            .frame(width: 1, height: 14)
+                            .background(Color.gray)
                         
                         Text("\(item.location)")
-                            .font(.subheadline)
-                            .foregroundStyle(Color.gray)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                     .frame(height: 25)
                     .padding(.top, 5)
