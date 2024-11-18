@@ -10,6 +10,8 @@ struct DetailItemView: View {
     @State private var showAlert = false
     @State private var showUserItems = false
     @State private var showReportConfirmation = false  // 신고 완료 메시지 표시 여부
+    @State private var showSelfChatAlert = false
+    
     
     init(item: Items, currentUserID: String) {
         self.item = item
@@ -229,6 +231,11 @@ struct DetailItemView: View {
             }
             .padding(.top, 16)
         }
+        .alert("알림", isPresented: $showSelfChatAlert) {
+            Button("확인", role: .cancel) { }
+        } message: {
+            Text("자기 자신에게는 채팅을 보낼 수 없습니다.")
+        }
         .background(
             Color(UIColor { traitCollection in
                 traitCollection.userInterfaceStyle == .dark
@@ -338,6 +345,16 @@ struct DetailItemView: View {
     
     // 채팅 시작 기능
     func startChat() {
+        
+        // 자기 자신과의 채팅 시도 확인
+        if item.userId == chatViewModel.senderID {
+
+            withAnimation {
+                showSelfChatAlert = true
+            }
+            return
+        }
+
         // 판매자 정보로 User 객체 생성
         let seller = User(
             id: item.userId,

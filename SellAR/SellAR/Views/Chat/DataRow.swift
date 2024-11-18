@@ -69,7 +69,6 @@ struct DataRow: View {
                             .background(messageBackgroundColor)
                             .foregroundColor(.white)
                             .cornerRadius(15)
-                            .shadow(color: Color.black.opacity(0.16), radius: 3, x: 0, y: 2)
                         if !isCurrentUser {
                             Text(data.formattedTime)
                                 .font(.caption2)

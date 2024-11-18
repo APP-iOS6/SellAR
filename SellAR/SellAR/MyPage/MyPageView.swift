@@ -321,6 +321,7 @@ struct MyPageView: View {
                     .foregroundColor(colorScheme == .dark ?
                         Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
                     .padding(.bottom,30)
+                    .bold()
                 
                 NavigationLink(destination: LoginView()) {
                     Text("로그인하기")
@@ -329,6 +330,7 @@ struct MyPageView: View {
                         .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흐린흰색
                         .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         .cornerRadius(26.5)
+                        .bold()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
