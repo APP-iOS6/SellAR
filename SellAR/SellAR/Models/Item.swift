@@ -63,7 +63,6 @@ struct Items: Identifiable, Codable, Equatable {
 struct Item: Identifiable, Codable, Equatable {
     var id: String
     var userId: String
-    var title: String
     var itemName: String
     var description: String
     var price: String
@@ -75,7 +74,15 @@ struct Item: Identifiable, Codable, Equatable {
     var createdAt: Date?
     var updatedAt: Date?
     var thumbnailLink: String?
-    var usdzLink: String
+    var thumbnailURL: URL? {
+        guard let thumbnailLink else { return nil }
+        return URL(string: thumbnailLink)
+    }
+    var usdzLink: String?
+    var usdzURL: URL? {
+        guard let usdzLink else { return nil }
+        return URL(string: usdzLink)
+    }
 
     init?(document: [String: Any]) {
         print("Document data: \(document)") // 데이터 출력
@@ -88,7 +95,6 @@ struct Item: Identifiable, Codable, Equatable {
 
         self.id = id
         self.userId = document["userId"] as? String ?? ""
-        self.title = document["title"] as? String ?? ""
         self.itemName = itemName
         self.description = document["description"] as? String ?? ""
         self.price = document["price"] as? String ?? "0"

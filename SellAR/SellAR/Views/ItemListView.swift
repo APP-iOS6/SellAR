@@ -15,7 +15,7 @@ struct ItemRowView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: 22) {
                 // Thumbnail View Section
                 if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
                    let imageURL = URL(string: imageURLString) {
@@ -50,7 +50,7 @@ struct ItemRowView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                     )
-                    .padding(.leading, 10)
+                    .padding()
                 } else {
                     Color.white
                         .frame(width: 120, height: 120)
@@ -64,34 +64,63 @@ struct ItemRowView: View {
                                 .foregroundColor(.gray)
                                 .font(.system(size: 16, weight: .bold))
                         )
-                        .padding(.leading, 10)
+                        .padding()
                 }
                 
                 // Item Info Section
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(item.itemName)
-                        .font(.headline)
-                        .foregroundStyle(Color.black)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Spacer()
                     
-                    Text("가격: \(formattedPriceInTenThousandWon)")
+                    HStack {
+                        Text(item.itemName)
+                            .font(.headline)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                        Spacer()
+                        
+                        Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(item.isSold ? Color.gray : (item.isReserved ? Color.orange : Color(red: 0.0, green: 0.6, blue: 0.2)))
+                            )
+                            .foregroundColor(.white)
+                            .padding(6)
+                    }
+                    
+                    Text("\(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
-                        .foregroundStyle(Color.gray)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .padding(.top, 0)
                     
-                    Text("지역: \(item.location)")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.gray)
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color.gray)
+                        .padding(.vertical, 4)
+                        .padding(.trailing, 16)
                     
-                    Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
-                        .font(.subheadline)
-                        .foregroundColor(item.isSold ? .gray : (item.isReserved ? .gray : .red))
                     
-//                    Text("\(item.createdAt ?? Date())")
-//                        .font(.subheadline)
-//                        .foregroundStyle(Color.gray)
-//                        .lineLimit(1)
+                    HStack(spacing: 4) {
+                        Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        
+                        Divider()
+                            .frame(width: 1, height: 14)
+                            .background(Color.gray)
+                        
+                        Text("\(item.location)")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
                 }
+                .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack {
@@ -101,43 +130,46 @@ struct ItemRowView: View {
                         showDetailSheet = true
                     }) {
                         Image(systemName: "ellipsis")
-                            .foregroundStyle(Color.black)
-//                            .foregroundColor(colorScheme == .dark ? .black : .white)
+//                            .foregroundStyle(Color.black)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .padding(8)
 //                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                     }
                     Spacer()
                     
-                    if !item.usdzLink.isEmpty {
+                    if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
                         arIcon
                     }
+
                     
                 }
+                .padding(.trailing, 4)
             }
             .padding(.vertical, 10)
-            .background(Color(.white))
+            .background(Color(.systemGray6))
             .cornerRadius(12)
+            .padding(.horizontal, 10)
             .shadow(radius: 1)
-            .padding(.horizontal, 16)
+            
         }
     }
-             private var formattedPriceInTenThousandWon: String {
-                let priceNumber = Int(item.price) ?? 0
-                let tenThousandUnit = priceNumber / 10000
-                let remaining = priceNumber % 10000
-                
-                let formatter = NumberFormatter()
-                formatter.numberStyle = .decimal
-                
-                if tenThousandUnit > 0 {
-                    if remaining == 0 {
-                        return "\(tenThousandUnit)만원"
-                    } else {
-                        let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
-                        return "\(tenThousandUnit)만 \(remainingStr)원"
-                    }
-                } else {
-                    return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(item.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
         }
     }
     
@@ -176,7 +208,7 @@ struct ItemListView: View {
         ZStack {
             Color(colorScheme == .dark ?
                   Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                .edgesIgnoringSafeArea(.all)
+            .edgesIgnoringSafeArea(.all)
             ScrollView {
                 VStack(spacing: 6) {
                     // Search Bar
@@ -196,7 +228,7 @@ struct ItemListView: View {
                                 searchText = ""
                             }) {
                                 Image(systemName: "xmark.circle.fill")
-//                                    .font(.system(size: 18))
+                                //                                    .font(.system(size: 18))
                                     .foregroundStyle(Color.gray)
                                     .padding(.trailing, 10)
                             }
