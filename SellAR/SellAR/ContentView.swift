@@ -28,10 +28,10 @@ struct ContentView: View {
             
             StartMessageView(loginViewModel: viewModel)
                 .tabItem {
-                    Image(systemName: "2.square.fill")
+                    Image(systemName: "message.circle.fill")
                     Text("채팅")
                 }
-                .badge(chatViewModel.totalUnreadCount > 0 ? chatViewModel.totalUnreadCount : 0)
+                .badge(chatViewModel.totalUnreadCount)
             
             MyPageView()
                 .tabItem {
