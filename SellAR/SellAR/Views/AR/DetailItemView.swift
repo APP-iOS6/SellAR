@@ -1,6 +1,15 @@
 import SwiftUI
 import SafariServices
 
+
+extension Color {
+    static var dynamicTextColor: Color {
+        return Color(UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? .black : .label
+        })
+    }
+}
+
 struct DetailItemView: View {
     let item: Items
     @StateObject private var userVM = UserViewModel()
@@ -9,9 +18,8 @@ struct DetailItemView: View {
     @State private var chatRoomID: String?
     @State private var showAlert = false
     @State private var showUserItems = false
-    @State private var showReportConfirmation = false  // 신고 완료 메시지 표시 여부
+    @State private var showReportConfirmation = false
     @State private var showSelfChatAlert = false
-    
     
     init(item: Items, currentUserID: String) {
         self.item = item
@@ -34,10 +42,10 @@ struct DetailItemView: View {
                                     case .success(let image):
                                         image.resizable()
                                             .aspectRatio(contentMode: .fit)
-                                            .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.width) // 화면 비율 맞춤
+                                            .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.width)
                                             .onTapGesture {
                                                 if let usdzURL = item.usdzURL {
-                                                    viewAR(url: usdzURL) // 썸네일 클릭 시 AR 보기 호출
+                                                    viewAR(url: usdzURL)
                                                 }
                                             }
                                     case .failure:
@@ -47,27 +55,6 @@ struct DetailItemView: View {
                                     }
                                 }
                                 .cornerRadius(8)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        } else if item.thumbnailURL == nil && item.images.count == 1 {
-                            VStack {
-                                if let singleImageURL = URL(string: item.images.first!) {
-                                    AsyncImage(url: singleImageURL) { phase in
-                                        switch phase {
-                                        case .empty:
-                                            ProgressView()
-                                        case .success(let image):
-                                            image.resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.width) // 화면 비율 맞춤
-                                        case .failure:
-                                            Text("이미지를 불러올 수 없습니다")
-                                        @unknown default:
-                                            EmptyView()
-                                        }
-                                    }
-                                    .cornerRadius(8)
-                                }
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
                         } else {
@@ -81,10 +68,10 @@ struct DetailItemView: View {
                                             case .success(let image):
                                                 image.resizable()
                                                     .aspectRatio(contentMode: .fit)
-                                                    .frame(maxWidth: UIScreen.main.bounds.width * 0.8, maxHeight: UIScreen.main.bounds.width * 0.8) // 비율 맞춤
+                                                    .frame(maxWidth: UIScreen.main.bounds.width * 0.8, maxHeight: UIScreen.main.bounds.width * 0.8)
                                                     .onTapGesture {
                                                         if let usdzURL = item.usdzURL {
-                                                            viewAR(url: usdzURL) // 썸네일 클릭 시 AR 보기 호출
+                                                            viewAR(url: usdzURL)
                                                         }
                                                     }
                                             case .failure:
@@ -95,7 +82,6 @@ struct DetailItemView: View {
                                         }
                                         .cornerRadius(8)
                                     }
-                                    
                                     ForEach(item.images, id: \.self) { imageURL in
                                         if let url = URL(string: imageURL) {
                                             AsyncImage(url: url) { phase in
@@ -105,7 +91,7 @@ struct DetailItemView: View {
                                                 case .success(let image):
                                                     image.resizable()
                                                         .aspectRatio(contentMode: .fit)
-                                                        .frame(maxWidth: UIScreen.main.bounds.width * 0.8, maxHeight: UIScreen.main.bounds.width * 0.8) // 비율 맞춤
+                                                        .frame(maxWidth: UIScreen.main.bounds.width * 0.8, maxHeight: UIScreen.main.bounds.width * 0.8)
                                                 case .failure:
                                                     Text("이미지를 불러올 수 없습니다")
                                                 @unknown default:
@@ -122,9 +108,7 @@ struct DetailItemView: View {
                     .padding(.vertical)
                 }
                 
-                // 흰색 배경 안에 들어갈 전체 내용
                 VStack(alignment: .leading, spacing: 16) {
-                    // 판매자 및 상품 정보 섹션
                     HStack {
                         NavigationLink(destination: UserItemsView(userId: item.userId)) {
                             if let profileImageUrl = userVM.user?.profileImageUrl, let url = URL(string: profileImageUrl) {
@@ -155,16 +139,16 @@ struct DetailItemView: View {
                             NavigationLink(destination: UserItemsView(userId: item.userId)) {
                                 Text("\(userVM.user?.username ?? "알 수 없음")")
                                     .font(.subheadline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.dynamicTextColor)
                             }
                             Text(item.location)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.dynamicTextColor)
                         }
                         Spacer()
                         Text(item.formattedCreatedAt)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.dynamicTextColor)
                     }
                     
                     Divider()
@@ -172,22 +156,22 @@ struct DetailItemView: View {
                     Text(item.itemName)
                         .font(.title2)
                         .fontWeight(.bold)
+                        .foregroundColor(.dynamicTextColor)
                     
                     Text(item.description)
                         .font(.body)
-                        .foregroundColor(.black)
                         .fontWeight(.light)
+                        .foregroundColor(.dynamicTextColor)
                     
                     Divider()
                     
-                    // 가격 및 버튼 섹션
                     HStack {
                         Text("\(formattedPriceInTenThousandWon)")
-                            .font(.headline)  // 폰트 크기를 headline으로 줄임
+                            .font(.headline)
                             .fontWeight(.bold)
+                            .foregroundColor(.dynamicTextColor)
                         Spacer()
                         
-                        // AR로 보기 버튼 (usdz 파일이 있는 경우에만 표시)
                         if item.usdzURL != nil {
                             Button(action: {
                                 if let usdzURL = item.usdzURL {
@@ -206,7 +190,6 @@ struct DetailItemView: View {
                             }
                         }
                         
-                        // 채팅하기 버튼
                         Button(action: {
                             startChat()
                         }) {
@@ -231,89 +214,21 @@ struct DetailItemView: View {
             }
             .padding(.top, 16)
         }
+        .background(
+            Color(UIColor { traitCollection in
+                traitCollection.userInterfaceStyle == .dark ? .black : .white
+            }).ignoresSafeArea()
+        )
         .alert("알림", isPresented: $showSelfChatAlert) {
             Button("확인", role: .cancel) { }
         } message: {
             Text("자기 자신에게는 채팅을 보낼 수 없습니다.")
         }
-        .background(
-            Color(UIColor { traitCollection in
-                traitCollection.userInterfaceStyle == .dark
-                ? UIColor.black
-                : UIColor.white
-            }).ignoresSafeArea()
-        )
         .onAppear {
             userVM.setUserId(item.userId)
         }
         .navigationTitle("상품 상세 정보")
         .navigationBarTitleDisplayMode(.inline)
-        
-        .background(
-            NavigationLink(destination: UserItemsView(userId: item.userId), isActive: $showUserItems) {
-                EmptyView()
-            }
-                .hidden()
-        )
-        .background(
-            NavigationLink(
-                destination: Group {
-                    if let chatRoomID = chatRoomID {
-                        ChatContentView(
-                            chatViewModel: chatViewModel,
-                            chatRoomID: chatRoomID,
-                            currentUserID: chatViewModel.senderID,
-                            otherUserID: item.userId
-                        )
-                    }
-                },
-                isActive: $navigateToChatRoom
-            ) {
-                EmptyView()
-            }
-        )
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    showAlert = true
-                }) {
-                    Text("신고")
-                        .imageScale(.large)
-                        .foregroundColor(.red)
-                }
-            }
-        }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("신고하기"),
-                message: Text("이 상품을 신고하시겠습니까?"),
-                primaryButton: .destructive(Text("신고하기")) {
-                    reportItem()
-                },
-                secondaryButton: .cancel(Text("취소"))
-            )
-        }
-        .overlay(
-            VStack {
-                if showReportConfirmation {
-                    Text("신고가 완료되었습니다.")
-                        .padding()
-                        .background(Color(red: 0.30, green: 0.50, blue: 0.78))
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .zIndex(1)
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                withAnimation {
-                                    showReportConfirmation = false
-                                }
-                            }
-                        }
-                }
-                Spacer()
-            }
-        )
     }
     
     private var formattedPriceInTenThousandWon: String {
@@ -336,34 +251,27 @@ struct DetailItemView: View {
         }
     }
     
-    // AR 보기 기능
     func viewAR(url: URL) {
         let safariVC = SFSafariViewController(url: url)
         let vc = UIApplication.shared.firstKeyWindow?.rootViewController?.presentedViewController ?? UIApplication.shared.firstKeyWindow?.rootViewController
         vc?.present(safariVC, animated: true)
     }
     
-    // 채팅 시작 기능
     func startChat() {
-        
-        // 자기 자신과의 채팅 시도 확인
         if item.userId == chatViewModel.senderID {
-
             withAnimation {
                 showSelfChatAlert = true
             }
             return
         }
-
-        // 판매자 정보로 User 객체 생성
+        
         let seller = User(
             id: item.userId,
-            email: "", // 이메일은 필요하지 않으므로 빈 문자열
+            email: "",
             username: userVM.user?.username ?? "알 수 없음",
             profileImageUrl: userVM.user?.profileImageUrl
         )
         
-        // 기존 채팅방이 있는지 확인
         if let existingChatRoom = chatViewModel.chatRooms.first(where: { room in
             room.participants.contains(item.userId) && room.participants.contains(chatViewModel.senderID)
         }) {
@@ -371,7 +279,6 @@ struct DetailItemView: View {
             self.navigateToChatRoom = true
         } else {
             chatViewModel.createNewChatRoom(with: seller)
-            // 채팅방 목록을 다시 불러온 후 새로 생성된 채팅방으로 이동
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 if let newChatRoom = chatViewModel.chatRooms.first(where: { room in
                     room.participants.contains(item.userId) && room.participants.contains(chatViewModel.senderID)
@@ -381,13 +288,5 @@ struct DetailItemView: View {
                 }
             }
         }
-    }
-    
-    // 신고하기 기능
-    func reportItem() {
-        withAnimation {
-            showReportConfirmation = true
-        }
-        print("신고가 완료되었습니다.")
     }
 }

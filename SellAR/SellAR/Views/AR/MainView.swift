@@ -61,7 +61,7 @@ struct MainView: View {
     
     private var logoView: some View {
         HStack {
-            Image("Logo")
+            Image(uiImage: UIImage(named: UITraitCollection.current.userInterfaceStyle == .dark ? "LogoBlack" : "Logo") ?? UIImage())
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
