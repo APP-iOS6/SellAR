@@ -29,7 +29,7 @@ struct QAView: View {
     
     var body: some View {
         ZStack {
-            Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             // 다크모드 : 라이트모드 순서 검정:밝은회색
             
                 VStack(spacing:0) {
@@ -84,7 +84,7 @@ struct QAView: View {
                                         Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
                             )
                             .overlay(RoundedRectangle(cornerRadius: 26.5)
-                                .stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                                .stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                             .cornerRadius(26.5)
                         }
                     }
@@ -155,7 +155,7 @@ struct QAItem: View {
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
-        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
     }
 }
