@@ -18,103 +18,129 @@ struct ItemFormView: View {
     
     @State private var showImagePicker = false
     @State private var selectedUSDZFileURL: URL?
-    @State private var formattedPrice: String = "0"  // 천 단위 쉼표 포맷팅을 위한 상태 변수
+    @State private var formattedPrice: String = "0"
+    @State private var isScannerLoading = false     
     
     var body: some View {
-        Form {
-            List {
-                inputSection
-                arSection
-                imageSection
-                
-                if case .deleting(let type) = vm.loadingState {
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 8) {
-                            ProgressView()
-                            Text("삭제중 \(type == .usdzWithThumbnail ? "USDZ file" : "Item") ")
-                                .foregroundStyle(.red)
+        ZStack {
+            Form {
+                List {
+                    inputSection
+                    arSection
+                    imageSection
+                    
+                    if case .deleting(let type) = vm.loadingState {
+                        HStack {
+                            Spacer()
+                            VStack(spacing: 8) {
+                                ProgressView()
+                                Text("삭제중 \(type == .usdzWithThumbnail ? "USDZ file" : "Item") ")
+                                    .foregroundStyle(.red)
+                            }
+                            Spacer()
                         }
-                        Spacer()
                     }
-                }
-                
-                if case .edit = vm.formType {
-                    Button("삭제", role: .destructive) {
-                        Task {
-                            do {
-                                try await vm.deleteItem()
-                                dismiss()
-                            } catch {
-                                vm.error = error.localizedDescription
+                    
+                    if case .edit = vm.formType {
+                        Button("삭제", role: .destructive) {
+                            Task {
+                                do {
+                                    try await vm.deleteItem()
+                                    dismiss()
+                                } catch {
+                                    vm.error = error.localizedDescription
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("취소") {
-                    dismiss()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("취소") {
+                        dismiss()
+                    }
+                    .disabled(vm.loadingState != .none)
                 }
-                .disabled(vm.loadingState != .none)
-            }
-            
-            ToolbarItem(placement: .confirmationAction) {
-                Button("저장") {
-                    Task {
-                        do {
-                            try await vm.save(fileURL: selectedUSDZFileURL)
-                            dismiss()
-                        } catch {
-                            print("저장 실패: \(error.localizedDescription)")
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("저장") {
+                        Task {
+                            do {
+                                try await vm.save(fileURL: selectedUSDZFileURL)
+                                dismiss()
+                            } catch {
+                                print("저장 실패: \(error.localizedDescription)")
+                            }
                         }
                     }
+                    .disabled(vm.loadingState != .none || vm.itemName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
-                .disabled(vm.loadingState != .none || vm.itemName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
-        }
-        .confirmationDialog("USDZ 추가", isPresented: $vm.showUSDZSource, titleVisibility: .visible, actions: {
-            Button("파일 선택") {
-                vm.selectedUSDZSource = .fileImporter
-            }
-            Button("오브젝트 캡쳐") {
-                vm.selectedUSDZSource = .objectCapture
-            }
-        })
-        .fullScreenCover(isPresented: .init(get: {
-            vm.selectedUSDZSource == .objectCapture
-        }, set: { _ in
-            vm.selectedUSDZSource = nil
-        }), content: {
-            USDZScanner { url in
-                Task { await vm.uploadUSDZ(fileURL: url) }
+            .confirmationDialog("USDZ 추가", isPresented: $vm.showUSDZSource, titleVisibility: .visible, actions: {
+                Button("파일 선택") {
+                    vm.selectedUSDZSource = .fileImporter
+                }
+                Button("오브젝트 캡쳐") {
+                    vm.selectedUSDZSource = .objectCapture
+                }
+            })
+            .fullScreenCover(isPresented: .init(get: {
+                vm.selectedUSDZSource == .objectCapture && !isScannerLoading
+            }, set: { _ in
                 vm.selectedUSDZSource = nil
+            }), content: {
+                USDZScanner { url in
+                    Task {
+                        isScannerLoading = false // 스캐너 작업 완료 후 로딩 해제
+                        await vm.uploadUSDZ(fileURL: url)
+                    }
+                    vm.selectedUSDZSource = nil
+                }
+            })
+            .onChange(of: vm.selectedUSDZSource) { newValue in
+                if newValue == .objectCapture {
+                    isScannerLoading = true // 버튼 클릭 시 로딩 시작
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // 지연 후 USDZ 스캐너 시작
+                        vm.selectedUSDZSource = .objectCapture
+                        isScannerLoading = false
+                    }
+                }
             }
-        })
-        .fileImporter(isPresented: .init(get: { vm.selectedUSDZSource == .fileImporter }, set: { _ in
-            vm.selectedUSDZSource = nil
-        }), allowedContentTypes: [UTType.usdz], onCompletion: { result in
-            switch result {
-            case .success(let url):
-                Task { await vm.uploadUSDZ(fileURL: url, isSecurityScopedResource: true)}
-            case .failure(let error):
-                vm.error = error.localizedDescription
+            .fileImporter(isPresented: .init(get: { vm.selectedUSDZSource == .fileImporter }, set: { _ in
+                vm.selectedUSDZSource = nil
+            }), allowedContentTypes: [UTType.usdz], onCompletion: { result in
+                switch result {
+                case .success(let url):
+                    Task { await vm.uploadUSDZ(fileURL: url, isSecurityScopedResource: true)}
+                case .failure(let error):
+                    vm.error = error.localizedDescription
+                }
+            })
+            .sheet(isPresented: $showImagePicker) {
+                PhotoPickerView(selectedImages: $vm.selectedImages)
             }
-        })
-        .sheet(isPresented: $showImagePicker) {
-            PhotoPickerView(selectedImages: $vm.selectedImages)
+            .navigationTitle(vm.navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .background(
+                Color(UIColor { traitCollection in
+                    traitCollection.userInterfaceStyle == .dark
+                    ? UIColor.black
+                    : UIColor.white
+                }).ignoresSafeArea()
+            )
+            
+            if isScannerLoading {
+                VStack {
+                    ProgressView("스캐너 로드 중...")
+                        .padding()
+                        .background(Color(UIColor.systemBackground))
+                        .cornerRadius(10)
+                    Spacer()
+                }
+                .transition(.opacity)
+            }
         }
-        .navigationTitle(vm.navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(
-            Color(UIColor { traitCollection in
-                traitCollection.userInterfaceStyle == .dark
-                ? UIColor.black
-                : UIColor.white
-            }).ignoresSafeArea()
-        )
     }
     
     var inputSection: some View {
@@ -128,7 +154,7 @@ struct ItemFormView: View {
                     formatPrice()
                 }
             
-            Text("가격: \(formattedPriceInTenThousandWon)") // "원"을 추가하지 않음
+            Text("가격: \(formattedPriceInTenThousandWon)")
             
             ZStack(alignment: .topLeading) {
                 if vm.description.isEmpty {
