@@ -44,12 +44,23 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("APNS token: \(deviceToken)")
         Messaging.messaging().apnsToken = deviceToken
+        
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("Error fetching FCM token: \(error)")
+                return
+            }
+            
+            if let token = token, let userID = Auth.auth().currentUser?.uid {
+                PushNotificationManager.shared.updateFCMToken(for: userID, token: token)
+            }
+        }
     }
-    
     // Foreground(앱 켜진 상태)에서도 알림 오는 설정
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.list, .banner])
     }
+    
 }
 
 extension AppDelegate: MessagingDelegate {
@@ -69,14 +80,71 @@ extension AppDelegate: MessagingDelegate {
     }
 }
 
+extension AppDelegate {
+    // 푸시 알림 탭 처리
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let userInfo = response.notification.request.content.userInfo
+        
+        // FCM 메시지 처리
+        if let messageID = userInfo["gcm.message_id"] {
+            print("Message ID: \(messageID)")
+        }
+        
+        // 채팅 관련 데이터 처리
+        if let type = userInfo["type"] as? String,
+           type == "chat",
+           let senderID = userInfo["senderID"] as? String {
+            // 채팅방으로 이동하는 로직
+            NotificationCenter.default.post(
+                name: NSNotification.Name("OpenChatRoom"),
+                object: nil,
+                userInfo: ["senderID": senderID]
+            )
+        }
+        
+        completionHandler()
+    }
+    
+    // 푸시 알림 에러 처리
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("Failed to register for remote notifications: \(error)")
+    }
+    
+    // 알림 설정 상태 확인
+    func checkNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            guard settings.authorizationStatus == .authorized else {
+                // 알림 권한이 없는 경우 처리
+                print("Notifications not authorized")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+    }
+}
+
+
 @main
 struct SellARApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var chatViewModel = ChatViewModel(senderID: Auth.auth().currentUser?.uid ?? "")
+        
     var body: some Scene {
         WindowGroup {
             NavigationStack {
                 ContentView(viewModel: LoginViewModel())
                     .environmentObject(LoginViewModel())
+                    .environmentObject(chatViewModel)
             }
         }
     }

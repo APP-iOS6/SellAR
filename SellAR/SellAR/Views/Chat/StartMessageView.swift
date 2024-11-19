@@ -72,25 +72,25 @@ struct StartMessageView: View {
                             VStack {
                                 Text("아직 채팅방이 없습니다")
                                     .font(.headline)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.gray)
                                 
                                 Text("새로운 채팅을 시작해보세요!")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                     .padding(.top, 8)
                                 
-                                Button(action: {
-                                    // 새 채팅 시작 버튼 액션
-                                    createNewChat()
-                                }) {
-                                    Text("새 채팅 시작하기")
-                                        .font(.body)
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .background(buttonColor)
-                                        .cornerRadius(10)
-                                }
-                                .padding(.top, 20)
+//                                Button(action: {
+//                                    // 새 채팅 시작 버튼 액션
+//                                    MainView(loginViewModel: viewModel)
+//                                }) {
+//                                    Text("새 채팅 시작하기")
+//                                        .font(.body)
+//                                        .foregroundColor(.white)
+//                                        .padding()
+//                                        .background(buttonColor)
+//                                        .cornerRadius(10)
+//                                }
+//                                .padding(.top, 20)
                             }
                         } else {
                             // 채팅방 목록 표시

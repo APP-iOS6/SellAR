@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
 
 
 // Firestore와 연결된 ViewModel
@@ -109,36 +110,36 @@ class ChatViewModel: ObservableObject {
     }
     
     
-    // 푸시 알림 전송 함수
-    func sendPushNotification(to userID: String, message: String, chatRoomID: String) {
-        // 받는 사람의 FCM 토큰 조회
-        db.collection("users").document(userID).getDocument { [weak self] document, error in
-            guard let self = self,
-                  let document = document,
-                  let fcmToken = document.data()?["fcmToken"] as? String else {
-                print("FCM 토큰을 찾을 수 없습니다.")
-                return
-            }
-            
-            let senderName = self.chatUsers[self.senderID]?.username ?? "알 수 없음"
-            
-            Task {
-                do {
-                    try await FCMNotificationService.shared.sendNotification(
-                        to: fcmToken,
-                        title: senderName,
-                        body: message,
-                        data: [
-                            "chatRoomID": chatRoomID,
-                            "senderID": self.senderID
-                        ]
-                    )
-                } catch {
-                    print("푸시 알림 전송 실패: \(error)")
-                }
-            }
-        }
-    }
+//    // 푸시 알림 전송 함수
+//    func sendPushNotification(to userID: String, message: String, chatRoomID: String) {
+//        // 받는 사람의 FCM 토큰 조회
+//        db.collection("users").document(userID).getDocument { [weak self] document, error in
+//            guard let self = self,
+//                  let document = document,
+//                  let fcmToken = document.data()?["fcmToken"] as? String else {
+//                print("FCM 토큰을 찾을 수 없습니다.")
+//                return
+//            }
+//            
+//            let senderName = self.chatUsers[self.senderID]?.username ?? "알 수 없음"
+//            
+//            Task {
+//                do {
+//                    try await FCMNotificationService.shared.sendNotification(
+//                        to: fcmToken,
+//                        title: senderName,
+//                        body: message,
+//                        data: [
+//                            "chatRoomID": chatRoomID,
+//                            "senderID": self.senderID
+//                        ]
+//                    )
+//                } catch {
+//                    print("푸시 알림 전송 실패: \(error)")
+//                }
+//            }
+//        }
+//    }
     
     // 메시지 구독 및 읽음 상태 추적
     func subscribeToMessages(for chatRoomID: String, currentUserID: String) {
@@ -327,16 +328,13 @@ class ChatViewModel: ObservableObject {
     
     
     func fetchChatRooms() {
-        // 기존 리스너 제거
         chatRoomsListener?.remove()
-        
         guard !senderID.isEmpty else {
             print("Error: Sender ID is empty")
             return
         }
-        
-        print("Fetching chat rooms for user: \(senderID)")  // 디버깅용 로그
-        
+
+        print("Fetching chat rooms for user: \(senderID)")
         chatRoomsListener = db.collection("chatRooms")
             .whereField("participants", arrayContains: senderID)
             .order(by: "latestTimestamp", descending: true)
@@ -349,52 +347,51 @@ class ChatViewModel: ObservableObject {
                 }
                 
                 guard let documents = querySnapshot?.documents else {
-                    print("No chat rooms found")
                     DispatchQueue.main.async {
-                        self.chatRooms = []  // 문서가 없을 때 빈 배열로 설정
+                        self.chatRooms = []
+                        self.totalUnreadCount = 0 // Reset when no documents
                     }
                     return
                 }
                 
-                print("Found \(documents.count) chat rooms")  // 디버깅용 로그
+                var newChatRooms = [ChatRoom]()
+                var totalUnread = 0
                 
-                let newChatRooms = documents.compactMap { doc -> ChatRoom? in
+                for doc in documents {
                     let data = doc.data()
                     guard let participants = data["participants"] as? [String],
                           let unreadCount = data["unreadCount"] as? [String: Int] else {
                         print("Failed to parse data for chat room: \(doc.documentID)")
-                        return nil
+                        continue
                     }
                     
-                    // 상대방 정보 가져오기
                     if let otherUserID = participants.first(where: { $0 != self.senderID }) {
                         self.fetchUserInfo(userID: otherUserID)
                     }
                     
-                    return ChatRoom(
+                    let chatRoom = ChatRoom(
                         id: doc.documentID,
                         name: data["name"] as? String ?? "알 수 없음",
-                        //                        profileImageURL: data["profileImageURL"] as? String ?? "",
                         latestMessage: data["latestMessage"] as? String ?? "",
                         timestamp: (data["latestTimestamp"] as? Timestamp)?.dateValue() ?? Date(),
                         participants: participants,
                         unreadCount: unreadCount
                     )
+                    
+                    totalUnread += unreadCount[self.senderID] ?? 0
+                    newChatRooms.append(chatRoom)
                 }
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     self.chatRooms = newChatRooms
-                    // 전체 읽지 않은 메시지 수 계산
-                    self.totalUnreadCount = newChatRooms.reduce(0) { sum, chatRoom in
-                        let count = chatRoom.unreadCount[self.senderID] ?? 0
-                        print("Chat room: \(chatRoom.id), Unread count: \(count)")
-                        return sum + count
-                    }
-                    print("Total unread count: \(self.totalUnreadCount)")
-                    print("Updated chatRooms array with \(self.chatRooms.count) rooms")  // 디버깅용 로그
+                    self.totalUnreadCount = totalUnread // Update the total unread count
+                    self.objectWillChange.send() // Force UI update
+                    print("Total unread count updated: \(self.totalUnreadCount)")
                 }
             }
     }
+
+
     
     
     func fetchMessages(for chatRoomID: String) {
@@ -453,9 +450,11 @@ class ChatViewModel: ObservableObject {
     }
     
     func sendMessage(content: String, to chatRoomID: String) {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        
         let date = ISO8601DateFormatter().string(from: Date())
         let newMessage: [String: Any] = [
-            "userID": senderID,
+            "userID": currentUser.uid,
             "content": content,
             "date": date,
             "isRead": false
@@ -477,11 +476,20 @@ class ChatViewModel: ObservableObject {
                           let participants = data["participants"] as? [String] else { return }
                     
                     // 받는 사람의 ID 찾기
-                    if let receiverID = participants.first(where: { $0 != self.senderID }) {
+                    let otherParticipants = participants.filter { $0 != currentUser.uid }
+                    
+                    for receiverID in otherParticipants {
                         // unreadCount 증가
                         self.incrementUnreadCount(for: chatRoomID, receiverID: receiverID)
+                        
                         // 푸시 알림 전송
-                        self.sendPushNotification(to: receiverID, message: content, chatRoomID: chatRoomID)
+                        if let currentUserName = self.chatUsers[currentUser.uid]?.username {
+                            PushNotificationManager.shared.sendChatPushNotification(
+                                to: receiverID,
+                                senderName: currentUserName,
+                                message: content
+                            )
+                        }
                     }
                     
                     // 최신 메시지와 시간 업데이트
@@ -491,5 +499,25 @@ class ChatViewModel: ObservableObject {
                     ])
                 }
             }
+    }
+    // 채팅방 알림 설정
+    func setupChatNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleOpenChatRoom),
+            name: NSNotification.Name("OpenChatRoom"),
+            object: nil
+        )
+    }
+    
+    @objc private func handleOpenChatRoom(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let senderID = userInfo["senderID"] as? String else { return }
+        
+        // 해당 채팅방 찾기
+        if let chatRoom = chatRooms.first(where: { $0.participants.contains(senderID) }) {
+            // 채팅방으로 이동하는 로직 구현
+            // NavigationPath나 StateObject를 통해 처리
+        }
     }
 }
