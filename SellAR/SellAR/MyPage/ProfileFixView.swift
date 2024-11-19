@@ -22,7 +22,7 @@ struct ProfileFixView: View {
     
     var body: some View {
             ZStack {
-                Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
+                Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
                 // 다크모드 : 라이트모드 순서 검정:밝은회색
                 
                 VStack(alignment: .leading, spacing: 0) {
@@ -83,9 +83,9 @@ struct ProfileFixView: View {
                             .padding(15) // 검정칸 크기
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
+                            .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                             .cornerRadius(10)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                         
                         Spacer()
                         
@@ -100,7 +100,7 @@ struct ProfileFixView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
-                        .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                        .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑:연파랑
                         .cornerRadius(26.5)
                         .disabled(isSaving)
                     }
@@ -159,9 +159,10 @@ struct ProfileFixView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding(40)
                     .frame(width: 135, height: 135)
-                    .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
+                    .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
+                    .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                     .clipShape(Circle())
-                    .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                    .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
             }
         }
     }

@@ -239,7 +239,7 @@ struct DetailItemView: View {
         .background(
             Color(UIColor { traitCollection in
                 traitCollection.userInterfaceStyle == .dark
-                ? UIColor(red: 23 / 255, green: 34 / 255, blue: 67 / 255, alpha: 1)
+                ? UIColor.black
                 : UIColor.white
             }).ignoresSafeArea()
         )

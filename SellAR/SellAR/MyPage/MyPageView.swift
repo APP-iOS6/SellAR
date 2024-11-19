@@ -21,9 +21,10 @@ struct MyPageView: View {
     
     var body: some View {
         ZStack {
-            Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
-//            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
-            // 다크모드 : 라이트모드 순서 검정:밝은회색
+            // 다크모드 : 라이트모드 순서
+//            Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
+            
             
             if showingToast {
                 ToastView(message: "로그아웃 되었습니다.", isShowing: $showingToast)
@@ -62,8 +63,8 @@ struct MyPageView: View {
                                 .padding(.leading, 3)
                                 .padding(.bottom, 3)
                                 .frame(width: 33, height: 33)
-                                .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
-                                .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255)))
+                                .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                                .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255)))
                                 .clipShape(Circle())
                         }
                         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -129,10 +130,10 @@ struct MyPageView: View {
                         .aspectRatio(contentMode: .fit)
                         .padding(40)
                         .frame(width: 135, height: 135)
-                        .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //연파랑
-                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
+                        .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
+                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                         .clipShape(Circle())
-                        .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                        .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                     
                 }
                 // 닉네임 및 이메일
@@ -145,7 +146,7 @@ struct MyPageView: View {
                 // 이름
                 HStack {
                     Image(systemName: "person.text.rectangle")
-                        .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                        .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                         .padding(.trailing, 6)
                     Text(user.username)
                         .font(.system(size: 14))
@@ -155,9 +156,9 @@ struct MyPageView: View {
                 .padding(10) // 검정칸 크기
                 .frame(maxWidth: 130, alignment: .leading)
                 .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
+                .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                 .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                 
                 
                 // 게시물 및 계정 관리 버튼들
@@ -172,7 +173,7 @@ struct MyPageView: View {
                     NavigationLink(destination: ItemListView(itemStore: itemStore)) {
                         HStack {
                             Image(systemName: "list.bullet")
-                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                             Spacer()
                                 .frame(width: 10)
                             Text("내 글 목록")
@@ -180,12 +181,11 @@ struct MyPageView: View {
                                 .fontWeight(.bold)
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
                         }
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                     }
                     .padding(.bottom, 20)
                     
@@ -203,7 +203,7 @@ struct MyPageView: View {
                     }) {
                         HStack {
                             Image(systemName: "person.fill")
-                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                             Spacer()
                                 .frame(width: 10)
                             Text("로그아웃")
@@ -215,8 +215,8 @@ struct MyPageView: View {
                         }
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                     }
                     .alert(isPresented: $showingLogoutAlert) {
                         Alert(
@@ -238,7 +238,7 @@ struct MyPageView: View {
                     }) {
                         HStack {
                             Image(systemName: "person.fill.xmark")
-                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                             Spacer()
                                 .frame(width: 7)
                             Text("회원 탈퇴")
@@ -249,8 +249,8 @@ struct MyPageView: View {
                         }
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                     }
                     .padding(.bottom, 20)
                     
@@ -284,7 +284,7 @@ struct MyPageView: View {
                     NavigationLink(destination: QAView()) {
                         HStack {
                             Image(systemName: "questionmark.circle")
-                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                                .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                             Spacer()
                                 .frame(width: 10)
                             Text("자주묻는 질문")
@@ -295,8 +295,8 @@ struct MyPageView: View {
                         }
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255))
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 167 / 255, green: 167 / 255, blue: 167 / 255), lineWidth: (1)))
+                        .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                     }
                 }
             }
@@ -318,8 +318,7 @@ struct MyPageView: View {
                 
                 Text("로그인이 필요합니다.")
                     .fontWeight(.bold)
-                    .foregroundColor(colorScheme == .dark ?
-                        Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255) : Color(red: 16 / 255, green: 16 / 255, blue: 17 / 255)) // 흐린흰색:검정
+                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // 흐린흰색:검정
                     .padding(.bottom,30)
                     .bold()
                 
@@ -328,7 +327,7 @@ struct MyPageView: View {
                         .frame(width: 150, height: 50)
                         .padding(2)
                         .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흐린흰색
-                        .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) // 연파랑
+                        .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                         .cornerRadius(26.5)
                         .bold()
                 }
