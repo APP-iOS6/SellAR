@@ -28,7 +28,7 @@ struct ItemFormView: View {
                     inputSection
                     arSection
                     imageSection
-                    
+
                     if case .deleting(let type) = vm.loadingState {
                         HStack {
                             Spacer()
@@ -40,7 +40,7 @@ struct ItemFormView: View {
                             Spacer()
                         }
                     }
-                    
+
                     if case .edit = vm.formType {
                         Button("삭제", role: .destructive) {
                             Task {
@@ -54,7 +54,9 @@ struct ItemFormView: View {
                         }
                     }
                 }
+                .listRowSeparator(.hidden) // 모든 구분 선을 제거
             }
+
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("취소") {
@@ -74,8 +76,14 @@ struct ItemFormView: View {
                             }
                         }
                     }
-                    .disabled(vm.loadingState != .none || vm.itemName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(
+                        vm.loadingState != .none ||
+                        vm.itemName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        vm.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        vm.location.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    )
                 }
+
             }
             .confirmationDialog("USDZ 추가", isPresented: $vm.showUSDZSource, titleVisibility: .visible, actions: {
                 Button("파일 선택") {
@@ -147,14 +155,25 @@ struct ItemFormView: View {
         Section {
             TextField("제목", text: $vm.itemName)
             
-            TextField("가격", text: $formattedPrice)
+            Divider()
+            
+            TextField("가격 (원)", text: $formattedPrice)
                 .keyboardType(.numberPad)
                 .onChange(of: formattedPrice) { newValue in
                     vm.price = newValue.filter { $0.isNumber }
                     formatPrice()
                 }
+                .onChange(of: vm.price) { newValue in
+                    if newValue.isEmpty {
+                        formattedPrice = "0"
+                    }
+                }
             
             Text("가격: \(formattedPriceInTenThousandWon)")
+                .font(.footnote)
+                .foregroundColor(.gray)
+            
+            Divider()
             
             ZStack(alignment: .topLeading) {
                 if vm.description.isEmpty {
@@ -173,10 +192,14 @@ struct ItemFormView: View {
                     .padding(.horizontal, -4)
             }
             
-            TextField("지역", text: $vm.location)
+            Divider()
+            
+            TextField("판매 장소", text: $vm.location)
         }
         .disabled(vm.loadingState != .none)
     }
+
+
     
     var arSection: some View {
         Section("AR 모델") {
