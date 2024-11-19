@@ -1,15 +1,9 @@
-//
-//  ItemFormView.swift
-//  SellAR
-//
-//  Created by Juno Lee on 11/4/24.
-//
-
 import SwiftUI
 import UniformTypeIdentifiers
 import SafariServices
 import USDZScanner
 import PhotosUI
+import ARKit
 
 struct ItemFormView: View {
     
@@ -19,7 +13,9 @@ struct ItemFormView: View {
     @State private var showImagePicker = false
     @State private var selectedUSDZFileURL: URL?
     @State private var formattedPrice: String = "0"
-    @State private var isScannerLoading = false     
+    @State private var isScannerLoading = false
+    @State private var isLiDARAvailable: Bool = ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh)
+    @State private var showLiDARAlert = false // LiDAR 지원 경고창 표시 여부
     
     var body: some View {
         ZStack {
@@ -54,7 +50,7 @@ struct ItemFormView: View {
                         }
                     }
                 }
-                .listRowSeparator(.hidden) // 모든 구분 선을 제거
+                .listRowSeparator(.hidden)
             }
 
             .toolbar {
@@ -90,9 +86,18 @@ struct ItemFormView: View {
                     vm.selectedUSDZSource = .fileImporter
                 }
                 Button("오브젝트 캡쳐") {
-                    vm.selectedUSDZSource = .objectCapture
+                    if isLiDARAvailable {
+                        vm.selectedUSDZSource = .objectCapture
+                    } else {
+                        showLiDARAlert = true
+                    }
                 }
             })
+            .alert("LiDAR 지원 없음", isPresented: $showLiDARAlert) {
+                Button("확인", role: .cancel) {}
+            } message: {
+                Text("이 기기에서는 지원하지 않는 기능입니다.")
+            }
             .fullScreenCover(isPresented: .init(get: {
                 vm.selectedUSDZSource == .objectCapture && !isScannerLoading
             }, set: { _ in
@@ -100,27 +105,18 @@ struct ItemFormView: View {
             }), content: {
                 USDZScanner { url in
                     Task {
-                        isScannerLoading = false // 스캐너 작업 완료 후 로딩 해제
+                        isScannerLoading = false
                         await vm.uploadUSDZ(fileURL: url)
                     }
                     vm.selectedUSDZSource = nil
                 }
             })
-            .onChange(of: vm.selectedUSDZSource) { newValue in
-                if newValue == .objectCapture {
-                    isScannerLoading = true // 버튼 클릭 시 로딩 시작
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { // 지연 후 USDZ 스캐너 시작
-                        vm.selectedUSDZSource = .objectCapture
-                        isScannerLoading = false
-                    }
-                }
-            }
             .fileImporter(isPresented: .init(get: { vm.selectedUSDZSource == .fileImporter }, set: { _ in
                 vm.selectedUSDZSource = nil
             }), allowedContentTypes: [UTType.usdz], onCompletion: { result in
                 switch result {
                 case .success(let url):
-                    Task { await vm.uploadUSDZ(fileURL: url, isSecurityScopedResource: true)}
+                    Task { await vm.uploadUSDZ(fileURL: url, isSecurityScopedResource: true) }
                 case .failure(let error):
                     vm.error = error.localizedDescription
                 }
@@ -199,8 +195,6 @@ struct ItemFormView: View {
         .disabled(vm.loadingState != .none)
     }
 
-
-    
     var arSection: some View {
         Section("AR 모델") {
             if let thumbnailURL = vm.thumbnailURL {
