@@ -27,6 +27,7 @@ struct ItemEditView: View {
     @State private var selectedImages: [UIImage] = [] // 선택된 이미지를 저장할 상태
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     @State private var showEditItemView = false
+    @State private var selectedUSDZFileURL: URL?
     @ObservedObject var vm = ItemFormVM()
 
     
@@ -117,6 +118,13 @@ struct ItemEditView: View {
                         }
                     }
                 }
+//                Task {
+//                    do {
+//                        try await vm.save(fileURL: selectedUSDZFileURL)
+//                    } catch {
+//                        print("저장 실패: \(error.localizedDescription)")
+//                    }
+//                }
             }) {
                 Text("수정")
                     .foregroundColor(colorScheme == .dark ? Color.black : Color.black)

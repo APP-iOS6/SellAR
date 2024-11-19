@@ -128,13 +128,12 @@ class ItemStore: ObservableObject {
     func updateItem(_ item: Item, completion: @escaping (Error?) -> Void) {
         db.collection("items").document(item.id).updateData([
             "itemName": item.itemName,
-            "title": item.title,
             "description": item.description,
             "price": item.price,
-            "images": item.images,
+//            "images": item.images,
             "location": item.location,
 //            "usdzLink": item.usdzLink ?? "", // USDZ 파일 링크 추가
-//            "thumbnailLink": item.thumbnailLink ?? "" // 썸네일 링크 추가
+            "thumbnailLink": item.thumbnailLink ?? "" // 썸네일 링크 추가
 
             // 필요한 경우 다른 필드도 추가
         ]) { error in
