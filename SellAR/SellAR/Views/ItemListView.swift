@@ -15,7 +15,7 @@ struct ItemRowView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .top, spacing: 22) {
                 // Thumbnail View Section
                 if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
                    let imageURL = URL(string: imageURLString) {
@@ -50,7 +50,7 @@ struct ItemRowView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                     )
-                    .padding(.leading, 10)
+                    .padding()
                 } else {
                     Color.white
                         .frame(width: 120, height: 120)
@@ -64,11 +64,13 @@ struct ItemRowView: View {
                                 .foregroundColor(.gray)
                                 .font(.system(size: 16, weight: .bold))
                         )
-                        .padding(.leading, 10)
+                        .padding()
                 }
                 
                 // Item Info Section
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Spacer()
+                    
                     HStack {
                         Text(item.itemName)
                             .font(.headline)
@@ -99,6 +101,8 @@ struct ItemRowView: View {
                         .frame(height: 1)
                         .background(Color.gray)
                         .padding(.vertical, 4)
+                        .padding(.trailing, 16)
+                    
                     
                     HStack(spacing: 4) {
                         Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
@@ -113,19 +117,10 @@ struct ItemRowView: View {
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
-                    .frame(height: 25)
-                    .padding(.top, 5)
-                    .padding(.leading, 3)
                     
-                    
-                    
-                    
-                    
-                    //                    Text("\(item.createdAt ?? Date())")
-                    //                        .font(.subheadline)
-                    //                        .foregroundStyle(Color.gray)
-                    //                        .lineLimit(1)
+                    Spacer()
                 }
+                .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack {
@@ -151,10 +146,11 @@ struct ItemRowView: View {
                 .padding(.trailing, 4)
             }
             .padding(.vertical, 10)
-            .background(colorScheme == .dark ? .black : .white)
+            .background(Color(.systemGray6))
             .cornerRadius(12)
+            .padding(.horizontal, 10)
             .shadow(radius: 1)
-            .padding(.horizontal, 16)
+            
         }
     }
     private var formattedPriceInTenThousandWon: String {
