@@ -21,7 +21,9 @@ struct ContentView: View {
                     MainView(loginViewModel: viewModel)
                 }
                 .tabItem {
+
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
+
                     Text("홈")
                 }
                 .tag(0)
@@ -44,8 +46,10 @@ struct ContentView: View {
                         .environmentObject(viewModel)
                 }
                 .tabItem {
+
                     Image(systemName: selectedTab == 2 ? "person.fill" : "person")
                     Text("My")
+
                 }
                 .tag(2)
             }
