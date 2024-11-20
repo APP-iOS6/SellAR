@@ -43,7 +43,7 @@ struct ItemEditView: View {
             get: { selectedItem?.itemName ?? "" },
             set: { selectedItem?.itemName = $0 }
         ))
-        .foregroundStyle(Color.black)
+        
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
         .focused($textFocused, equals: .textTitle)
@@ -56,7 +56,7 @@ struct ItemEditView: View {
             get: { selectedItem?.location ?? "" },
             set: { selectedItem?.location = $0 }
         ))
-        .foregroundStyle(Color.black)
+        
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
         .focused($textFocused, equals: .location)
@@ -67,7 +67,7 @@ struct ItemEditView: View {
     
     private var descriptionTextEditor: some View {
         TextEditor(text: $description)
-            .foregroundStyle(Color.black)
+            
             .onChange(of: description) { newValue in
                 selectedItem?.description = newValue
             }
@@ -76,7 +76,7 @@ struct ItemEditView: View {
             .overlay {
                 if description.isEmpty {
                     Text(placeholder)
-                        .foregroundColor(Color(.systemGray4))
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                 }
             }
             .scrollContentBackground(.hidden)
@@ -99,7 +99,7 @@ struct ItemEditView: View {
                     .padding(.trailing, 5)
             }
             .frame(maxWidth: .infinity, maxHeight: 25)
-            .foregroundStyle(Color.black)
+            
             .focused($textFocused, equals: .textPrice)
             .textFieldStyle(.plain)
             .padding(.vertical, 10)
@@ -145,20 +145,12 @@ struct ItemEditView: View {
     
     private var actionButtons: some View {
         HStack {
-//            NavigationLink(
-//                       destination: ItemFormView(vm: ItemFormVM()), // ItemFormView로 이동
-//                       isActive: $showEditItemView
-//                   ) {
-//                       EmptyView() // 빈 뷰로 상태 연결
-//                   }
-//                   .hidden() // UI에 표시되지 않게 숨김
-            
             Button(action: {
                 vm.showUSDZSource = true
                 textFocused = nil
             }) {
                 Text("촬영하기")
-                    .foregroundStyle(Color.black)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 Image(systemName: "camera")
                     .foregroundColor(Color.cyan)
             }
@@ -213,8 +205,7 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("올리기")
-                    .foregroundStyle(Color.black)
-//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 Image(systemName: "square.and.arrow.up")
                     .foregroundColor(Color.cyan)
             }
@@ -226,8 +217,7 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("이미지")
-                    .foregroundStyle(Color.black)
-//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 Image(systemName: "photo")
                     .foregroundColor(Color.cyan)
             }
@@ -249,8 +239,8 @@ struct ItemEditView: View {
         }
         .frame(width: .infinity)
         .padding()
-        .background(Color.white)
-//        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+        .background(Color(.systemGray6))
+        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
         .cornerRadius(8).overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.gray, lineWidth: 1)
@@ -336,14 +326,13 @@ struct ItemEditView: View {
                             VStack {
                                 HStack {
                                     Text("제목")
-                                        .foregroundStyle(Color.black)
+                                        
                                         .font(.system(size: 20, weight: .bold))
                                         .padding(.leading, 5)
                                     
                                     titleTextField
                                     
                                     Text("위치")
-                                        .foregroundStyle(Color.black)
                                         .font(.system(size: 20, weight: .bold))
                                         .padding(.leading, 5)
                                     
@@ -361,8 +350,7 @@ struct ItemEditView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.white)
-//                            .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+                            .background(Color(.systemGray6))
                             .cornerRadius(8)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
