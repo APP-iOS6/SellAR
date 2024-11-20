@@ -15,7 +15,7 @@ struct ItemRowView: View {
     
     var body: some View {
         VStack {
-            HStack(alignment: .top, spacing: 22) {
+            HStack(alignment: .top, spacing: 2) {
                 // Thumbnail View Section
                 if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
                    let imageURL = URL(string: imageURLString) {
