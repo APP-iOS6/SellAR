@@ -335,7 +335,6 @@ struct UserItemRowView: View {
             .padding(.vertical, 10)
             .background(Color(.systemGray6))
             .cornerRadius(12)
-            .padding(.horizontal, 10)
             .shadow(radius: 1)
             
             if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
