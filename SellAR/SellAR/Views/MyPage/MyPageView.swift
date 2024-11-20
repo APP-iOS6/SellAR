@@ -14,21 +14,22 @@ struct MyPageView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
 
     @StateObject private var userDataManager = UserDataManager()
-    @State private var isLoading = true
-    @Environment(\.colorScheme) var colorScheme // 다크모드/라이트모드 관련\
-    @State private var showingLogoutAlert = false
-    @State private var showingToast = false
+    @State private var isLoading = true // 프로필 사진 불러오는 중 프로그래스뷰
+    @State private var isProcessing = false // 로그아웃,회원탈퇴 얼럿 작업중 프로그래스뷰 관련
+    @Environment(\.colorScheme) var colorScheme // 다크모드:라이트모드 관련
+    @State private var showingLogoutAlert = false // 로그아웃 얼럿
+    @State private var showingToast = false // 로그아웃 얼럿 토스트메세지
+    @State private var showingDeleteAlert = false // 계정삭제 얼럿
+    @State private var showingDeleteToast = false // 계정삭제 토스트메세지
+    @State private var showingDeleteFailToast = false // 계정삭제 실패 토스트메세지
     
     var body: some View {
         ZStack {
             // 다크모드 : 라이트모드 순서
-//            Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
+            //            Color(colorScheme == .dark ? Color.black : Color(red: 219 / 255,green: 219 / 255, blue: 219 / 255)).edgesIgnoringSafeArea(.all)
             Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             
             
-            if showingToast {
-                ToastView(message: "로그아웃 되었습니다.", isShowing: $showingToast)
-            }
             VStack(spacing: 0) {
                 HStack {
                     //                Button(action: {
@@ -84,6 +85,26 @@ struct MyPageView: View {
                 }
             }
             .padding(10)
+            
+            if showingToast {
+                ToastView(message: "로그아웃 되었습니다.", isShowing: $showingToast)
+            }
+            
+            if showingDeleteToast {
+                ToastView(message: "회원탈퇴신청이 정상적으로 접수되었습니다.", isShowing: $showingDeleteToast)
+            }
+            
+            if showingDeleteFailToast {
+                ToastView(message: "회원탈퇴 중 오류가 발생했습니다.", isShowing: $showingDeleteFailToast)
+            }
+            
+            if isProcessing {
+                Color.black.opacity(0.5).edgesIgnoringSafeArea(.all)
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(2)
+            }
+        }
             .navigationTitle("")
             .navigationBarHidden(true) // 상단여백제거
             .navigationBarBackButtonHidden(true) //네비게이션 시스템 백 버튼 젝
@@ -93,7 +114,6 @@ struct MyPageView: View {
                 }
             }
         }
-    }
     @ViewBuilder
     func loggedInView(user: User) -> some View {
         ScrollView {
@@ -223,9 +243,13 @@ struct MyPageView: View {
                             title: Text("로그아웃"),
                             message: Text("로그아웃 하시겠습니까?"),
                             primaryButton: .destructive(Text("예")) {
+                                isProcessing = true // 프로그래스뷰 표기
                                 loginViewModel.logout()
-                                userDataManager.currentUser = nil
-                                showingToast = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { //1초지연
+                                    isProcessing = false
+                                    userDataManager.currentUser = nil
+                                    showingToast = true
+                                }
                             },
                             secondaryButton: .cancel(Text("아니오"))
                         )
@@ -235,6 +259,7 @@ struct MyPageView: View {
                     }
                     Button(action: {
                         // 회원 탈퇴 액션
+                        showingDeleteAlert = true
                     }) {
                         HStack {
                             Image(systemName: "person.fill.xmark")
@@ -251,6 +276,26 @@ struct MyPageView: View {
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                         .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                    }
+                    .alert(isPresented: $showingDeleteAlert) {
+                        Alert(
+                            title: Text("회원탈퇴"),
+                            message: Text("회원탈퇴시 번복 할 수 없습니다.\n정말로 진행하시겠습니까?"),
+                            primaryButton: .destructive(Text("예")){
+                                loginViewModel.deleteAccount { success, message in
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        isProcessing = false
+                                        if success {
+                                            userDataManager.currentUser = nil
+                                            showingDeleteToast = true
+                                        } else {
+                                            showingDeleteFailToast = true
+                                        }
+                                    }
+                                }
+                            },
+                            secondaryButton: .cancel(Text("아니오"))
+                        )
                     }
                     .padding(.bottom, 20)
                     
@@ -342,14 +387,15 @@ struct MyPageView: View {
 struct ToastView: View {
     let message: String
     @Binding var isShowing: Bool
-
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         VStack {
             Spacer()
             Text(message)
                 .padding()
-                .background(Color.black.opacity(0.7))
-                .foregroundColor(.white)
+                .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red : 219 / 255, green: 219 / 255, blue: 219 / 255))
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 .cornerRadius(10)
                 .transition(.move(edge: .bottom))
                 .onAppear {

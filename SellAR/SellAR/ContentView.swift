@@ -22,7 +22,7 @@ struct ContentView: View {
         TabView {
             MainView(loginViewModel: viewModel)
                 .tabItem {
-                    Image(systemName: "house.fill")
+                    Image(systemName: "house.circle")
                     Text("홈")
                 }
             
@@ -35,7 +35,7 @@ struct ContentView: View {
             
             MyPageView()
                 .tabItem {
-                    Image(systemName: "3.square.fill")
+                    Image(systemName: "person.crop.circle")
                     Text("마이페이지")
                 }
                 .environmentObject(viewModel)

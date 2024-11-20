@@ -31,26 +31,26 @@ class LoginViewModel: NSObject, ObservableObject {
     
     // MARK: UserDefaults에서 userID 불러오기
     override init() {
-            super.init()
-            
-                if let savedUserID = UserDefaults.standard.string(forKey: "userID"), user.id.isEmpty, !isLoginPrinted {
-                    self.user.id = savedUserID
-                    print("유지된 로그인: userID = \(savedUserID)")
-                    isLoginPrinted = true
-                }
-                
-                if let savedGoogleUserID = UserDefaults.standard.string(forKey: "googleUserID"), user.id.isEmpty, !isLoginPrinted {
-                    self.user.id = savedGoogleUserID
-                    print("유지된 구글 로그인: userID = \(savedGoogleUserID)")
-                    isLoginPrinted = true
-                }
-                
-                if let savedAppleUserID = UserDefaults.standard.string(forKey: "appleUserID"), user.id.isEmpty, !isLoginPrinted {
-                    self.user.id = savedAppleUserID
-                    print("유지된 애플 로그인: userID = \(savedAppleUserID)")
-                    isLoginPrinted = true
-                }
-            }
+        super.init()
+        
+        if let savedUserID = UserDefaults.standard.string(forKey: "userID"), user.id.isEmpty, !isLoginPrinted {
+            self.user.id = savedUserID
+            print("유지된 로그인: userID = \(savedUserID)")
+            isLoginPrinted = true
+        }
+        
+        if let savedGoogleUserID = UserDefaults.standard.string(forKey: "googleUserID"), user.id.isEmpty, !isLoginPrinted {
+            self.user.id = savedGoogleUserID
+            print("유지된 구글 로그인: userID = \(savedGoogleUserID)")
+            isLoginPrinted = true
+        }
+        
+        if let savedAppleUserID = UserDefaults.standard.string(forKey: "appleUserID"), user.id.isEmpty, !isLoginPrinted {
+            self.user.id = savedAppleUserID
+            print("유지된 애플 로그인: userID = \(savedAppleUserID)")
+            isLoginPrinted = true
+        }
+    }
     // 로그인 성공 시 userID 저장
     func saveUserID(_ userID: String, loginMethod: String) {
         switch loginMethod {
@@ -74,7 +74,7 @@ class LoginViewModel: NSObject, ObservableObject {
         self.user.id = userID
         UserDefaults.standard.set(userID, forKey: "userID")
     }
-
+    
     
     // MARK: Firestore에 사용자 데이터를 저장하는 공통 메서드
     func saveUserToFirestore(uid: String, email: String, username: String, profileImageUrl: String?) {
@@ -87,23 +87,23 @@ class LoginViewModel: NSObject, ObservableObject {
         ]
         
         print("저장할 데이터:", userData)
-            
-            db.collection("users").document(uid).setData(userData) { error in
-                if let error = error {
-                    print("Firestore에 사용자 데이터 저장 실패: \(error.localizedDescription)")
-                } else {
-                    print("Firestore에 사용자 데이터 저장 성공")
-                    DispatchQueue.main.async {
-                        self.user = User(
-                            id: uid,
-                            email: email,
-                            username: username,
-                            profileImageUrl: profileImageUrl
-                        )
-                    }
+        
+        db.collection("users").document(uid).setData(userData) { error in
+            if let error = error {
+                print("Firestore에 사용자 데이터 저장 실패: \(error.localizedDescription)")
+            } else {
+                print("Firestore에 사용자 데이터 저장 성공")
+                DispatchQueue.main.async {
+                    self.user = User(
+                        id: uid,
+                        email: email,
+                        username: username,
+                        profileImageUrl: profileImageUrl
+                    )
                 }
             }
         }
+    }
     
     // MARK: 이메일과 비밀번호로 가입하는 회원가입 메서드
     func registerWithEmailPassword(email: String, password: String, username: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void = { _ in }) {
@@ -147,7 +147,7 @@ class LoginViewModel: NSObject, ObservableObject {
             }
         }
     }
-
+    
     func uploadProfileImage(_ image: UIImage?, completion: @escaping (URL?) -> Void) {
         guard let image = image,
               let imageData = image.jpegData(compressionQuality: 0.5) else {
@@ -198,9 +198,9 @@ class LoginViewModel: NSObject, ObservableObject {
                 completion(false)
                 return
             }
-
+            
             self.errorViewModel.handleLoginError(nil)
-
+            
             if let firebaseUser = authResult?.user {
                 self.user = User(id: firebaseUser.uid, email: email, username: firebaseUser.displayName ?? "", profileImageUrl: nil)
                 print("로그인 성공")
@@ -210,7 +210,7 @@ class LoginViewModel: NSObject, ObservableObject {
             completion(true)
         }
     }
-
+    
     // 이메일 유효성 검사
     private func isValidEmail(_ email: String) -> Bool {
         return email.contains("@")
@@ -271,20 +271,20 @@ class LoginViewModel: NSObject, ObservableObject {
             }
         }
     }
-     
+    
     // MARK: 애플 로그인 메서드 세부 코드는 AppleExtention.swift에서 구현
     
     func loginWithApple(completion: @escaping (Bool) -> Void) {
-            self.completionHandler = completion
-            let request = ASAuthorizationAppleIDProvider().createRequest()
-            request.requestedScopes = [.fullName, .email]
-            
-            let controller = ASAuthorizationController(authorizationRequests: [request])
-            controller.performRequests()
-            
-            controller.delegate = self
-            controller.presentationContextProvider = self
-        }
+        self.completionHandler = completion
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.performRequests()
+        
+        controller.delegate = self
+        controller.presentationContextProvider = self
+    }
     // MARK: 닉네임 저장 메서드
     func saveNickname(_ nickname: String, profileImageUrl: String? = nil) {
         guard !nickname.isEmpty else { return }
@@ -296,20 +296,20 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     // MARK: 닉네임이 이미 저장되어있는지 확인하는 메서드
     private func checkIfUserExists(uid: String, completion: @escaping (Bool) -> Void) {
-            db.collection("users").document(uid).getDocument { document, error in
-                if let document = document, document.exists {
-                    completion(true)
-                } else {
-                    completion(false)
-                }
+        db.collection("users").document(uid).getDocument { document, error in
+            if let document = document, document.exists {
+                completion(true)
+            } else {
+                completion(false)
             }
         }
+    }
     // 다른곳에서 db 가져올 수 있는 메서드
     func getUserDocument(uid: String, completion: @escaping (DocumentSnapshot?, Error?) -> Void) {
         db.collection("users").document(uid).getDocument(completion: completion)
     }
-
-// MARK: 로그아웃 버튼 클릭 시 로그아웃 되는 함수
+    
+    // MARK: 로그아웃 버튼 클릭 시 로그아웃 되는 함수
     func logout() {
         // Firebase에서 현재 로그인 상태 확인
         if Auth.auth().currentUser == nil {
@@ -336,6 +336,44 @@ class LoginViewModel: NSObject, ObservableObject {
             print("로그아웃 성공")
         } catch let signOutError as NSError {
             print("로그아웃 실패: \(signOutError.localizedDescription)")
+        }
+    }
+    
+    func deleteAccount(completion: @escaping (Bool, String?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(false, "사용자를 찾을 수 없습니다.")
+            return
+        }
+        
+        // Firestore에서 사용자 데이터 삭제
+        db.collection("users").document(user.uid).delete { error in
+            if let error = error {
+                print("Firestore에서 사용자 데이터 삭제 실패: \(error.localizedDescription)")
+                completion(false, "데이터 삭제 중 오류가 발생했습니다.")
+                return
+            }
+            
+            // Firebase Authentication에서 사용자 삭제
+            user.delete { error in
+                if let error = error {
+                    print("Firebase에서 사용자 삭제 실패: \(error.localizedDescription)")
+                    completion(false, "계정 삭제 중 오류가 발생했습니다.")
+                } else {
+                    print("사용자 계정이 성공적으로 삭제되었습니다.")
+                    // UserDefaults에서 저장된 로그인 정보 삭제
+                    UserDefaults.standard.removeObject(forKey: "userID")
+                    UserDefaults.standard.removeObject(forKey: "googleUserID")
+                    UserDefaults.standard.removeObject(forKey: "appleUserID")
+                    
+                    // 뷰 상태 초기화
+                    self.user = User(id: "", email: "", username: "", profileImageUrl: nil)
+                    self.isMainViewActive = false
+                    self.isNicknameEntryActive = false
+                    self.isLoggedIn = false
+                    
+                    completion(true, nil)
+                }
+            }
         }
     }
 }
