@@ -13,7 +13,7 @@ struct SalesStatusSheetView: View {
     
     @Binding var showSalesStatusSheet: Bool
     @Binding var showDetail: Bool
-    @Binding var selectedItem: Item?
+    @Binding var selectedItem: Items?
     
     @ObservedObject var itemStore: ItemStore
 

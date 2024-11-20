@@ -12,7 +12,7 @@ struct UserItemsView: View {
     @ObservedObject var itemStore = ItemStore()
     
     // `userId`를 기준으로 필터링된 아이템 목록
-    var filteredItems: [Item] {
+    var filteredItems: [Items] {
         itemStore.items.filter { $0.userId == userId }
     }
     
@@ -25,7 +25,7 @@ struct UserItemsView: View {
                         .padding()
                 } else {
                     ForEach(filteredItems) { item in
-                        ItemRowView(item: item, showDetailSheet: .constant(false), selectedItem: .constant(nil))
+                        UserItemRowView(item: item, showDetailSheet: .constant(false), selectedItem: .constant(nil))
                     }
                 }
             }

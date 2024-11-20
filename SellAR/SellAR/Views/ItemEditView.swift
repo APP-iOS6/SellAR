@@ -20,7 +20,7 @@ struct ItemEditView: View {
         case location
     }
     
-    @Binding var selectedItem: Item?
+    @Binding var selectedItem: Items?
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var textFocused: KeyboardDone?
     @State private var description: String = ""

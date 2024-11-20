@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ItemRowView: View {
-    var item: Item
+    var item: Items
     @Environment(\.colorScheme) var colorScheme
     @Binding var showDetailSheet: Bool
-    @Binding var selectedItem: Item?
+    @Binding var selectedItem: Items?
     
     var body: some View {
         VStack {
@@ -185,6 +185,169 @@ struct ItemRowView: View {
     }
 }
 
+// UserItemsView에서 쓰는 뷰
+struct UserItemRowView: View {
+    var item: Items
+    @Environment(\.colorScheme) var colorScheme
+    @Binding var showDetailSheet: Bool
+    @Binding var selectedItem: Items?
+    
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            HStack(alignment: .top, spacing: 2) {
+                // Thumbnail View Section
+                if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
+                   let imageURL = URL(string: imageURLString) {
+                    AsyncImage(url: imageURL) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 120, height: 120)
+                                .background(Color.gray)
+                                .cornerRadius(8)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 120, height: 120)
+                                .clipped()
+                                .cornerRadius(8)
+                                .shadow(radius: 2)
+                        case .failure:
+                            Color.white
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                    )
+                    .padding()
+                } else {
+                    Color.white
+                        .frame(width: 120, height: 120)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                        )
+                        .overlay(
+                            Text("없음")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 16, weight: .bold))
+                        )
+                        .padding()
+                }
+                
+                // Item Info Section
+                VStack(alignment: .leading, spacing: 4) {
+                    Spacer()
+                    
+                    HStack {
+                        Text(item.itemName)
+                            .font(.headline)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                        Spacer()
+                        
+                        Text(item.isSold ? "판매 완료" : (item.isReserved ? "예약 중" : "판매 중"))
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(item.isSold ? Color.gray : (item.isReserved ? Color.orange : Color(red: 0.0, green: 0.6, blue: 0.2)))
+                            )
+                            .foregroundColor(.white)
+                            .padding(6)
+                    }
+                    
+                    Text("\(formattedPriceInTenThousandWon)")
+                        .font(.subheadline)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .padding(.top, 0)
+                    
+                    Divider()
+                        .frame(height: 1)
+                        .background(Color.gray)
+                        .padding(.vertical, 4)
+                        .padding(.trailing, 16)
+                    
+                    
+                    HStack(spacing: 4) {
+                        Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                        
+                        Divider()
+                            .frame(width: 1, height: 14)
+                            .background(Color.gray)
+                        
+                        Text("\(item.location)")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.top, -50)
+                .frame(maxWidth: .infinity, alignment: .leading)
+               
+            }
+            .padding(.vertical, 10)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+            .padding(.horizontal, 10)
+            .shadow(radius: 1)
+            
+            if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
+                arIcon
+                    .padding(15)
+            }
+            
+        }
+    }
+    private var formattedPriceInTenThousandWon: String {
+        let priceNumber = Int(item.price) ?? 0
+        let tenThousandUnit = priceNumber / 10000
+        let remaining = priceNumber % 10000
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        if tenThousandUnit > 0 {
+            if remaining == 0 {
+                return "\(tenThousandUnit)만원"
+            } else {
+                let remainingStr = formatter.string(from: NSNumber(value: remaining)) ?? "0"
+                return "\(tenThousandUnit)만 \(remainingStr)원"
+            }
+        } else {
+            return formatter.string(from: NSNumber(value: remaining)) ?? "0원"
+        }
+    }
+    
+    private var arIcon: some View {
+        Text("AR")
+            .font(.caption)
+            .fontWeight(.bold)
+            .foregroundColor(.blue)
+            .padding(6)
+            .background(Color.white.opacity(0.8))
+            .clipShape(Circle())
+            .shadow(radius: 2)
+    }
+}
+
 
 struct ItemListView: View {
     @State private var searchText: String = ""
@@ -194,9 +357,9 @@ struct ItemListView: View {
     
     @ObservedObject var itemStore = ItemStore()
     
-    @State private var selectedItem: Item?
+    @State private var selectedItem: Items?
     
-    var filteredItems: [Item] {
+    var filteredItems: [Items] {
         if searchText.isEmpty {
             return itemStore.items
         } else {
