@@ -14,12 +14,12 @@ struct ItemRowView: View {
     @Binding var selectedItem: Items?
     
     var body: some View {
-        VStack {
+        ZStack(alignment: .bottomTrailing) {
             HStack(alignment: .top, spacing: 2) {
                 // Thumbnail View Section
-                if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
-                   let imageURL = URL(string: imageURLString) {
-                    AsyncImage(url: imageURL) { phase in
+                if let thumbnailURL = item.thumbnailURL {
+                    // thumbnailURL이 있을 때
+                    AsyncImage(url: thumbnailURL) { phase in
                         switch phase {
                         case .empty:
                             ProgressView()
@@ -46,26 +46,39 @@ struct ItemRowView: View {
                             EmptyView()
                         }
                     }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                    )
                     .padding()
-                } else {
-                    Color.white
-                        .frame(width: 120, height: 120)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                        )
-                        .overlay(
-                            Text("없음")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 16, weight: .bold))
-                        )
-                        .padding()
+                } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
+                    // thumbnailURL이 없으면 item.images.first를 사용
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 120, height: 120)
+                                .background(Color.gray)
+                                .cornerRadius(8)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 120, height: 120)
+                                .clipped()
+                                .cornerRadius(8)
+                                .shadow(radius: 2)
+                        case .failure:
+                            Color.white
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    .padding()
                 }
+
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 4) {
@@ -123,6 +136,7 @@ struct ItemRowView: View {
                 .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
+                
                 VStack {
                     // Ellipsis Button
                     Button(action: {
@@ -130,26 +144,28 @@ struct ItemRowView: View {
                         showDetailSheet = true
                     }) {
                         Image(systemName: "ellipsis")
-//                            .foregroundStyle(Color.black)
+                        //                            .foregroundStyle(Color.black)
                             .foregroundColor(colorScheme == .dark ? .white : .black)
                             .padding(8)
-//                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
+                        //                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
                     }
+                    
                     Spacer()
                     
                     if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
                         arIcon
+                            .padding(5)
                     }
-
-                    
                 }
-                .padding(.trailing, 4)
+               
             }
             .padding(.vertical, 10)
             .background(Color(.systemGray6))
             .cornerRadius(12)
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 10)
             .shadow(radius: 1)
+            
+
             
         }
     }
@@ -196,9 +212,9 @@ struct UserItemRowView: View {
         ZStack(alignment: .bottomTrailing) {
             HStack(alignment: .top, spacing: 2) {
                 // Thumbnail View Section
-                if let imageURLString = item.thumbnailLink?.isEmpty ?? true ? item.images.first : item.thumbnailLink,
-                   let imageURL = URL(string: imageURLString) {
-                    AsyncImage(url: imageURL) { phase in
+                if let thumbnailURL = item.thumbnailURL {
+                    // thumbnailURL이 있을 때
+                    AsyncImage(url: thumbnailURL) { phase in
                         switch phase {
                         case .empty:
                             ProgressView()
@@ -225,26 +241,39 @@ struct UserItemRowView: View {
                             EmptyView()
                         }
                     }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                    )
                     .padding()
-                } else {
-                    Color.white
-                        .frame(width: 120, height: 120)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                        )
-                        .overlay(
-                            Text("없음")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 16, weight: .bold))
-                        )
-                        .padding()
+                } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
+                    // thumbnailURL이 없으면 item.images.first를 사용
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(width: 120, height: 120)
+                                .background(Color.gray)
+                                .cornerRadius(8)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 120, height: 120)
+                                .clipped()
+                                .cornerRadius(8)
+                                .shadow(radius: 2)
+                        case .failure:
+                            Color.white
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    .padding()
                 }
+
                 
                 // Item Info Section
                 VStack(alignment: .leading, spacing: 4) {
