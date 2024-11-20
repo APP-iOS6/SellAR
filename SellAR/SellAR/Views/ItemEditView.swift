@@ -20,11 +20,10 @@ struct ItemEditView: View {
         case location
     }
     
-    @Binding var selectedItem: Item?
+    @Binding var selectedItem: Items?
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var textFocused: KeyboardDone?
     @State private var description: String = ""
-    @State private var selectedImages: [UIImage] = [] // 선택된 이미지를 저장할 상태
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     @State private var showEditItemView = false
     @State private var selectedUSDZFileURL: URL?
@@ -43,7 +42,7 @@ struct ItemEditView: View {
             get: { selectedItem?.itemName ?? "" },
             set: { selectedItem?.itemName = $0 }
         ))
-        .foregroundStyle(Color.black)
+        
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
         .focused($textFocused, equals: .textTitle)
@@ -56,7 +55,7 @@ struct ItemEditView: View {
             get: { selectedItem?.location ?? "" },
             set: { selectedItem?.location = $0 }
         ))
-        .foregroundStyle(Color.black)
+        
         .frame(maxWidth: .infinity, maxHeight: 25)
         .textFieldStyle(.plain)
         .focused($textFocused, equals: .location)
@@ -67,7 +66,7 @@ struct ItemEditView: View {
     
     private var descriptionTextEditor: some View {
         TextEditor(text: $description)
-            .foregroundStyle(Color.black)
+            
             .onChange(of: description) { newValue in
                 selectedItem?.description = newValue
             }
@@ -76,7 +75,7 @@ struct ItemEditView: View {
             .overlay {
                 if description.isEmpty {
                     Text(placeholder)
-                        .foregroundColor(Color(.systemGray4))
+                        .foregroundStyle(colorScheme == .dark ? .white : .black)
                 }
             }
             .scrollContentBackground(.hidden)
@@ -99,7 +98,7 @@ struct ItemEditView: View {
                     .padding(.trailing, 5)
             }
             .frame(maxWidth: .infinity, maxHeight: 25)
-            .foregroundStyle(Color.black)
+            
             .focused($textFocused, equals: .textPrice)
             .textFieldStyle(.plain)
             .padding(.vertical, 10)
@@ -107,6 +106,10 @@ struct ItemEditView: View {
             
             Button(action: {
                 textFocused = nil
+                print("현재 선택된 이미지: \(vm.selectedImages)")
+
+                
+                
                 presentationMode.wrappedValue.dismiss()
                 if let item = selectedItem {
                     // Firestore 문서의 ID를 사용하여 업데이트
@@ -120,11 +123,11 @@ struct ItemEditView: View {
                 }
 //                Task {
 //                    do {
-//                        try await vm.save(fileURL: selectedUSDZFileURL)
-//                    } catch {
-//                        print("저장 실패: \(error.localizedDescription)")
-//                    }
+//                    try await vm.save(fileURL: selectedUSDZFileURL)
+//                } catch {
+//                    print("저장 실패: \(error.localizedDescription)")
 //                }
+//            }
             }) {
                 Text("수정")
                     .foregroundColor(colorScheme == .dark ? Color.black : Color.black)
@@ -145,20 +148,12 @@ struct ItemEditView: View {
     
     private var actionButtons: some View {
         HStack {
-//            NavigationLink(
-//                       destination: ItemFormView(vm: ItemFormVM()), // ItemFormView로 이동
-//                       isActive: $showEditItemView
-//                   ) {
-//                       EmptyView() // 빈 뷰로 상태 연결
-//                   }
-//                   .hidden() // UI에 표시되지 않게 숨김
-            
             Button(action: {
                 vm.showUSDZSource = true
                 textFocused = nil
             }) {
                 Text("촬영하기")
-                    .foregroundStyle(Color.black)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 Image(systemName: "camera")
                     .foregroundColor(Color.cyan)
             }
@@ -178,6 +173,19 @@ struct ItemEditView: View {
             }), content: {
                 USDZScanner { url in
                     Task { await vm.uploadUSDZ(fileURL: url) }
+//                    Task {
+//                        await vm.uploadUSDZ(fileURL: url)
+//                        
+//                        if let uploadedUSDZURL = vm.usdzURL?.absoluteString,
+//                           let uploadedThumbnailURL = vm.thumbnailURL?.absoluteString {
+//                            selectedItem?.usdzLink = uploadedUSDZURL
+//                            selectedItem?.thumbnailLink = uploadedThumbnailURL
+//                        }
+//                        
+//                        // 업로드 후 상태 초기화
+//                        vm.selectedUSDZSource = nil
+//                    }
+
                     // 업로드 후 상태 초기화
                     vm.selectedUSDZSource = nil
                 }
@@ -200,8 +208,7 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("올리기")
-                    .foregroundStyle(Color.black)
-//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 Image(systemName: "square.and.arrow.up")
                     .foregroundColor(Color.cyan)
             }
@@ -213,13 +220,13 @@ struct ItemEditView: View {
                 textFocused = nil
             }) {
                 Text("이미지")
-                    .foregroundStyle(Color.black)
-//                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    .foregroundStyle(colorScheme == .dark ? .white : .black)
                 Image(systemName: "photo")
                     .foregroundColor(Color.cyan)
             }
             .sheet(isPresented: $isImagePickerPresented) {
                 PhotoPickerView(selectedImages: $vm.selectedImages)
+
             }
             
 //            Divider()
@@ -234,8 +241,8 @@ struct ItemEditView: View {
         }
         .frame(width: .infinity)
         .padding()
-        .background(Color.white)
-//        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+        .background(Color(.systemGray6))
+        .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
         .cornerRadius(8).overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.gray, lineWidth: 1)
@@ -247,9 +254,7 @@ struct ItemEditView: View {
     var body: some View {
         NavigationStack {
         ZStack {
-                Color(colorScheme == .dark ?
-                      Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                    .edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             
                 ScrollView {
                     VStack {
@@ -323,14 +328,13 @@ struct ItemEditView: View {
                             VStack {
                                 HStack {
                                     Text("제목")
-                                        .foregroundStyle(Color.black)
+                                        
                                         .font(.system(size: 20, weight: .bold))
                                         .padding(.leading, 5)
                                     
                                     titleTextField
                                     
                                     Text("위치")
-                                        .foregroundStyle(Color.black)
                                         .font(.system(size: 20, weight: .bold))
                                         .padding(.leading, 5)
                                     
@@ -348,8 +352,7 @@ struct ItemEditView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.white)
-//                            .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+                            .background(Color(.systemGray6))
                             .cornerRadius(8)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
@@ -387,8 +390,56 @@ struct ItemEditView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "xmark")
-                        .foregroundColor(Color.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                 })
+            }
+        }
+    }
+}
+
+struct PhotoPickerEditView: UIViewControllerRepresentable {
+    @Binding var selectedImages: [UIImage]
+    
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 0
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        var parent: PhotoPickerEditView
+        
+        init(_ parent: PhotoPickerEditView) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            picker.dismiss(animated: true)
+            
+            guard !results.isEmpty else { return }
+            
+            for result in results {
+                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+                    result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                        if let image = image as? UIImage {
+                            DispatchQueue.main.async {
+                                self?.parent.selectedImages.append(image)
+                            }
+                        } else if let error = error {
+                            print("이미지를 로드할 수 없습니다: \(error.localizedDescription)")
+                        }
+                    }
+                }
             }
         }
     }

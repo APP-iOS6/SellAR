@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseStorage
 
 class ItemStore: ObservableObject {
-    @Published var items: [Item] = []
+    @Published var items: [Items] = []
     
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?  // 리스너를 위한 변수 추가
@@ -57,29 +57,39 @@ class ItemStore: ObservableObject {
                 print("userId가 없습니다.")
                 return
             }
-
-            // Firestore에서 해당 userId에 맞는 아이템만 가져오기
+            
             db.collection("items")
-                .whereField("userId", isEqualTo: userId)  // userId로 필터링
+                .whereField("userId", isEqualTo: userId)
                 .order(by: "createdAt", descending: true)
                 .addSnapshotListener { (snapshot, error) in
                     if let error = error {
                         print("아이템을 가져오는 중 오류 발생: \(error.localizedDescription)")
                         return
                     }
-
+                    
                     guard let documents = snapshot?.documents else {
                         print("아이템이 없습니다.")
                         return
                     }
-
-                    self.items = documents.compactMap { doc in
-                        let data = doc.data()
-                        return Item(document: data)
+                    
+                    // 가져온 문서를 Items 모델로 변환
+                    var items: [Items] = []
+                    for document in documents {
+                        do {
+                            let item = try document.data(as: Items.self)
+                            items.append(item)
+                        } catch {
+                            print("아이템 데이터 변환 오류: \(error.localizedDescription)")
+                        }
+                    }
+                    
+                    // 변환된 아이템 배열을 상태에 저장
+                    DispatchQueue.main.async {
+                        self.items = items
                     }
                 }
         }
-    // 유저별 아이템 확인용
+
     func fetchAllItems() {
             db.collection("items")
                 .order(by: "createdAt", descending: true)
@@ -94,13 +104,24 @@ class ItemStore: ObservableObject {
                         return
                     }
 
-                    self.items = documents.compactMap { doc in
-                        let data = doc.data()
-                        return Item(document: data)
+                    // 가져온 데이터를 Items 모델로 변환
+                    var fetchedItems: [Items] = []
+                    for document in documents {
+                        do {
+                            let item = try document.data(as: Items.self)
+                            fetchedItems.append(item)
+                        } catch {
+                            print("아이템 데이터 변환 오류: \(error.localizedDescription)")
+                        }
                     }
-                    print("Fetched all items:", self.items)
+
+                    // 변환된 아이템 배열을 상태에 저장
+                    DispatchQueue.main.async {
+                        self.items = fetchedItems
+                    }
                 }
         }
+    
 
 
 //    func fetchItems() {
@@ -125,16 +146,14 @@ class ItemStore: ObservableObject {
 //            }
 //        }
     
-    func updateItem(_ item: Item, completion: @escaping (Error?) -> Void) {
+    func updateItem(_ item: Items, completion: @escaping (Error?) -> Void) {
         db.collection("items").document(item.id).updateData([
             "itemName": item.itemName,
             "description": item.description,
             "price": item.price,
-//            "images": item.images,
+            "images": item.images,
             "location": item.location,
-//            "usdzLink": item.usdzLink ?? "", // USDZ 파일 링크 추가
-            "thumbnailLink": item.thumbnailLink ?? "" // 썸네일 링크 추가
-
+//            "thumbnailURL": item.thumbnailURL?.absoluteString ?? "" // String으로 변환하여 저장
             // 필요한 경우 다른 필드도 추가
         ]) { error in
             if let error = error {

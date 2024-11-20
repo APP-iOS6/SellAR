@@ -12,7 +12,7 @@ struct ItemStatusSheetView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @Binding var showDetail: Bool
-    @Binding var selectedItem: Item?
+    @Binding var selectedItem: Items?
     @State private var isEditing = false
 
     @State private var showAlert = false
