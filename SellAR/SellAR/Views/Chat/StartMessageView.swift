@@ -35,7 +35,8 @@ struct StartMessageView: View {
         Group {
             if loginViewModel.user.id.isEmpty {
                 // 로그인하지 않은 상태
-                VStack(alignment: .center, spacing: 20) {
+                VStack() {
+                   
                     Image(colorScheme == .dark ? "SellarLogoDark" : "SellarLogoWhite")
                         .resizable()
                         .frame(width: 150, height: 150)
@@ -166,6 +167,7 @@ struct StartMessageView: View {
                                 }
                             }) {
                                 Text(editMode.isEditing ? "완료" : "편집")
+                                    .foregroundStyle(Color.blue)
                             }
                         }
                     }
