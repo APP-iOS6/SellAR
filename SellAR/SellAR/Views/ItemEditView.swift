@@ -24,7 +24,6 @@ struct ItemEditView: View {
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var textFocused: KeyboardDone?
     @State private var description: String = ""
-    @State private var selectedImages: [UIImage] = [] // 선택된 이미지를 저장할 상태
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     @State private var showEditItemView = false
     @State private var selectedUSDZFileURL: URL?
@@ -107,6 +106,10 @@ struct ItemEditView: View {
             
             Button(action: {
                 textFocused = nil
+                print("현재 선택된 이미지: \(vm.selectedImages)")
+
+                
+                
                 presentationMode.wrappedValue.dismiss()
                 if let item = selectedItem {
                     // Firestore 문서의 ID를 사용하여 업데이트
@@ -120,11 +123,11 @@ struct ItemEditView: View {
                 }
 //                Task {
 //                    do {
-//                        try await vm.save(fileURL: selectedUSDZFileURL)
-//                    } catch {
-//                        print("저장 실패: \(error.localizedDescription)")
-//                    }
+//                    try await vm.save(fileURL: selectedUSDZFileURL)
+//                } catch {
+//                    print("저장 실패: \(error.localizedDescription)")
 //                }
+//            }
             }) {
                 Text("수정")
                     .foregroundColor(colorScheme == .dark ? Color.black : Color.black)
@@ -222,8 +225,7 @@ struct ItemEditView: View {
                     .foregroundColor(Color.cyan)
             }
             .sheet(isPresented: $isImagePickerPresented) {
-                PhotoPickerView(selectedImages: $selectedImages)
-//                PhotoPickerView(selectedImages: $vm.selectedImages)
+                PhotoPickerView(selectedImages: $vm.selectedImages)
 
             }
             
@@ -390,6 +392,54 @@ struct ItemEditView: View {
                     Image(systemName: "xmark")
                         .foregroundColor(colorScheme == .dark ? .white : .black)
                 })
+            }
+        }
+    }
+}
+
+struct PhotoPickerEditView: UIViewControllerRepresentable {
+    @Binding var selectedImages: [UIImage]
+    
+    func makeUIViewController(context: Context) -> PHPickerViewController {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 0
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = context.coordinator
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PHPickerViewControllerDelegate {
+        var parent: PhotoPickerEditView
+        
+        init(_ parent: PhotoPickerEditView) {
+            self.parent = parent
+        }
+        
+        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+            picker.dismiss(animated: true)
+            
+            guard !results.isEmpty else { return }
+            
+            for result in results {
+                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
+                    result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                        if let image = image as? UIImage {
+                            DispatchQueue.main.async {
+                                self?.parent.selectedImages.append(image)
+                            }
+                        } else if let error = error {
+                            print("이미지를 로드할 수 없습니다: \(error.localizedDescription)")
+                        }
+                    }
+                }
             }
         }
     }

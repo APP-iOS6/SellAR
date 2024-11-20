@@ -34,31 +34,6 @@ struct Items: Identifiable, Codable, Equatable {
     var isReserved: Bool = false  // 예약 상태 추가
     
     
-      init(id: String = UUID().uuidString,
-           userId: String,
-           itemName: String,
-           usdzLink: String? = nil,
-           thumbnailLink: String? = nil,
-           description: String,
-           price: String,
-           images: [String] = ["placeholder"],
-           location: String,
-           isReserved: Bool = false,
-           createdAt: Date? = nil,
-           updatedAT: Date? = nil) {
-          self.id = id
-          self.userId = userId
-          self.itemName = itemName
-          self.usdzLink = usdzLink
-          self.thumbnailLink = thumbnailLink
-          self.description = description
-          self.price = price
-          self.images = images
-          self.location = location
-          self.isReserved = isReserved
-          self.createdAt = createdAt
-          self.updatedAT = updatedAT
-      }
 
     // 생성된 시간의 읽기 쉬운 형식
     var formattedCreatedAt: String {

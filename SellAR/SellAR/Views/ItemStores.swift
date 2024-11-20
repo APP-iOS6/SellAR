@@ -153,11 +153,7 @@ class ItemStore: ObservableObject {
             "price": item.price,
             "images": item.images,
             "location": item.location,
-            "usdzLink": item.usdzLink ?? "", // USDZ 파일 링크 추가
-            "thumbnailLink": item.thumbnailLink ?? "", // 썸네일 링크 추가
-            "usdzURL": item.usdzURL ?? "",
-            "thumbnailURL": item.thumbnailURL ?? ""
-
+//            "thumbnailURL": item.thumbnailURL?.absoluteString ?? "" // String으로 변환하여 저장
             // 필요한 경우 다른 필드도 추가
         ]) { error in
             if let error = error {
