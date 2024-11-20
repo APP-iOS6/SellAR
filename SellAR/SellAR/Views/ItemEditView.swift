@@ -178,6 +178,19 @@ struct ItemEditView: View {
             }), content: {
                 USDZScanner { url in
                     Task { await vm.uploadUSDZ(fileURL: url) }
+//                    Task {
+//                        await vm.uploadUSDZ(fileURL: url)
+//                        
+//                        if let uploadedUSDZURL = vm.usdzURL?.absoluteString,
+//                           let uploadedThumbnailURL = vm.thumbnailURL?.absoluteString {
+//                            selectedItem?.usdzLink = uploadedUSDZURL
+//                            selectedItem?.thumbnailLink = uploadedThumbnailURL
+//                        }
+//                        
+//                        // 업로드 후 상태 초기화
+//                        vm.selectedUSDZSource = nil
+//                    }
+
                     // 업로드 후 상태 초기화
                     vm.selectedUSDZSource = nil
                 }
@@ -219,7 +232,9 @@ struct ItemEditView: View {
                     .foregroundColor(Color.cyan)
             }
             .sheet(isPresented: $isImagePickerPresented) {
-                PhotoPickerView(selectedImages: $vm.selectedImages)
+                PhotoPickerView(selectedImages: $selectedImages)
+//                PhotoPickerView(selectedImages: $vm.selectedImages)
+
             }
             
 //            Divider()
@@ -247,9 +262,7 @@ struct ItemEditView: View {
     var body: some View {
         NavigationStack {
         ZStack {
-                Color(colorScheme == .dark ?
-                      Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-                    .edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             
                 ScrollView {
                     VStack {
@@ -387,7 +400,7 @@ struct ItemEditView: View {
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "xmark")
-                        .foregroundColor(Color.white)
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
                 })
             }
         }

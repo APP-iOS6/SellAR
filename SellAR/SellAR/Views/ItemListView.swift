@@ -148,7 +148,7 @@ struct ItemRowView: View {
             .padding(.vertical, 10)
             .background(Color(.systemGray6))
             .cornerRadius(12)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, 16)
             .shadow(radius: 1)
             
         }
@@ -206,9 +206,8 @@ struct ItemListView: View {
     
     var body: some View {
         ZStack {
-            Color(colorScheme == .dark ?
-                  Color(red: 23 / 255, green: 34 / 255, blue: 67 / 255) : Color(red: 203 / 255, green: 217 / 255, blue: 238 / 255))
-            .edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
+
             ScrollView {
                 VStack(spacing: 6) {
                     // Search Bar
