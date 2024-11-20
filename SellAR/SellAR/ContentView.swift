@@ -6,45 +6,59 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ContentView: View {
+    @StateObject private var chatViewModel = ChatViewModel(senderID: Auth.auth().currentUser?.uid ?? "")
     @ObservedObject var viewModel: LoginViewModel
-    @StateObject private var chatViewModel: ChatViewModel
-
-    
-    init(viewModel: LoginViewModel) {
-        self.viewModel = viewModel
-        // viewModel.userID를 사용하여 ChatViewModel 초기화
-        _chatViewModel = StateObject(wrappedValue: ChatViewModel(senderID: viewModel.userID ?? ""))
-    }
+    @State private var selectedTab = 0
     
     var body: some View {
-        TabView {
-            MainView(loginViewModel: viewModel)
+        Group {
+            TabView(selection: $selectedTab) {
+                // 홈 탭
+                NavigationStack {
+                    MainView(loginViewModel: viewModel)
+                }
                 .tabItem {
-                    Image(systemName: "house.fill")
+
+                    Image(systemName: selectedTab == 0 ? "house.fill" : "house")
+
                     Text("홈")
                 }
-            
-            StartMessageView(loginViewModel: viewModel)
+                .tag(0)
+                
+                // 채팅 탭
+                NavigationStack {
+                    StartMessageView(loginViewModel: viewModel)
+                        .environmentObject(chatViewModel)
+                }
                 .tabItem {
-                    Image(systemName: "message.circle.fill")
+                    Image(systemName: selectedTab == 1 ? "message.fill" : "message")
                     Text("채팅")
                 }
-                .badge(chatViewModel.totalUnreadCount)
-            
-            MyPageView()
-                .tabItem {
-                    Image(systemName: "3.square.fill")
-                    Text("마이페이지")
+                .badge(chatViewModel.totalUnreadCount > 0 ? String(chatViewModel.totalUnreadCount) : "0")
+                .tag(1)
+                
+                // 마이페이지 탭
+                NavigationStack {
+                    MyPageView()
+                        .environmentObject(viewModel)
                 }
-                .environmentObject(viewModel)
-        }
-        .onChange(of: viewModel.userID ?? "") { userID in
-            // userID가 변경될 때 ChatViewModel의 senderID 업데이트
-            chatViewModel.senderID = userID ?? ""
-            if !userID.isEmpty {
-                chatViewModel.fetchChatRooms()
+                .tabItem {
+
+                    Image(systemName: selectedTab == 2 ? "person.fill" : "person")
+                    Text("My")
+
+                }
+                .tag(2)
+            }
+            .tint(.black)
+            .onChange(of: chatViewModel.totalUnreadCount) { newValue in
+                print("Total unread messages: \(newValue)")
+            }
+            .onAppear {
+                chatViewModel.fetchChatRooms() // 채팅방 목록과 안읽은 메시지 수를 가져옵니다
             }
         }
     }
