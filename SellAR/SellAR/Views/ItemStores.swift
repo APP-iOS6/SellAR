@@ -147,23 +147,40 @@ class ItemStore: ObservableObject {
 //        }
     
     func updateItem(_ item: Items, completion: @escaping (Error?) -> Void) {
-        db.collection("items").document(item.id).updateData([
+        var updateData: [String: Any] = [
             "itemName": item.itemName,
             "description": item.description,
             "price": item.price,
-            "images": item.images,
-            "location": item.location,
-//            "thumbnailURL": item.thumbnailURL?.absoluteString ?? "" // String으로 변환하여 저장
-            // 필요한 경우 다른 필드도 추가
-        ]) { error in
+            "location": item.location
+        ]
+        
+        // 이미지가 있을 경우 이미지 URL을 추가
+        if !item.images.isEmpty {
+            updateData["images"] = item.images
+        }
+        
+        // USDZ 파일 URL이 있을 경우 해당 URL을 추가
+        if let usdzURL = item.usdzURL {
+            updateData["usdzURL"] = usdzURL.absoluteString
+        }
+        
+        // 썸네일 URL이 있을 경우 추가
+        if let thumbnailURL = item.thumbnailURL {
+            updateData["thumbnailURL"] = thumbnailURL.absoluteString
+        }
+        
+        // Firestore에 업데이트
+        db.collection("items").document(item.id).updateData(updateData) { error in
             if let error = error {
                 print("Error updating document: \(error)")
+                completion(error)
             } else {
                 print("Document successfully updated")
-                // 성공적으로 수정된 후 다른 행동 추가 (예: dismiss)
+                completion(nil)
             }
         }
     }
+
     
     func updateItemStatus(itemId: String, isSold: Bool, isReserved: Bool) {
         let db = Firestore.firestore()

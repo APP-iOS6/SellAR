@@ -43,8 +43,13 @@ struct ItemRowView: View {
                                         .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                                 )
                         @unknown default:
-                            EmptyView()
-                        }
+                            Color.white
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )                        }
                     }
                     .padding()
                 } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
@@ -73,10 +78,21 @@ struct ItemRowView: View {
                                         .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
                                 )
                         @unknown default:
-                            EmptyView()
-                        }
+                            Color.white
+                                .frame(width: 120, height: 120)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
+                                )                        }
                     }
                     .padding()
+                } else {
+                    Color.gray.opacity(0.3)
+                        .frame(width: 120, height: 120)
+                        .cornerRadius(8)
+                        .shadow(radius: 2)
+                        .padding()
                 }
 
                 
