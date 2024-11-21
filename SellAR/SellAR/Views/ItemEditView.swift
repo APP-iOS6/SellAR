@@ -161,7 +161,9 @@ struct ItemEditView: View {
                     }
                 })
                 .sheet(isPresented: $showImagePicker) {
-                    PhotoPickerView(selectedImages: $vm.selectedImages)
+//                    PhotoPickerView(selectedImages: $vm.selectedImages)
+                    EditPhotoPickerView(vm: vm)
+
                 }
                 .navigationTitle(vm.navigationTitle)
                 .navigationBarTitleDisplayMode(.inline)
@@ -463,7 +465,12 @@ struct ItemEditView: View {
 }
 
 struct EditPhotoPickerView: UIViewControllerRepresentable {
-    @Binding var selectedImages: [UIImage]
+//    @Binding var selectedImages: [UIImage]
+    let vm: ItemFormVM
+    
+    var selectedImages: [UIImage] {
+        vm.selectedImages
+    }
     
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()
@@ -498,7 +505,9 @@ struct EditPhotoPickerView: UIViewControllerRepresentable {
                     result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
                         if let image = image as? UIImage {
                             DispatchQueue.main.async {
-                                self?.parent.selectedImages.append(image)
+                                print("선택된 이미지: \(image)")
+//                                self?.parent.selectedImages.append(image)
+                                self?.parent.vm.selectedImages.append(image)
                             }
                         } else if let error = error {
                             print("이미지를 로드할 수 없습니다: \(error.localizedDescription)")
