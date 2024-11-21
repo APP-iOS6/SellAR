@@ -293,21 +293,22 @@ class ChatViewModel: ObservableObject {
     
     
     // 채팅방 생성 메서드
-    func createNewChatRoom(with targetUser: User) {
+    func createNewChatRoom(with targetUser: User, completion: ((String?) -> Void)? = nil) {
+        // 참가자 배열 생성
         let participants = [self.senderID, targetUser.id]
         
-        // unreadCount로 통일
+        // 읽지 않은 메시지 카운트 초기화
         let unreadCount: [String: Int] = [
             self.senderID: 0,
             targetUser.id: 0
         ]
         
+        // 새 채팅방 데이터 생성
         let newChatRoom: [String: Any] = [
             "name": targetUser.username,
-            //            "profileImageURL": targetUser.profileImageUrl ?? "",
             "latestMessage": "대화를 시작해보세요",
             "latestTimestamp": Timestamp(date: Date()),
-            "unreadCount": unreadCount,  // unreadCounts -> unreadCount로 변경
+            "unreadCount": unreadCount,
             "participants": participants,
             "lastReadMessageID": [
                 self.senderID: "",
@@ -315,16 +316,20 @@ class ChatViewModel: ObservableObject {
             ]
         ]
         
-        db.collection("chatRooms").addDocument(data: newChatRoom) { [weak self] error in
+        // 명시적으로 고유한 문서 ID 생성
+        let documentRef = db.collection("chatRooms").document()
+        
+        documentRef.setData(newChatRoom) { error in
             if let error = error {
                 print("채팅방 생성 실패: \(error.localizedDescription)")
+                completion?(nil)
             } else {
-                print("새 채팅방이 생성되었습니다")
-                self?.fetchChatRooms()
+                print("새 채팅방이 생성되었습니다: \(documentRef.documentID)")
+                self.fetchChatRooms()
+                completion?(documentRef.documentID)
             }
         }
     }
-    
     
     
     func fetchChatRooms() {
