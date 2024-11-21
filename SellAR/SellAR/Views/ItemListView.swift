@@ -288,6 +288,12 @@ struct UserItemRowView: View {
                         }
                     }
                     .padding()
+                } else {
+                    Color.gray.opacity(0.3)
+                        .frame(width: 120, height: 120)
+                        .cornerRadius(8)
+                        .shadow(radius: 2)
+                        .padding()
                 }
 
                 

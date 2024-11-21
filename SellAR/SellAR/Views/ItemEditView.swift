@@ -27,7 +27,6 @@ struct ItemEditView: View {
     @State private var description: String = ""
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     @State private var showEditItemView = false
-    @State private var selectedUSDZFileURL: URL?
     @ObservedObject var vm = ItemFormVM()
     
     let placeholder: String = "내용을 입력해 주세요."
@@ -104,6 +103,13 @@ struct ItemEditView: View {
                                         print("Error updating item: \(error)")
                                     } else {
                                         print("Document successfully updated")
+                                    }
+                                }
+                                Task {
+                                    do {
+                                        try await vm.save(fileURL: selectUSDZFileURL)
+                                    } catch {
+                                        print("저장 실패: \(error.localizedDescription)")
                                     }
                                 }
                             }
@@ -328,11 +334,11 @@ struct ItemEditView: View {
                 } label: {
                     HStack {
                         Image(systemName: "arkit").imageScale(.large)
-                        Text(selectedUSDZFileURL != nil ? "파일 변경" : "USDZ 추가")
+                        Text(selectUSDZFileURL != nil ? "파일 변경" : "USDZ 추가")
                     }
                 }
                 
-                if let selectedURL = selectedUSDZFileURL {
+                if let selectedURL = selectUSDZFileURL {
                     Text("선택된 파일: \(selectedURL.lastPathComponent)")
                         .font(.footnote)
                         .foregroundColor(.gray)
