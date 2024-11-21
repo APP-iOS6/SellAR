@@ -57,7 +57,7 @@ struct ContentView: View {
             }
             .onAppear {
                 chatViewModel.fetchChatRooms() // 채팅방 목록과 안읽은 메시지 수를 가져옵니다
-                updateTabBarAppearance() // 색상 업데이트
+                updateTabBarAppearance() 
             }
         }
     }
@@ -73,10 +73,10 @@ struct ContentView: View {
     private func updateTabBarAppearance() {
         let tabBarAppearance = UITabBar.appearance()
         let selectedColor = UIColor(red: 76/255, green: 127/255, blue: 200/255, alpha: 1)
-        let defaultColor: UIColor = colorScheme == .light ? .gray : .white
+        let defaultColor: UIColor = colorScheme == .light ? .gray : .gray
 
-        tabBarAppearance.tintColor = selectedColor // 선택된 탭 색상
-        tabBarAppearance.unselectedItemTintColor = defaultColor // 선택되지 않은 탭 색상
+        tabBarAppearance.tintColor = selectedColor
+        tabBarAppearance.unselectedItemTintColor = defaultColor
     }
 }
 
