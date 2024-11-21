@@ -68,7 +68,7 @@ struct MainView: View {
     
     private var logoView: some View {
         HStack {
-            Image(uiImage: UIImage(named: UITraitCollection.current.userInterfaceStyle == .dark ? "LogoBlack" : "Logo") ?? UIImage())
+            Image(uiImage: UIImage(named: UITraitCollection.current.userInterfaceStyle == .dark ? "SellarLogoDark" : "SellarLogoWhite") ?? UIImage())
                 .resizable()
                 .scaledToFit()
                 .frame(width: 120, height: 120)
@@ -101,7 +101,7 @@ struct MainView: View {
         .padding(8)
         .background(Color(.systemGray6))
         .cornerRadius(10)
-        .shadow(radius: 1)
+        .frame(maxWidth: UIScreen.main.bounds.width * 0.85)
         .padding(.top, -16)
         .padding(.horizontal, 10)
     }
@@ -110,15 +110,24 @@ struct MainView: View {
         Button(action: {
             showAddItemView = true
         }) {
-            Text("판매")
-                .font(.headline)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color(red: 0.30, green: 0.50, blue: 0.78))
-                .foregroundColor(.white)
-                .cornerRadius(8)
+            HStack(spacing: 4) {
+                Image(systemName: "plus")
+                    .foregroundColor(.blue)
+                Text("물건 판매하기")
+                    .font(.headline)
+                    .foregroundColor(.blue)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.blue.opacity(0.2))
+            )
         }
     }
+
+
+
 }
 
 extension View {
@@ -169,7 +178,6 @@ struct ListItemView: View {
                 thumbnailView
                     .frame(width: 120, height: 120)
                     .cornerRadius(8)
-                    .shadow(radius: 2)
                     .padding()
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -193,6 +201,7 @@ struct ListItemView: View {
                             )
                             .foregroundColor(.white)
                             .padding(6)
+                            .offset(x: -9)
                     }
                     
                     Text("\(formattedPriceInTenThousandWon)")
@@ -225,16 +234,17 @@ struct ListItemView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.vertical, 10)
-            .background(Color(.systemGray6))
+//            .background(Color(.systemGray6))
             .cornerRadius(12)
             .padding(.horizontal, 10)
-            .shadow(radius: 1)
+            
             
             if item.usdzLink != nil {
                 arIcon
                     .padding(15)
             }
         }
+        .padding(.vertical, 8)
     }
     
     private var formattedPriceInTenThousandWon: String {
@@ -260,7 +270,7 @@ struct ListItemView: View {
     private var thumbnailView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
-                .foregroundStyle(Color.gray.opacity(0.3))
+                .foregroundStyle(Color.clear)
             
             if let thumbnailURL = item.thumbnailURL {
                 AsyncImage(url: thumbnailURL) { phase in
@@ -288,13 +298,21 @@ struct ListItemView: View {
     }
     
     private var arIcon: some View {
-        Text("AR")
-            .font(.caption)
-            .fontWeight(.bold)
-            .foregroundColor(.blue)
-            .padding(6)
-            .background(Color.white.opacity(0.8))
-            .clipShape(Circle())
-            .shadow(radius: 2)
+        HStack(spacing: 4) {
+            Image(systemName: "arkit") // ARKit 아이콘
+                .foregroundColor(.blue) // 아이콘 파란색
+            Text("AR")
+                .font(.caption)
+                .foregroundColor(.blue) // 글씨 파란색
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.blue.opacity(0.2)) // 하늘색 배경
+        )
+        .padding(6)
     }
+
+
 }

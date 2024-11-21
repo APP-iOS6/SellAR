@@ -25,18 +25,19 @@ struct UserItemsView: View {
                         .padding()
                 } else {
                     ForEach(filteredItems) { item in
-                        UserItemRowView(item: item, showDetailSheet: .constant(false), selectedItem: .constant(nil))
+                        UserItemRowView(
+                            item: item,
+                            showDetailSheet: .constant(false),
+                            selectedItem: .constant(nil)
+                        )
+                        .padding(.vertical, 8)
                     }
                 }
             }
             .padding()
         }
         .background(
-            Color(UIColor { traitCollection in
-                traitCollection.userInterfaceStyle == .dark
-                ? UIColor.black
-                : UIColor.white
-            }).ignoresSafeArea()
+            Color.clear.ignoresSafeArea() 
         )
         .navigationTitle("판매자의 상품 목록")
         .onAppear {

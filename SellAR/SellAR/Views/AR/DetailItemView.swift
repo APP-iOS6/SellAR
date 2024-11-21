@@ -193,12 +193,26 @@ struct DetailItemView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "arkit")
+                                        .foregroundColor(
+                                            Color(UIColor { traitCollection in
+                                                return traitCollection.userInterfaceStyle == .dark ? .black : .white
+                                            })
+                                        )
                                     Text("AR 보기")
                                         .font(.footnote)
+                                        .foregroundColor(
+                                            Color(UIColor { traitCollection in
+                                                return traitCollection.userInterfaceStyle == .dark ? .black : .white
+                                            })
+                                        )
                                 }
                                 .padding(.vertical, 6)
                                 .padding(.horizontal, 12)
-                                .background(Color.blue.opacity(0.2))
+                                .background(
+                                    Color(UIColor { traitCollection in
+                                        return traitCollection.userInterfaceStyle == .dark ? UIColor(red: 0.5, green: 0.7, blue: 1.0, alpha: 1.0) : UIColor(red: 0.3, green: 0.5, blue: 0.9, alpha: 1.0)
+                                    })
+                                )
                                 .cornerRadius(20)
                             }
                         }
@@ -208,35 +222,96 @@ struct DetailItemView: View {
                         }) {
                             HStack {
                                 Image(systemName: "message")
+                                    .foregroundColor(
+                                        Color(UIColor { traitCollection in
+                                            return traitCollection.userInterfaceStyle == .dark ? .black : .white
+                                        })
+                                    )
                                 Text("채팅하기")
                                     .font(.footnote)
+                                    .foregroundColor(
+                                        Color(UIColor { traitCollection in
+                                            return traitCollection.userInterfaceStyle == .dark ? .black : .white
+                                        })
+                                    )
                             }
                             .padding(.vertical, 6)
                             .padding(.horizontal, 12)
-                            .background(Color.green.opacity(0.2))
+                            .background(
+                                Color(UIColor { traitCollection in
+                                    return traitCollection.userInterfaceStyle == .dark ? UIColor(red: 0.5, green: 0.9, blue: 0.5, alpha: 1.0) : UIColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1.0)
+                                })
+                            )
                             .cornerRadius(20)
                         }
                     }
                 }
                 .padding()
-                .background(Color.white)
+                .background(
+                    Color(UIColor { traitCollection in
+                        return traitCollection.userInterfaceStyle == .dark ? .gray : .white
+                    })
+                )
                 .cornerRadius(10)
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
+
             }
             .padding(.top, 16)
         }
         .background(
-            Color(UIColor { traitCollection in
-                traitCollection.userInterfaceStyle == .dark ? .black : .white
-            }).ignoresSafeArea()
-        )
-        .alert("알림", isPresented: $showSelfChatAlert) {
-            Button("확인", role: .cancel) { }
-        } message: {
-            Text("자기 자신에게는 채팅을 보낼 수 없습니다.")
-        }
+                    Color(UIColor { traitCollection in
+                        traitCollection.userInterfaceStyle == .dark ? .black : .white
+                    }).ignoresSafeArea()
+                )
+                .alert("알림", isPresented: $showSelfChatAlert) {
+                    Button("확인", role: .cancel) { }
+                } message: {
+                    Text("자기 자신에게는 채팅을 보낼 수 없습니다.")
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            showAlert = true
+                        }) {
+                            Text("신고하기")
+                                .imageScale(.large)
+                                .foregroundColor(.red)
+                        }
+                    }
+                }
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("신고하기"),
+                        message: Text("이 상품을 신고하시겠습니까?"),
+                        primaryButton: .destructive(Text("신고하기")) {
+                            reportItem()
+                        },
+                        secondaryButton: .cancel(Text("취소"))
+                    )
+                }
+                .overlay(
+                    VStack {
+                        if showReportConfirmation {
+                            Text("신고가 완료되었습니다.")
+                                .padding()
+                                
+                                .background(Color.blue.opacity(0.7))
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                                .zIndex(1)
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        withAnimation {
+                                            showReportConfirmation = false
+                                        }
+                                    }
+                                }
+                        }
+                    }
+                )
         .onAppear {
             userVM.setUserId(item.userId)
         }
@@ -269,6 +344,15 @@ struct DetailItemView: View {
         let vc = UIApplication.shared.firstKeyWindow?.rootViewController?.presentedViewController ?? UIApplication.shared.firstKeyWindow?.rootViewController
         vc?.present(safariVC, animated: true)
     }
+    
+    // 신고하기 기능
+        func reportItem() {
+            // 신고 기능 로직을 여기에 추가
+            withAnimation {
+                showReportConfirmation = true
+            }
+            print("신고가 완료되었습니다.")
+        }
     
     func startChat() {
         if item.userId == chatViewModel.senderID {
@@ -303,3 +387,4 @@ struct DetailItemView: View {
         }
     }
 }
+
