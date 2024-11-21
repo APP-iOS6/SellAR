@@ -507,7 +507,9 @@ struct EditPhotoPickerView: UIViewControllerRepresentable {
                             DispatchQueue.main.async {
                                 print("선택된 이미지: \(image)")
 //                                self?.parent.selectedImages.append(image)
-                                self?.parent.vm.selectedImages.append(image)
+                                self!.parent.vm.selectedImages.append(image)
+                                print("선택된 이미지의 개수: \(self?.parent.vm.selectedImages.count ?? 0)")
+
                             }
                         } else if let error = error {
                             print("이미지를 로드할 수 없습니다: \(error.localizedDescription)")

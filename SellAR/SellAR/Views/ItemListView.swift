@@ -97,6 +97,10 @@ struct ItemRowView: View {
             }
         }
         .padding(.vertical, 8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1) // 테두리 추가
+        )
     }
     
     private var thumbnailView: some View {
@@ -247,6 +251,10 @@ struct UserItemRowView: View {
             }
         }
         .padding(.vertical, 8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1) // 테두리 추가
+        )
     }
     
     private var thumbnailView: some View {
