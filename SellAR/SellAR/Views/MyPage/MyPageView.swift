@@ -65,7 +65,7 @@ struct MyPageView: View {
                                 .padding(.bottom, 3)
                                 .frame(width: 33, height: 33)
                                 .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
-                                .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255)))
+                                .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255)))
                                 .clipShape(Circle())
                         }
                         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -153,7 +153,7 @@ struct MyPageView: View {
                         .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                         .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                         .clipShape(Circle())
-                        .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                     
                 }
                 // 닉네임 및 이메일
@@ -178,7 +178,7 @@ struct MyPageView: View {
                 .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                 .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                 
                 
                 // 게시물 및 계정 관리 버튼들
@@ -205,7 +205,8 @@ struct MyPageView: View {
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .cornerRadius(10)
                     }
                     .padding(.bottom, 20)
                     
@@ -236,7 +237,8 @@ struct MyPageView: View {
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .cornerRadius(10)
                     }
                     .alert(isPresented: $showingLogoutAlert) {
                         Alert(
@@ -257,6 +259,10 @@ struct MyPageView: View {
                     NavigationLink(destination: ContentView(viewModel: loginViewModel).navigationBarBackButtonHidden(true), isActive: $loginViewModel.isMainViewActive) {
                         EmptyView()
                     }
+                    
+                    Spacer()
+                        .frame(height: 8) // 버튼사이간격
+                    
                     Button(action: {
                         // 회원 탈퇴 액션
                         showingDeleteAlert = true
@@ -267,6 +273,7 @@ struct MyPageView: View {
                             Spacer()
                                 .frame(width: 7)
                             Text("회원 탈퇴")
+                                .foregroundColor(Color.red)
                                 .font(.system(size: 15))
                                 .fontWeight(.bold)
                             Spacer()
@@ -275,7 +282,8 @@ struct MyPageView: View {
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .cornerRadius(10)
                     }
                     .alert(isPresented: $showingDeleteAlert) {
                         Alert(
@@ -341,11 +349,13 @@ struct MyPageView: View {
                         .padding(15) //검정칸 크기
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
-                        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                        .cornerRadius(10)
                     }
                 }
             }
             .padding(.vertical, 10)
+            .padding(.horizontal, 10) // 좌우 리스트값 변경시도
             .navigationTitle("")
             .navigationBarHidden(true) // 상단여백제거
         }
@@ -373,7 +383,7 @@ struct MyPageView: View {
                         .padding(2)
                         .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흐린흰색
                         .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
-                        .cornerRadius(26.5)
+                        .cornerRadius(10)
                         .bold()
                 }
             }
