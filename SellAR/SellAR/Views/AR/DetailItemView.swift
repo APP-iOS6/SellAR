@@ -113,7 +113,7 @@ struct DetailItemView: View {
                     }
                     .padding(.vertical, -8)
                 }
-
+                
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         NavigationLink(destination: UserItemsView(userId: item.userId)) {
@@ -235,6 +235,23 @@ struct DetailItemView: View {
         }
         .navigationTitle("상품 상세 정보")
         .navigationBarTitleDisplayMode(.inline)
+        .background(
+            NavigationLink(
+                destination: Group {
+                    if let chatRoomID = chatRoomID {
+                        ChatContentView(
+                            chatViewModel: chatViewModel,
+                            chatRoomID: chatRoomID,
+                            currentUserID: chatViewModel.senderID,
+                            otherUserID: item.userId
+                        )
+                    }
+                },
+                isActive: $navigateToChatRoom
+            ) {
+                EmptyView()
+            }
+        )
     }
     
     private var formattedPriceInTenThousandWon: String {
@@ -264,6 +281,7 @@ struct DetailItemView: View {
     }
     
     func startChat() {
+        // 본인 상품인 경우 채팅 방지
         if item.userId == chatViewModel.senderID {
             withAnimation {
                 showSelfChatAlert = true
@@ -271,6 +289,7 @@ struct DetailItemView: View {
             return
         }
         
+        // 판매자 정보로 User 객체 생성
         let seller = User(
             id: item.userId,
             email: "",
@@ -278,6 +297,7 @@ struct DetailItemView: View {
             profileImageUrl: userVM.user?.profileImageUrl
         )
         
+        // 기존 채팅방 확인
         if let existingChatRoom = chatViewModel.chatRooms.first(where: { room in
             room.participants.contains(item.userId) && room.participants.contains(chatViewModel.senderID)
         }) {
@@ -285,6 +305,7 @@ struct DetailItemView: View {
             self.navigateToChatRoom = true
         } else {
             chatViewModel.createNewChatRoom(with: seller)
+            // 채팅방 목록을 다시 불러온 후 새로 생성된 채팅방으로 이동
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 if let newChatRoom = chatViewModel.chatRooms.first(where: { room in
                     room.participants.contains(item.userId) && room.participants.contains(chatViewModel.senderID)
