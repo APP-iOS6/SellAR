@@ -35,6 +35,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
+    // 방향 제한 설정 (세로 모드 고정)
+        func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+            return .portrait // 세로 모드만 허용
+        }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
