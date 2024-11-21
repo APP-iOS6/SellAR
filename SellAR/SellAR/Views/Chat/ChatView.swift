@@ -12,6 +12,7 @@
 //
 import SwiftUI
 import Firebase
+import SDWebImageSwiftUI
 
 // ChatRoomRow 컴포넌트 분리
 struct ChatRoomRow: View {
@@ -26,7 +27,7 @@ struct ChatRoomRow: View {
             if let otherUserID = chatRoom.participants.first(where: { $0 != currentUserID }) {
                 if let otherUser = chatViewModel.chatUsers[otherUserID] {
                     // 사용자가 존재하는 경우
-                    AsyncImage(url: URL(string: otherUser.profileImageUrl ?? "")) { image in
+                    WebImage(url: URL(string: otherUser.profileImageUrl ?? "")) { image in
                         image.resizable()
                     } placeholder: {
                         Circle().fill(Color.gray)
