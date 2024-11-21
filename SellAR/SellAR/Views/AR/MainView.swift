@@ -22,7 +22,7 @@ struct MainView: View {
                         .padding(.horizontal, 10)
                 }
                 
-                VStack(spacing: 8) {
+                VStack(spacing: 24) {
                     ForEach(vm.filteredItems) { item in
                         NavigationLink(destination: DetailItemView(item: item, currentUserID: loginViewModel.user.id)) {
                             ListItemView(item: item, status: item.isSold)
@@ -101,7 +101,7 @@ struct MainView: View {
         .padding(8)
         .background(Color(.systemGray6))
         .cornerRadius(10)
-        .frame(maxWidth: UIScreen.main.bounds.width * 0.85)
+        .frame(maxWidth: UIScreen.main.bounds.width * 0.83)
         .padding(.top, -16)
         .padding(.horizontal, 10)
     }
@@ -245,6 +245,10 @@ struct ListItemView: View {
             }
         }
         .padding(.vertical, 8)
+        .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1) // 테두리 추가
+                )
     }
     
     private var formattedPriceInTenThousandWon: String {
