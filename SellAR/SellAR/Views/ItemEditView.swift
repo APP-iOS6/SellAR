@@ -197,53 +197,78 @@ struct ItemEditView: View {
             
             Divider()
             
-            TextField("가격 (원)", text: Binding(
-                get: { selectedItem?.price ?? "" },
-                set: { selectedItem?.price = $0 }
-            ))
-            .keyboardType(.numberPad)
-            .focused($textFocused, equals: .textPrice)
-            .onChange(of: selectedItem?.price ?? "0") { newValue in
-                selectedItem?.price = newValue.filter { $0.isNumber }
-                formatPrice()
-            }
-            .onChange(of: selectedItem?.price ?? "0") { newValue in
-                if newValue.isEmpty {
-                    formattedPrice = "0"
+            HStack {
+                TextField("가격 (원)", text: Binding(
+                    get: { selectedItem?.price ?? "" },
+                    set: { selectedItem?.price = $0 }
+                ))
+                .padding(.bottom, -16)
+                .keyboardType(.numberPad)
+                .focused($textFocused, equals: .textPrice)
+                .onChange(of: selectedItem?.price ?? "0") { newValue in
+                    selectedItem?.price = newValue.filter { $0.isNumber }
+                    formatPrice()
                 }
+                .onChange(of: selectedItem?.price ?? "0") { newValue in
+                    if newValue.isEmpty {
+                        formattedPrice = "0"
+                    }
+                }
+                .overlay(
+                    HStack {
+                        Spacer()
+                        Text("원")
+                            .foregroundColor(.gray)
+                            .padding(.trailing, 8)
+                    }
+                )
+                .padding(.bottom, -16)
             }
+            .padding(.bottom, -16)
+            
             
             Text("가격: \(formattedPriceInTenThousandWon)")
                 .font(.footnote)
                 .foregroundColor(.gray)
+                .padding(.bottom, -16)
             
             Divider()
-            
-            TextEditor(text: Binding(
-                get: { selectedItem?.description ?? "" }, // selectedItem의 description을 가져옴
-                set: { selectedItem?.description = $0 }   // description 변경 시 selectedItem의 description을 업데이트
-            ))
-            .focused($textFocused, equals: .textdescription)
-            .onChange(of: selectedItem?.description ?? "") { newValue in
-                // description이 변경될 때 선택된 아이템의 설명을 업데이트
-                selectedItem?.description = newValue
-            }
-            .focused($textFocused, equals: .textdescription)
-            .overlay {
-                if (selectedItem?.description.isEmpty ?? true) {
-                    Text("상품 설명을 입력하세요") // placeholder 텍스트
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
-                }
-            }
-            .scrollContentBackground(.hidden)
-            
-            Divider()
+                .padding(.vertical, -8)
             
             TextField("위치를 입력해 주세요", text: Binding(
                 get: { selectedItem?.location ?? "" },
                 set: { selectedItem?.location = $0 }
             ))
             .focused($textFocused, equals: .location)
+            
+            Divider()
+                .padding(.vertical, -8)
+
+            
+            TextEditor(text: Binding(
+                get: { selectedItem?.description ?? "" }, // selectedItem의 description을 가져옴
+                set: { selectedItem?.description = $0 }   // description 변경 시 selectedItem의 description을 업데이트
+            ))
+            .frame(minHeight: 180)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+            )
+            .focused($textFocused, equals: .textdescription)
+            .onChange(of: selectedItem?.description ?? "") { newValue in
+                // description이 변경될 때 선택된 아이템의 설명을 업데이트
+                selectedItem?.description = newValue
+            }
+            .focused($textFocused, equals: .textdescription)
+            .overlay(alignment: .topLeading) {
+                if (selectedItem?.description.isEmpty ?? true) {
+                    Text("상품 설명을 입력하세요") // placeholder 텍스트
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 10)
+                        .foregroundColor(.gray)
+                }
+            }
+            .scrollContentBackground(.hidden)
         }
         .disabled(vm.loadingState != .none)
     }
