@@ -101,7 +101,7 @@ struct MainView: View {
         .padding(8)
         .background(Color(.systemGray6))
         .cornerRadius(10)
-        .frame(maxWidth: UIScreen.main.bounds.width * 0.85)
+        .frame(maxWidth: UIScreen.main.bounds.width * 0.83)
         .padding(.top, -16)
         .padding(.horizontal, 10)
     }
