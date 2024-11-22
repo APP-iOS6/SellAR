@@ -33,6 +33,10 @@ class ItemFormVM: ObservableObject {
     @Published var imageURLs: [URL] = []
     @Published var isReserved: Bool = false
     
+    func addSelectedImage(_ image: UIImage) {
+        selectedImages.append(image)
+    }
+    
     let byteCountFormatter: ByteCountFormatter = {
         let f = ByteCountFormatter()
         f.countStyle = .file

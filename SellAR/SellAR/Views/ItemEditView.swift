@@ -28,6 +28,7 @@ struct ItemEditView: View {
     @State private var isImagePickerPresented: Bool = false // 이미지 선택기 표시 여부
     @State private var showEditItemView = false
     @ObservedObject var vm = ItemFormVM()
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     
     let placeholder: String = "내용을 입력해 주세요."
     @ObservedObject var itemStore = ItemStore()
@@ -154,11 +155,11 @@ struct ItemEditView: View {
                         vm.error = error.localizedDescription
                     }
                 })
-                .sheet(isPresented: $showImagePicker) {
-//                    PhotoPickerView(selectedImages: $vm.selectedImages)
-                    EditPhotoPickerView(vm: vm)
-
-                }
+                //                .sheet(isPresented: $showImagePicker) {
+                ////                    PhotoPickerView(selectedImages: $vm.selectedImages)
+                //                    EditPhotoPickerView(vm: vm)
+                //
+                //                }
                 .navigationTitle(vm.navigationTitle)
                 .navigationBarTitleDisplayMode(.inline)
                 .background(
@@ -243,7 +244,7 @@ struct ItemEditView: View {
             
             Divider()
                 .padding(.vertical, -8)
-
+            
             
             TextEditor(text: Binding(
                 get: { selectedItem?.description ?? "" }, // selectedItem의 description을 가져옴
@@ -347,7 +348,7 @@ struct ItemEditView: View {
                         Image(systemName: "arkit")
                             .imageScale(.large)
                             .foregroundColor(Color.primary)
-
+                        
                         Text("보기")
                             .foregroundColor(Color.primary)
                     }
@@ -413,9 +414,9 @@ struct ItemEditView: View {
                         }
                     }
                     
-                    Button(action: {
-                        showImagePicker = true
-                    }) {
+                    PhotosPicker(selection: $selectedPhotoItems,
+                                 maxSelectionCount: 0,
+                                 matching: .images) {
                         VStack {
                             Image(systemName: "photo.on.rectangle.angled")
                                 .font(.system(size: 50))
@@ -428,6 +429,18 @@ struct ItemEditView: View {
                         .background(Color(UIColor.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
+                                 .onChange(of: selectedPhotoItems) { newItems in
+                                     for item in newItems {
+                                         Task {
+                                             if let data = try? await item.loadTransferable(type: Data.self),
+                                                let image = UIImage(data: data) {
+                                                 DispatchQueue.main.async {
+                                                     vm.addSelectedImage(image)
+                                                 }
+                                             }
+                                         }
+                                     }
+                                 }
                 }
             }
         }
@@ -470,60 +483,51 @@ struct ItemEditView: View {
     }
 }
 
-struct EditPhotoPickerView: UIViewControllerRepresentable {
-//    @Binding var selectedImages: [UIImage]
-    let vm: ItemFormVM
+struct EditPhotoPickerView: View {
+    @ObservedObject var vm: ItemFormVM
+    @State private var selectedPhotoItems: [PhotosPickerItem] = []
     
-    var selectedImages: [UIImage] {
-        vm.selectedImages
-    }
-    
-    func makeUIViewController(context: Context) -> PHPickerViewController {
-        var config = PHPickerConfiguration()
-        config.filter = .images
-        config.selectionLimit = 0
-        
-        let picker = PHPickerViewController(configuration: config)
-        picker.delegate = context.coordinator
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        var parent: EditPhotoPickerView
-        
-        init(_ parent: EditPhotoPickerView) {
-            self.parent = parent
-        }
-        
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
-            
-            guard !results.isEmpty else { return }
-            
-            for result in results {
-                if result.itemProvider.canLoadObject(ofClass: UIImage.self) {
-                    result.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-                        if let image = image as? UIImage {
+    var body: some View {
+        VStack {
+            PhotosPicker(
+                selection: $selectedPhotoItems,
+                maxSelectionCount: 0, // Allow unlimited selection
+                matching: .images
+            ) {
+                Text("Select Photos")
+                    .font(.title2)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .onChange(of: selectedPhotoItems) { newItems in
+                for item in newItems {
+                    Task {
+                        if let data = try? await item.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
                             DispatchQueue.main.async {
-                                print("선택된 이미지: \(image)")
-//                                self?.parent.selectedImages.append(image)
-                                self?.parent.vm.selectedImages.append(image)
-                                print("선택된 이미지의 개수: \(self?.parent.vm.selectedImages.count ?? 0)")
-
+                                vm.addSelectedImage(image)
                             }
-                        } else if let error = error {
-                            print("이미지를 로드할 수 없습니다: \(error.localizedDescription)")
                         }
                     }
                 }
             }
+            
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(vm.selectedImages, id: \.self) { image in
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                            .cornerRadius(10)
+                    }
+                }
+            }
+            .padding()
         }
+        .padding()
     }
 }
 
