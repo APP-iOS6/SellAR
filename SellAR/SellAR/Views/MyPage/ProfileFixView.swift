@@ -85,7 +85,7 @@ struct ProfileFixView: View {
                             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                             .cornerRadius(10)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
                         
                         Spacer()
                         
@@ -101,7 +101,7 @@ struct ProfileFixView: View {
                         .padding()
                         .foregroundColor(Color(red: 243 / 255, green: 242 / 255, blue: 248 / 255)) // 흰색
                         .background(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑:연파랑
-                        .cornerRadius(26.5)
+                        .cornerRadius(10)
                         .disabled(isSaving)
                     }
                 }
@@ -129,6 +129,21 @@ struct ProfileFixView: View {
                     .frame(width: 135, height: 135)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .clipShape(Circle())
+                    .overlay(
+                        Image(systemName: "camera")
+                            .resizable()
+                            .frame(width: 25, height: 20)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 35, height: 35)
+                            .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
+                            .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle().stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1))
+                            )
+                            .padding(5),
+                        alignment: .bottomTrailing
+                    )
             } else if let imageUrl = userDataManager.currentUser?.profileImageUrl,
                       let url = URL(string: imageUrl) {
                 AsyncImage(url: url) { phase in
@@ -142,6 +157,21 @@ struct ProfileFixView: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 135, height: 135)
                             .clipShape(Circle())
+                            .overlay(
+                                Image(systemName: "camera")
+                                    .resizable()
+                                    .frame(width: 25, height: 20)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 35, height: 35)
+                                    .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
+                                    .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
+                                    .clipShape(Circle())
+                                    .overlay(
+                                        Circle().stroke(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1))
+                                    )
+                                    .padding(5),
+                                alignment: .bottomTrailing
+                            )
                     case .failure:
                         Image(systemName: "person.circle.fill")
                             .resizable()
@@ -162,7 +192,9 @@ struct ProfileFixView: View {
                     .foregroundColor(Color(red: 76 / 255, green: 127 / 255, blue: 200 / 255)) //진파랑
                     .background(colorScheme == .dark ? Color(red: 53 / 255, green: 57 / 255, blue: 61 / 255) : Color.white)
                     .clipShape(Circle())
-                    .overlay(Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
+                    .overlay(
+                        Circle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1))
+                    )
             }
         }
     }

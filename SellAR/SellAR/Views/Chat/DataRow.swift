@@ -7,7 +7,7 @@
 
 import SwiftUI
 import Firebase
-
+import SDWebImageSwiftUI
 
 
 // 개별 메시지 Row View
@@ -45,7 +45,7 @@ struct DataRow: View {
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             
-                            AsyncImage(url: URL(string: user.profileImageUrl ?? "")) { image in
+                            WebImage(url: URL(string: user.profileImageUrl ?? "")) { image in
                                 image.resizable()
                             } placeholder: {
                                 Circle().fill(Color.gray)
@@ -80,7 +80,7 @@ struct DataRow: View {
                 if isCurrentUser {
                     // 현재 사용자 프로필 이미지
                     VStack(alignment: .center, spacing: 8) {
-                        AsyncImage(url: URL(string: chatViewModel.chatUsers[chatViewModel.senderID]?.profileImageUrl ?? "")) { image in
+                        WebImage(url: URL(string: chatViewModel.chatUsers[chatViewModel.senderID]?.profileImageUrl ?? "")) { image in
                             image.resizable()
                         } placeholder: {
                             Circle().fill(Color.gray)
