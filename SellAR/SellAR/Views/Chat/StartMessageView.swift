@@ -122,7 +122,9 @@ struct StartMessageView: View {
                                                 viewModel.leaveChatRoom(chatRoomID: chatRoom.id)
                                             } label: {
                                                 Text("나가기")
+                                                    .foregroundStyle(Color.white)
                                             }
+                                            .tint(.red)
                                         }
                                         .tag(chatRoom.id) // Selection을 위한 태그 추가
                                     }

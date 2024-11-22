@@ -10,8 +10,11 @@ import FirebaseAuth
 
 struct ContentView: View {
     @StateObject private var chatViewModel = ChatViewModel(senderID: Auth.auth().currentUser?.uid ?? "")
-    @ObservedObject var viewModel: LoginViewModel
+    @StateObject var viewModel: LoginViewModel
     @State private var selectedTab = 0
+    @Environment(\.colorScheme) var colorScheme // 라이트/다크 모드 감지
+
+    
     
     var body: some View {
         Group {
@@ -21,9 +24,7 @@ struct ContentView: View {
                     MainView(loginViewModel: viewModel)
                 }
                 .tabItem {
-
                     Image(systemName: selectedTab == 0 ? "house.fill" : "house")
-
                     Text("홈")
                 }
                 .tag(0)
@@ -37,7 +38,7 @@ struct ContentView: View {
                     Image(systemName: selectedTab == 1 ? "message.fill" : "message")
                     Text("채팅")
                 }
-                .badge(chatViewModel.totalUnreadCount > 0 ? String(chatViewModel.totalUnreadCount) : "0")
+                .badge(chatViewModel.totalUnreadCount > 0 ? String(chatViewModel.totalUnreadCount) : nil)
                 .tag(1)
                 
                 // 마이페이지 탭
@@ -46,24 +47,37 @@ struct ContentView: View {
                         .environmentObject(viewModel)
                 }
                 .tabItem {
-
                     Image(systemName: selectedTab == 2 ? "person.fill" : "person")
                     Text("My")
-
                 }
                 .tag(2)
             }
-            .tint(.black)
             .onChange(of: chatViewModel.totalUnreadCount) { newValue in
                 print("Total unread messages: \(newValue)")
             }
             .onAppear {
                 chatViewModel.fetchChatRooms() // 채팅방 목록과 안읽은 메시지 수를 가져옵니다
+                updateTabBarAppearance() 
             }
         }
     }
+    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemBackground
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
+    private func updateTabBarAppearance() {
+        let tabBarAppearance = UITabBar.appearance()
+        let selectedColor = UIColor(red: 76/255, green: 127/255, blue: 200/255, alpha: 1)
+        let defaultColor: UIColor = colorScheme == .light ? .gray : .gray
+
+        tabBarAppearance.tintColor = selectedColor
+        tabBarAppearance.unselectedItemTintColor = defaultColor
+    }
 }
 
-#Preview {
-    ContentView(viewModel: LoginViewModel())
-}
+

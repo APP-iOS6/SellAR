@@ -66,6 +66,7 @@ struct ItemFormView: View {
                         dismiss()
                     }
                     .disabled(vm.loadingState != .none)
+                    .foregroundColor(Color.primary)
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
@@ -157,50 +158,74 @@ struct ItemFormView: View {
     var inputSection: some View {
         Section {
             TextField("제목", text: $vm.itemName)
-            
+                .padding(.bottom, -16) // 간격 최소화
+
             Divider()
-            
-            TextField("가격 (원)", text: $formattedPrice)
-                .keyboardType(.numberPad)
-                .onChange(of: formattedPrice) { newValue in
-                    vm.price = newValue.filter { $0.isNumber }
-                    formatPrice()
-                }
-                .onChange(of: vm.price) { newValue in
-                    if newValue.isEmpty {
-                        formattedPrice = "0"
+                .padding(.vertical, -8) // 간격 최소화
+
+            HStack {
+                TextField("가격 (원)", text: $formattedPrice)
+                    .padding(.bottom, -16)
+                    .keyboardType(.numberPad)
+                    .onChange(of: formattedPrice) { newValue in
+                        vm.price = newValue.filter { $0.isNumber }
+                        formatPrice()
                     }
-                }
-            
+                    .onChange(of: vm.price) { newValue in
+                        if newValue.isEmpty {
+                            formattedPrice = "0"
+                        }
+                    }
+                    .overlay(
+                        HStack {
+                            Spacer()
+                            Text("원")
+                                .foregroundColor(.gray)
+                                .padding(.trailing, 8)
+                        }
+                    )
+                    .padding(.bottom, -16)
+            }
+            .padding(.bottom, -16)
+
             Text("가격: \(formattedPriceInTenThousandWon)")
                 .font(.footnote)
                 .foregroundColor(.gray)
+                .padding(.bottom, -16) // 간격 최소화
+
+            Divider()
+                .padding(.vertical, -8) // 간격 최소화
+            
+            TextField("판매 장소", text: $vm.location)
+                .padding(.bottom, -1)
+                .padding(.top, -20)// 간격 최소화
             
             Divider()
-            
+                .padding(.vertical, -8) // 간격 최소화
+
             ZStack(alignment: .topLeading) {
                 if vm.description.isEmpty {
-                    Text("상품 설명을 입력하세요")
+                    Text("상품 설명을 입력하세요.")
                         .foregroundColor(.gray)
                         .padding(.horizontal, 4)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 4)
                 }
-                
+
                 TextEditor(text: $vm.description)
-                    .frame(minHeight: 100)
+                    .frame(minHeight: 180)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                     )
                     .padding(.horizontal, -4)
+                    .padding(.top, -4)
             }
-            
-            Divider()
-            
-            TextField("판매 장소", text: $vm.location)
+            .padding(.bottom, 4) // 간격 최소화
         }
         .disabled(vm.loadingState != .none)
     }
+
+
 
     var arSection: some View {
         Section("AR 모델") {
@@ -230,8 +255,11 @@ struct ItemFormView: View {
                     viewAR(url: usdzURL)
                 } label: {
                     HStack {
-                        Image(systemName: "arkit").imageScale(.large)
+                        Image(systemName: "arkit")
+                            .imageScale(.large)
+                            .foregroundColor(Color.primary) // 다크모드 대응
                         Text("보기")
+                            .foregroundColor(Color.primary) // 다크모드 대응
                     }
                 }
                 
@@ -244,8 +272,11 @@ struct ItemFormView: View {
                     vm.showUSDZSource = true
                 } label: {
                     HStack {
-                        Image(systemName: "arkit").imageScale(.large)
+                        Image(systemName: "arkit")
+                            .imageScale(.large)
+                            .foregroundColor(Color.primary) // 다크모드 대응
                         Text(selectedUSDZFileURL != nil ? "파일 변경" : "USDZ 추가")
+                            .foregroundColor(Color.primary) // 다크모드 대응
                     }
                 }
                 
@@ -267,7 +298,8 @@ struct ItemFormView: View {
         }
         .disabled(vm.loadingState != .none)
     }
-    
+
+
     var imageSection: some View {
         Section("이미지") {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -277,7 +309,7 @@ struct ItemFormView: View {
                             Image(uiImage: vm.selectedImages[index])
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: 100, height: 100)
+                                .frame(width: 120, height: 120)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
 
                             Button(action: {
@@ -296,12 +328,13 @@ struct ItemFormView: View {
                     }) {
                         VStack {
                             Image(systemName: "photo.on.rectangle.angled")
-                                .font(.system(size: 40))
+                                .font(.system(size: 50))
                                 .foregroundColor(.blue)
                             Text("이미지 추가")
                                 .font(.footnote)
+                                .foregroundColor(Color.primary) // 다크모드 대응
                         }
-                        .frame(width: 100, height: 100)
+                        .frame(width: 120, height: 120)
                         .background(Color(UIColor.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
@@ -309,6 +342,7 @@ struct ItemFormView: View {
             }
         }
     }
+
 
     func viewAR(url: URL) {
         let safariVC = SFSafariViewController(url: url)
