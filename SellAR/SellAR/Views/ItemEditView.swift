@@ -394,13 +394,13 @@ struct ItemEditView: View {
         Section("이미지") {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                   
+                                    
                     ForEach(vm.selectedImages.indices, id: \.self) { index in
                         ZStack(alignment: .topTrailing) {
                             Image(uiImage: vm.selectedImages[index])
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: 120, height: 100)
+                                .frame(width: 120, height: 120)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                             
                             Button(action: {
@@ -441,6 +441,13 @@ struct ItemEditView: View {
                                          }
                                      }
                                  }
+                                 .onChange(of: selectedItem?.images ?? []) { images in
+                                     for item in images {
+                                         
+                                     }
+                                     
+                                 }
+                                 
                 }
             }
         }
