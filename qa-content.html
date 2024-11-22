@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자주묻는 질문</title>
+    <style>
+        /* 기본 스타일 (라이트 모드) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #333333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* 카테고리 버튼 스타일 */
+        .category-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .category-button {
+            flex: 1px;
+            margin: 0 5px;
+            padding: 10px 3px; /* 버튼 크기 증가 */
+            background-color: #e0e0e0;
+            color: #333333;
+            border: none;
+            border-radius: 10px; /* 모서리 곡률 10으로 설정 */
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 16px; /* 글자 크기 증가 */
+            text-align: center;
+        }
+        /* 버튼이 눌러졌을 때의 스타일 - 이 부분을 수정하여 선택된 버튼의 색상을 변경할 수 있습니다 */
+        .category-button.active {
+            background-color: #4D7CCB;
+            color: #ffffff;
+        }
+        
+        .qa-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #DBDBDB;
+            border-radius: 10px;
+        }
+
+        .question {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .answer {
+            margin-top: 10px; /* 질문과 답변 사이 간격 */
+        }
+
+        .answer .label {
+            font-weight: bold;
+            color: #333;
+            margin-right: 5px; /* A:와 본문 간격 */
+        }
+
+        .answer .additional-text {
+            margin-left: 20px; /* 두 번째 문장 들여쓰기 */
+            margin-top: 1px; /* 첫 번째 문장과의 간격 */
+        }
+        
+        .answer p {
+            margin: 1px 0;
+        }
+
+
+        /* 다크 모드 스타일 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #000;
+                color: #ffffff;
+            }
+            .category-button {
+                background-color: #35393D;
+                color: #ffffff;
+            }
+            /* 다크모드에서 버튼이 눌러졌을 때의 스타일 - 이 부분을 수정하여 선택된 버튼의 색상을 변경할 수 있습니다 */
+            .category-button.active {
+                background-color: #4D7CCB;
+            }
+            .qa-item {
+                background-color: #35393D;
+                border: 1px solid #35393D;
+            }
+            .question {
+                color: white;
+            }
+            .answer {
+                color: white;
+            }
+            .answer .label {
+                color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="category-buttons">
+        <!-- 카테고리 버튼  -->
+        <button class="category-button" onclick="filterCategory('AR지원')">AR지원</button>
+        <button class="category-button" onclick="filterCategory('회원관리')">회원관리</button>
+        <button class="category-button" onclick="filterCategory('게시물')">게시물</button>
+        <button class="category-button"
+            onclick="filterCategory('등록')">등록</button>
+    </div>
+
+    <div id="qa-container">
+        <!-- QA 정보 -->
+
+            <!-- 견본코드 -->
+<!--        <div class="qa-item" data-category="카테고리">-->
+<!--            <div class="question">Q: 질문</div>-->
+<!--            <div class="answer">-->
+<!--                <span class="label">A:</span> 답변 첫문장, 길이가 길어져서 문단넘어가지않게 유의할것-->
+<!--                <div class="additional-text">답변, 이후의 문장</div>-->
+<!--            </div>-->
+<!--        </div>-->
+        
+        <!-- AR지원 -->
+        
+        <div class="qa-item" data-category="AR지원">
+            <div class="question">Q: 안드로이드 단말기로 사용이 가능한가요?</div>
+            <div class="answer">
+                <span class="label">A:</span> iPhone, iPad의 스캐너 기능을 사용하기 때문에
+                <div class="additional-text">안드로이드는 SellAR에서 지원이 불가능합니다. USDZ를 다른 방법으로 만드신 뒤에 첨부하는 것은
+                    <p>가능합니다.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="qa-item" data-category="AR지원">
+            <div class="question">Q: 아이폰을 사용하는데 USDZ캡쳐가 안됩니다.</div>
+            <div class="answer">
+                <span class="label">A:</span> SellAR의 USDZ 캡쳐는 LIDAR센서가 답재된
+                <div class="additional-text">기종에서만 동작합니다.
+                    <p>(iPhone 13 이상의 Pro 기종 또는 iPad Pro 기종)</p>
+                    단 캡쳐된 USDZ파일을 AR로 배치하는 기능은 모든 기종에서 동작합니다. </div>
+            </div>
+        </div>
+        
+        <!-- 회원관리 -->
+        
+        <div class="qa-item" data-category="회원관리">
+            <div class="question">Q: 회원 탈퇴는 어떻게 하나요?</div>
+            <div class="answer">
+                <span class="label">A:</span>  현재 준비중인 기능입니다.
+                <div class="additional-text"></div>
+            </div>
+        </div>
+        
+        <div class="qa-item" data-category="회원관리">
+            <div class="question">Q: 닉네임과 프로필 사진 수정은 어떻게하나요?</div>
+            <div class="answer">
+                <span class="label">A:</span> "마이페이지의 프로필수정 탭에서 가능합니다."
+                <div class="additional-text"> 마이페이지 > 우측상단버튼 > 프로필수정 > 저장</div>
+            </div>
+        </div>
+        
+        <!-- 게시물 -->
+        
+        <div class="qa-item" data-category="게시물">
+            <div class="question">Q: 게시물에 AR기능은 어떻게 사용하나요?</div>
+            <div class="answer">
+                <span class="label">A:</span> 판매 게시물에 USDZ파일이 첨부된 경우
+                <div class="additional-text"> AR버튼이 활성화 됩니다.
+                    <p> AR버튼은 게시물 하단에 위치하며, 버튼을 누를경우 </p>
+                    AR 기능을 사용할수있습니다.
+                </div>
+            </div>
+        </div>
+        
+        <div class="qa-item" data-category="게시물">
+            <div class="question">Q: 게시물에는 어떤 기능이있나요?</div>
+            <div class="answer">
+                <span class="label">A:</span> USDZ파일이 첨부된 경우 우측하단에 AR마크가
+                <div class="additional-text">있습니다.
+                <p> 이 외에도 일반사진, 상품설명, 판매자에게 채팅, 게시물 신고 등의 기능이 있습니다.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 등록 -->
+        
+        <div class="qa-item" data-category="등록">
+            <div class="question">Q: AR캡쳐가 잘 안됩니다.</div>
+            <div class="answer">
+                <span class="label">A:</span> AR캡쳐는 기본적으로 넓은공간에서 진행해주세요
+                <div class="additional-text">좁은공간에서 진행하시는 경우, 공간이 부족해 LIDAR 센서의 인식이 어려워 캡쳐에 어려움이 있습니다.</div>
+            </div>
+        </div>
+        
+        <div class="qa-item" data-category="등록">
+            <div class="question">Q: 캡쳐한 USDZ파일은 어디에 저장되나요?</div>
+            <div class="answer">
+                <span class="label">A:</span> 사용하시는 단말기의 '내 파일'에 저장됩니다.
+                <div class="additional-text"></div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    <script>
+        // 페이지 로드시 실행되는 함수
+        window.onload = function() {
+            showAllItems();
+        }
+        
+        // 실행 시 모든 게시물을 보여주는 함수
+        function showAllItems() {
+            const items = document.querySelectorAll('.qa-item');
+            items.forEach(item => {
+                item.style.display = 'block';
+            });
+        }
+        
+        // 카테고리 필터링 함수
+        function filterCategory(category) {
+            const items = document.querySelectorAll('.qa-item');
+            const buttons = document.querySelectorAll('.category-button');
+            let isAnyButtonActive = false;
+            
+            // 버튼 활성화 상태 변경
+            buttons.forEach(button => {
+                if (button.textContent === category) {
+                    button.classList.toggle('active');
+                    isAnyButtonActive = isAnyButtonActive || button.classList.contains('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+            
+            // 모든 버튼이 비활성화일 경우 = 전체 게시물 표기
+            if (!isAnyButtonActive) {
+                showAllItems();
+                return;
+            }
+            
+            // QA게시물 필터링
+            items.forEach(item => {
+                if (item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
