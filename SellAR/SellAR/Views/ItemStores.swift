@@ -146,7 +146,7 @@ class ItemStore: ObservableObject {
 //            }
 //        }
     
-    func updateItem(_ item: Items, completion: @escaping (Error?) -> Void) {
+    func updateItem(_ item: Items, vm: ItemFormVM, completion: @escaping (Error?) -> Void) {
         var updateData: [String: Any] = [
             "itemName": item.itemName,
             "description": item.description,
@@ -159,14 +159,14 @@ class ItemStore: ObservableObject {
             updateData["images"] = item.images
         }
         
-        // USDZ 파일 URL이 있을 경우 해당 URL을 추가
-        if let usdzURL = item.usdzURL {
-            updateData["usdzURL"] = usdzURL.absoluteString
+        // `usdzURL`이 있을 경우 해당 URL을 `usdzLink`에 저장
+        if let usdzLink = vm.usdzURL?.absoluteString {
+            updateData["usdzLink"] = usdzLink
         }
         
-        // 썸네일 URL이 있을 경우 추가
-        if let thumbnailURL = item.thumbnailURL {
-            updateData["thumbnailURL"] = thumbnailURL.absoluteString
+        // `thumbnailURL`이 있을 경우 해당 URL을 `thumbnailLink`에 저장
+        if let thumbnailLink = vm.thumbnailURL?.absoluteString {
+            updateData["thumbnailLink"] = thumbnailLink
         }
         
         // Firestore에 업데이트

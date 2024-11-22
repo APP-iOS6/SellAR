@@ -98,20 +98,20 @@ struct ItemEditView: View {
                             presentationMode.wrappedValue.dismiss()
                             if let item = selectedItem {
                                 // Firestore 문서의 ID를 사용하여 업데이트
-                                itemStore.updateItem(item) { error in
+                                itemStore.updateItem(item, vm: vm) { error in
                                     if let error {
                                         print("Error updating item: \(error)")
                                     } else {
                                         print("Document successfully updated")
                                     }
                                 }
-                                Task {
-                                    do {
-                                        try await vm.save(fileURL: selectUSDZFileURL)
-                                    } catch {
-                                        print("저장 실패: \(error.localizedDescription)")
-                                    }
-                                }
+//                                Task {
+//                                    do {
+//                                        try await vm.save(fileURL: selectUSDZFileURL)
+//                                    } catch {
+//                                        print("저장 실패: \(error.localizedDescription)")
+//                                    }
+//                                }
                             }
                         }) {
                             Text("저장")
@@ -507,7 +507,7 @@ struct EditPhotoPickerView: UIViewControllerRepresentable {
                             DispatchQueue.main.async {
                                 print("선택된 이미지: \(image)")
 //                                self?.parent.selectedImages.append(image)
-                                self!.parent.vm.selectedImages.append(image)
+                                self?.parent.vm.selectedImages.append(image)
                                 print("선택된 이미지의 개수: \(self?.parent.vm.selectedImages.count ?? 0)")
 
                             }
