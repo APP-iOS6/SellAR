@@ -13,6 +13,7 @@
 import SwiftUI
 import Firebase
 import SDWebImageSwiftUI
+import SDWebImage
 
 // ChatRoomRow 컴포넌트 분리
 struct ChatRoomRow: View {
