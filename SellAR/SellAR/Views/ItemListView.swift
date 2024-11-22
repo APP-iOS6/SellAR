@@ -16,78 +16,17 @@ struct ItemRowView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             HStack(alignment: .top, spacing: 2) {
-                // Thumbnail View Section
-                if let thumbnailURL = item.thumbnailURL {
-                    // thumbnailURL이 있을 때
-                    AsyncImage(url: thumbnailURL) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(width: 120, height: 120)
-                                .background(Color.gray)
-                                .cornerRadius(8)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 120, height: 120)
-                                .clipped()
-                                .cornerRadius(8)
-                                .shadow(radius: 2)
-                        case .failure:
-                            Color.white
-                                .frame(width: 120, height: 120)
-                                .cornerRadius(8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
+                thumbnailView
+                    .frame(width: 120, height: 120)
+                    .cornerRadius(8)
                     .padding()
-                } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
-                    // thumbnailURL이 없으면 item.images.first를 사용
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(width: 120, height: 120)
-                                .background(Color.gray)
-                                .cornerRadius(8)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 120, height: 120)
-                                .clipped()
-                                .cornerRadius(8)
-                                .shadow(radius: 2)
-                        case .failure:
-                            Color.white
-                                .frame(width: 120, height: 120)
-                                .cornerRadius(8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                    .padding()
-                }
-
                 
-                // Item Info Section
                 VStack(alignment: .leading, spacing: 4) {
                     Spacer()
                     
                     HStack {
                         Text(item.itemName)
                             .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                         
@@ -103,11 +42,21 @@ struct ItemRowView: View {
                             )
                             .foregroundColor(.white)
                             .padding(6)
+                            .offset(x: -9)
+                        
+                        Button(action: {
+                            selectedItem = item
+                            showDetailSheet = true
+                        }) {
+                            Image(systemName: "ellipsis")
+                            //                            .foregroundStyle(Color.black)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                .padding(.trailing, 15)
+                        }
                     }
                     
                     Text("\(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .padding(.top, 0)
                     
                     Divider()
@@ -116,9 +65,8 @@ struct ItemRowView: View {
                         .padding(.vertical, 4)
                         .padding(.trailing, 16)
                     
-                    
                     HStack(spacing: 4) {
-                        Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
+                        Text("\(item.formattedCreatedAt)")
                             .font(.footnote)
                             .foregroundColor(.secondary)
                         
@@ -128,7 +76,7 @@ struct ItemRowView: View {
                         
                         Text("\(item.location)")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
                     
                     Spacer()
@@ -136,39 +84,55 @@ struct ItemRowView: View {
                 .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
-                
-                VStack {
-                    // Ellipsis Button
-                    Button(action: {
-                        selectedItem = item
-                        showDetailSheet = true
-                    }) {
-                        Image(systemName: "ellipsis")
-                        //                            .foregroundStyle(Color.black)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                            .padding(8)
-                        //                            .background(colorScheme == .dark ? Color.white : Color.black, in: Circle())
-                    }
-                    
-                    Spacer()
-                    
-                    if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
-                        arIcon
-                            .padding(5)
-                    }
-                }
-               
             }
             .padding(.vertical, 10)
-            .background(Color(.systemGray6))
+//            .background(Color(.systemGray6))
             .cornerRadius(12)
             .padding(.horizontal, 10)
-            .shadow(radius: 1)
             
-
             
+            if item.usdzLink != nil {
+                arIcon
+                    .padding(15)
+            }
         }
+        .padding(.vertical, 8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1) // 테두리 추가
+        )
     }
+    
+    private var thumbnailView: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .foregroundStyle(Color.clear)
+            
+            if let thumbnailURL = item.thumbnailURL {
+                AsyncImage(url: thumbnailURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable()
+                            .aspectRatio(contentMode: .fill)
+                    default:
+                        ProgressView()
+                    }
+                }
+            } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable()
+                            .aspectRatio(contentMode: .fill)
+                    default:
+                        ProgressView()
+                    }
+                }
+            }
+        }
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+    }
+    
     private var formattedPriceInTenThousandWon: String {
         let priceNumber = Int(item.price) ?? 0
         let tenThousandUnit = priceNumber / 10000
@@ -190,14 +154,20 @@ struct ItemRowView: View {
     }
     
     private var arIcon: some View {
-        Text("AR")
-            .font(.caption)
-            .fontWeight(.bold)
-            .foregroundColor(.blue)
-            .padding(6)
-            .background(Color.white.opacity(0.8))
-            .clipShape(Circle())
-            .shadow(radius: 2)
+        HStack(spacing: 4) {
+            Image(systemName: "arkit") // ARKit 아이콘
+                .foregroundColor(.blue) // 아이콘 파란색
+            Text("AR")
+                .font(.caption)
+                .foregroundColor(.blue) // 글씨 파란색
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.blue.opacity(0.2)) // 하늘색 배경
+        )
+        .padding(6)
     }
 }
 
@@ -211,78 +181,17 @@ struct UserItemRowView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             HStack(alignment: .top, spacing: 2) {
-                // Thumbnail View Section
-                if let thumbnailURL = item.thumbnailURL {
-                    // thumbnailURL이 있을 때
-                    AsyncImage(url: thumbnailURL) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(width: 120, height: 120)
-                                .background(Color.gray)
-                                .cornerRadius(8)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 120, height: 120)
-                                .clipped()
-                                .cornerRadius(8)
-                                .shadow(radius: 2)
-                        case .failure:
-                            Color.white
-                                .frame(width: 120, height: 120)
-                                .cornerRadius(8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
+                thumbnailView
+                    .frame(width: 120, height: 120)
+                    .cornerRadius(8)
                     .padding()
-                } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
-                    // thumbnailURL이 없으면 item.images.first를 사용
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .frame(width: 120, height: 120)
-                                .background(Color.gray)
-                                .cornerRadius(8)
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 120, height: 120)
-                                .clipped()
-                                .cornerRadius(8)
-                                .shadow(radius: 2)
-                        case .failure:
-                            Color.white
-                                .frame(width: 120, height: 120)
-                                .cornerRadius(8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(colorScheme == .dark ? Color.white.opacity(0.3) : Color.gray.opacity(0.5), lineWidth: 1)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                    .padding()
-                }
-
                 
-                // Item Info Section
                 VStack(alignment: .leading, spacing: 4) {
                     Spacer()
                     
                     HStack {
                         Text(item.itemName)
                             .font(.headline)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             .lineLimit(2)
                             .fixedSize(horizontal: false, vertical: true)
                         
@@ -298,11 +207,11 @@ struct UserItemRowView: View {
                             )
                             .foregroundColor(.white)
                             .padding(6)
+                            .offset(x: -9)
                     }
                     
                     Text("\(formattedPriceInTenThousandWon)")
                         .font(.subheadline)
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
                         .padding(.top, 0)
                     
                     Divider()
@@ -311,9 +220,8 @@ struct UserItemRowView: View {
                         .padding(.vertical, 4)
                         .padding(.trailing, 16)
                     
-                    
                     HStack(spacing: 4) {
-                        Text("\(item.formattedCreatedAt)")  // 생성 시간 표시
+                        Text("\(item.formattedCreatedAt)")
                             .font(.footnote)
                             .foregroundColor(.secondary)
                         
@@ -323,27 +231,62 @@ struct UserItemRowView: View {
                         
                         Text("\(item.location)")
                             .font(.footnote)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
                     
                     Spacer()
                 }
                 .padding(.top, -50)
                 .frame(maxWidth: .infinity, alignment: .leading)
-               
             }
             .padding(.vertical, 10)
-            .background(Color(.systemGray6))
+//            .background(Color(.systemGray6))
             .cornerRadius(12)
-            .shadow(radius: 1)
+            .padding(.horizontal, 10)
             
-            if let usdzLink = item.usdzLink, !usdzLink.isEmpty {
+            
+            if item.usdzLink != nil {
                 arIcon
                     .padding(15)
             }
-            
         }
+        .padding(.vertical, 8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1) // 테두리 추가
+        )
     }
+    
+    private var thumbnailView: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .foregroundStyle(Color.clear)
+            
+            if let thumbnailURL = item.thumbnailURL {
+                AsyncImage(url: thumbnailURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable()
+                            .aspectRatio(contentMode: .fill)
+                    default:
+                        ProgressView()
+                    }
+                }
+            } else if let firstImageURL = item.images.first, let url = URL(string: firstImageURL) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable()
+                            .aspectRatio(contentMode: .fill)
+                    default:
+                        ProgressView()
+                    }
+                }
+            }
+        }
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+    }
+    
     private var formattedPriceInTenThousandWon: String {
         let priceNumber = Int(item.price) ?? 0
         let tenThousandUnit = priceNumber / 10000
@@ -365,14 +308,20 @@ struct UserItemRowView: View {
     }
     
     private var arIcon: some View {
-        Text("AR")
-            .font(.caption)
-            .fontWeight(.bold)
-            .foregroundColor(.blue)
-            .padding(6)
-            .background(Color.white.opacity(0.8))
-            .clipShape(Circle())
-            .shadow(radius: 2)
+        HStack(spacing: 4) {
+            Image(systemName: "arkit") // ARKit 아이콘
+                .foregroundColor(.blue) // 아이콘 파란색
+            Text("AR")
+                .font(.caption)
+                .foregroundColor(.blue) // 글씨 파란색
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.blue.opacity(0.2)) // 하늘색 배경
+        )
+        .padding(6)
     }
 }
 
@@ -405,13 +354,11 @@ struct ItemListView: View {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.gray)
-                            .padding(.leading, 6)
+                            .padding(.leading, 8)
                         
                         TextField("상품 이름을 입력해주세요.", text: $searchText)
-                            .padding(8)
-                            .foregroundColor(.primary)
+                            .textFieldStyle(PlainTextFieldStyle())
                             .focused($isSearchTextFocused)
-                            .font(.body)
                         
                         if !searchText.isEmpty {
                             Button(action: {
@@ -420,13 +367,16 @@ struct ItemListView: View {
                                 Image(systemName: "xmark.circle.fill")
                                 //                                    .font(.system(size: 18))
                                     .foregroundStyle(Color.gray)
-                                    .padding(.trailing, 10)
                             }
+                            .padding(.trailing, 8)
                         }
                     }
-                    .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 8))
+                    .padding(8)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.85)
                     .padding(.top, 15)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 10)
                     .padding(.bottom,15)
                     
                     // Item Rows
@@ -437,6 +387,7 @@ struct ItemListView: View {
                     Spacer()
                 }
             }
+            .padding(.horizontal, 10)
         }
         .navigationTitle("내 상품 관리")
         .onAppear {
