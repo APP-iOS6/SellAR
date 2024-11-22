@@ -88,6 +88,7 @@ struct ItemEditView: View {
                             presentationMode.wrappedValue.dismiss()
                         }
                         .disabled(vm.loadingState != .none)
+                        .foregroundColor(Color.primary)
                     }
                     
                     ToolbarItem(placement: .confirmationAction) {
@@ -105,13 +106,6 @@ struct ItemEditView: View {
                                         print("Document successfully updated")
                                     }
                                 }
-//                                Task {
-//                                    do {
-//                                        try await vm.save(fileURL: selectUSDZFileURL)
-//                                    } catch {
-//                                        print("저장 실패: \(error.localizedDescription)")
-//                                    }
-//                                }
                             }
                         }) {
                             Text("저장")
@@ -196,8 +190,10 @@ struct ItemEditView: View {
                 set: { selectedItem?.itemName = $0 }
             ))
             .focused($textFocused, equals: .textName)
+            .padding(.bottom, -16)
             
             Divider()
+                .padding(.vertical, -8)
             
             HStack {
                 TextField("가격 (원)", text: Binding(
@@ -237,11 +233,13 @@ struct ItemEditView: View {
             Divider()
                 .padding(.vertical, -8)
             
-            TextField("위치를 입력해 주세요", text: Binding(
+            TextField("판매 장소", text: Binding(
                 get: { selectedItem?.location ?? "" },
                 set: { selectedItem?.location = $0 }
             ))
             .focused($textFocused, equals: .location)
+            .padding(.bottom, -1)
+            .padding(.top, -20)
             
             Divider()
                 .padding(.vertical, -8)
@@ -346,8 +344,12 @@ struct ItemEditView: View {
                     viewAR(url: usdzURL)
                 } label: {
                     HStack {
-                        Image(systemName: "arkit").imageScale(.large)
+                        Image(systemName: "arkit")
+                            .imageScale(.large)
+                            .foregroundColor(Color.primary)
+
                         Text("보기")
+                            .foregroundColor(Color.primary)
                     }
                 }
                 
@@ -360,8 +362,11 @@ struct ItemEditView: View {
                     vm.showUSDZSource = true
                 } label: {
                     HStack {
-                        Image(systemName: "arkit").imageScale(.large)
+                        Image(systemName: "arkit")
+                            .imageScale(.large)
+                            .foregroundColor(Color.primary)
                         Text(selectUSDZFileURL != nil ? "파일 변경" : "USDZ 추가")
+                            .foregroundColor(Color.primary)
                     }
                 }
                 
@@ -394,7 +399,7 @@ struct ItemEditView: View {
                             Image(uiImage: vm.selectedImages[index])
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: 100, height: 100)
+                                .frame(width: 120, height: 100)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                             
                             Button(action: {
@@ -413,12 +418,13 @@ struct ItemEditView: View {
                     }) {
                         VStack {
                             Image(systemName: "photo.on.rectangle.angled")
-                                .font(.system(size: 40))
+                                .font(.system(size: 50))
                                 .foregroundColor(.blue)
                             Text("이미지 추가")
                                 .font(.footnote)
+                                .foregroundColor(Color.primary)
                         }
-                        .frame(width: 100, height: 100)
+                        .frame(width: 120, height: 120)
                         .background(Color(UIColor.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
