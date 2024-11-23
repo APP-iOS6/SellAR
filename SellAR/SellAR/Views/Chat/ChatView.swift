@@ -4,12 +4,7 @@
 //
 //  Created by 박범규 on 11/5/24.
 //
-//
-//  ChatView.swift
-//  SellAR
-//
-//  Created by 박범규 on 11/5/24.
-//
+
 import SwiftUI
 import Firebase
 import SDWebImageSwiftUI
