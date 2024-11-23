@@ -1,13 +1,13 @@
 {
-  "originHash" : "569afcb1d7afff83aa9944475cdc93e780b24195311d27bd226c93285acf77a9",
+  "originHash" : "1f0068847394f171c8c73b8f8cf339f0d69a57f283f988dc9891c2bdc953aeb4",
   "pins" : [
     {
-      "identity" : "abseil-cpp-binary",
+      "identity" : "abseil-cpp-swiftpm",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/abseil-cpp-binary.git",
+      "location" : "https://github.com/firebase/abseil-cpp-SwiftPM.git",
       "state" : {
-        "revision" : "194a6706acbd25e4ef639bcaddea16e8758a3e27",
-        "version" : "1.2024011602.0"
+        "revision" : "140793ccfa916fe62f965249669e59ef325ae33c",
+        "version" : "0.20240116.1"
       }
     },
     {
@@ -29,12 +29,21 @@
       }
     },
     {
+      "identity" : "boringssl-swiftpm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/firebase/boringssl-SwiftPM.git",
+      "state" : {
+        "revision" : "38b03401110f03bde32bc7e86ff4f815238ed2d3",
+        "version" : "0.32.1"
+      }
+    },
+    {
       "identity" : "firebase-ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk",
       "state" : {
-        "revision" : "8328630971a8fdd8072b36bb22bef732eb15e1f0",
-        "version" : "11.4.0"
+        "revision" : "dbdfdc44bee8b8e4eaa5ec27eb12b9338f3f2bc1",
+        "version" : "11.5.0"
       }
     },
     {
@@ -74,12 +83,12 @@
       }
     },
     {
-      "identity" : "grpc-binary",
+      "identity" : "grpc-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/grpc-binary.git",
+      "location" : "https://github.com/grpc/grpc-ios.git",
       "state" : {
-        "revision" : "f56d8fc3162de9a498377c7b6cea43431f4f5083",
-        "version" : "1.65.1"
+        "revision" : "fe0a245d0ccc2f549555a130916eb57a0081cec8",
+        "version" : "1.65.5"
       }
     },
     {
