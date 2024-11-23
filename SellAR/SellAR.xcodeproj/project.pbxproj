@@ -10,19 +10,27 @@
 		0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022B2CD8506200C3CF8E /* GoogleSignIn */; };
 		0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 0484022D2CD8506200C3CF8E /* GoogleSignInSwift */; };
 		180525372CEF0DA100A53F8E /* qa_content.html in Resources */ = {isa = PBXBuildFile; fileRef = 180525362CEF0DA100A53F8E /* qa_content.html */; };
+		B809CCEA2CF2050F00038E19 /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = B809CCE92CF2050F00038E19 /* RealityKitContent */; };
 		B84595752CE5ED7100750E4E /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B84595742CE5ED7100750E4E /* Localizable.xcstrings */; };
-		B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C6F2CD213DC009DDA02 /* FirebaseStorage */; };
-		B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B8482C712CD213F0009DDA02 /* FirebaseFirestore */; };
-		B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46942CD884620076BE39 /* FirebaseAuth */; };
+		B84599F72CF050F800750E4E /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B84599F62CF050F800750E4E /* SDWebImageSwiftUI */; };
 		B86F46982CD9E3430076BE39 /* USDZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = B86F46972CD9E3430076BE39 /* USDZScanner */; };
+		B87547EA2CF21CBE00316DF4 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B87547E92CF21CBE00316DF4 /* FirebaseDatabase */; };
+		B87547EC2CF21CBE00316DF4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B87547EB2CF21CBE00316DF4 /* FirebaseFirestore */; };
+		B87547EE2CF21CBE00316DF4 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B87547ED2CF21CBE00316DF4 /* FirebaseStorage */; };
+		B87547F02CF21CD200316DF4 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B87547EF2CF21CD200316DF4 /* FirebaseAuth */; };
+		B87547F22CF21CD200316DF4 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B87547F12CF21CD200316DF4 /* FirebaseCore */; };
+		B87547F42CF21CD200316DF4 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B87547F32CF21CD200316DF4 /* FirebaseDatabase */; };
+		B87547F62CF21CD200316DF4 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = B87547F52CF21CD200316DF4 /* FirebaseFirestore */; };
+		B87547F82CF21CD200316DF4 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B87547F72CF21CD200316DF4 /* FirebaseStorage */; };
+		B87547FD2CF222FE00316DF4 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = B87547FC2CF222FE00316DF4 /* FirebaseMessaging */; };
 		BEE3E4502CEB79D700601EE1 /* USDZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 04C2C6242CE47E27004EC1FB /* USDZScanner */; };
-		E0053C052CE1D738006B1A9A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E0053C042CE1D738006B1A9A /* FirebaseAnalytics */; };
-		E0053C072CE1D73D006B1A9A /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E0053C062CE1D73D006B1A9A /* FirebaseMessaging */; };
 		E06942FD2CE5E232000D1161 /* sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json in Resources */ = {isa = PBXBuildFile; fileRef = E06942FC2CE5E232000D1161 /* sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		180525362CEF0DA100A53F8E /* qa_content.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = qa_content.html; sourceTree = "<group>"; };
+		B809CCE52CF2050F00038E19 /* SellARVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellARVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B809CCE82CF2050F00038E19 /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		B84595742CE5ED7100750E4E /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		B86F46342CD7F85C0076BE39 /* SellAR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SellAR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06942FC2CE5E232000D1161 /* sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json"; sourceTree = "<group>"; };
@@ -36,13 +44,37 @@
 			);
 			target = B8482C5B2CD1F1CB009DDA02 /* SellAR */;
 		};
+		B809CCF72CF2051100038E19 /* Exceptions for "SellARVision" folder in "SellARVision" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B809CCE42CF2050F00038E19 /* SellARVision */;
+		};
+		B875476E2CF2178400316DF4 /* Exceptions for "SellAR" folder in "SellARVision" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/Item.swift,
+				ViewModels/ItemListVM.swift,
+			);
+			target = B809CCE42CF2050F00038E19 /* SellARVision */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		B809CCE62CF2050F00038E19 /* SellARVision */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B809CCF72CF2051100038E19 /* Exceptions for "SellARVision" folder in "SellARVision" target */,
+			);
+			path = SellARVision;
+			sourceTree = "<group>";
+		};
 		B8482C5E2CD1F1CB009DDA02 /* SellAR */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				04DF4A3A2CD85FC200B5B637 /* Exceptions for "SellAR" folder in "SellAR" target */,
+				B875476E2CF2178400316DF4 /* Exceptions for "SellAR" folder in "SellARVision" target */,
 			);
 			path = SellAR;
 			sourceTree = "<group>";
@@ -50,18 +82,31 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B809CCE22CF2050F00038E19 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B87547EA2CF21CBE00316DF4 /* FirebaseDatabase in Frameworks */,
+				B87547EE2CF21CBE00316DF4 /* FirebaseStorage in Frameworks */,
+				B809CCEA2CF2050F00038E19 /* RealityKitContent in Frameworks */,
+				B87547EC2CF21CBE00316DF4 /* FirebaseFirestore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B8482C592CD1F1CB009DDA02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B84599F72CF050F800750E4E /* SDWebImageSwiftUI in Frameworks */,
+				B87547F02CF21CD200316DF4 /* FirebaseAuth in Frameworks */,
 				BEE3E4502CEB79D700601EE1 /* USDZScanner in Frameworks */,
-				E0053C072CE1D73D006B1A9A /* FirebaseMessaging in Frameworks */,
-				E0053C052CE1D738006B1A9A /* FirebaseAnalytics in Frameworks */,
+				B87547F82CF21CD200316DF4 /* FirebaseStorage in Frameworks */,
 				0484022E2CD8506200C3CF8E /* GoogleSignInSwift in Frameworks */,
-				B8482C702CD213DC009DDA02 /* FirebaseStorage in Frameworks */,
-				B86F46952CD884620076BE39 /* FirebaseAuth in Frameworks */,
+				B87547F22CF21CD200316DF4 /* FirebaseCore in Frameworks */,
+				B87547F62CF21CD200316DF4 /* FirebaseFirestore in Frameworks */,
 				0484022C2CD8506200C3CF8E /* GoogleSignIn in Frameworks */,
-				B8482C722CD213F0009DDA02 /* FirebaseFirestore in Frameworks */,
+				B87547F42CF21CD200316DF4 /* FirebaseDatabase in Frameworks */,
+				B87547FD2CF222FE00316DF4 /* FirebaseMessaging in Frameworks */,
 				B86F46982CD9E3430076BE39 /* USDZScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -69,12 +114,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B809CCE72CF2050F00038E19 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				B809CCE82CF2050F00038E19 /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
 		B8482C532CD1F1CB009DDA02 = {
 			isa = PBXGroup;
 			children = (
 				B84595742CE5ED7100750E4E /* Localizable.xcstrings */,
 				B8482C5E2CD1F1CB009DDA02 /* SellAR */,
+				B809CCE62CF2050F00038E19 /* SellARVision */,
 				B8482C6E2CD213DC009DDA02 /* Frameworks */,
+				B809CCE72CF2050F00038E19 /* Packages */,
 				B8482C5D2CD1F1CB009DDA02 /* Products */,
 				E06942FC2CE5E232000D1161 /* sellar-4fc83-firebase-adminsdk-b0tlm-7adbeaf47b.json */,
 				180525362CEF0DA100A53F8E /* qa_content.html */,
@@ -85,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				B86F46342CD7F85C0076BE39 /* SellAR.app */,
+				B809CCE52CF2050F00038E19 /* SellARVision.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +155,32 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B809CCE42CF2050F00038E19 /* SellARVision */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B809CCF82CF2051100038E19 /* Build configuration list for PBXNativeTarget "SellARVision" */;
+			buildPhases = (
+				B809CCE12CF2050F00038E19 /* Sources */,
+				B809CCE22CF2050F00038E19 /* Frameworks */,
+				B809CCE32CF2050F00038E19 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B809CCE62CF2050F00038E19 /* SellARVision */,
+			);
+			name = SellARVision;
+			packageProductDependencies = (
+				B809CCE92CF2050F00038E19 /* RealityKitContent */,
+				B87547E92CF21CBE00316DF4 /* FirebaseDatabase */,
+				B87547EB2CF21CBE00316DF4 /* FirebaseFirestore */,
+				B87547ED2CF21CBE00316DF4 /* FirebaseStorage */,
+			);
+			productName = SellARVision;
+			productReference = B809CCE52CF2050F00038E19 /* SellARVision.app */;
+			productType = "com.apple.product-type.application";
+		};
 		B8482C5B2CD1F1CB009DDA02 /* SellAR */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B8482C6A2CD1F1CC009DDA02 /* Build configuration list for PBXNativeTarget "SellAR" */;
@@ -116,15 +198,17 @@
 			);
 			name = SellAR;
 			packageProductDependencies = (
-				B8482C6F2CD213DC009DDA02 /* FirebaseStorage */,
-				B8482C712CD213F0009DDA02 /* FirebaseFirestore */,
-				B86F46942CD884620076BE39 /* FirebaseAuth */,
 				B86F46972CD9E3430076BE39 /* USDZScanner */,
 				0484022B2CD8506200C3CF8E /* GoogleSignIn */,
 				0484022D2CD8506200C3CF8E /* GoogleSignInSwift */,
-				E0053C042CE1D738006B1A9A /* FirebaseAnalytics */,
-				E0053C062CE1D73D006B1A9A /* FirebaseMessaging */,
 				04C2C6242CE47E27004EC1FB /* USDZScanner */,
+				B84599F62CF050F800750E4E /* SDWebImageSwiftUI */,
+				B87547EF2CF21CD200316DF4 /* FirebaseAuth */,
+				B87547F12CF21CD200316DF4 /* FirebaseCore */,
+				B87547F32CF21CD200316DF4 /* FirebaseDatabase */,
+				B87547F52CF21CD200316DF4 /* FirebaseFirestore */,
+				B87547F72CF21CD200316DF4 /* FirebaseStorage */,
+				B87547FC2CF222FE00316DF4 /* FirebaseMessaging */,
 			);
 			productName = SellAR;
 			productReference = B86F46342CD7F85C0076BE39 /* SellAR.app */;
@@ -140,6 +224,9 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					B809CCE42CF2050F00038E19 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					B8482C5B2CD1F1CB009DDA02 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -156,10 +243,11 @@
 			mainGroup = B8482C532CD1F1CB009DDA02;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B86F46962CD9E3430076BE39 /* XCRemoteSwiftPackageReference "USDZScanner" */,
 				0484022A2CD8506200C3CF8E /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				04C2C6232CE47E27004EC1FB /* XCRemoteSwiftPackageReference "USDZScanner" */,
+				B84599F52CF050F800750E4E /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B8482C5D2CD1F1CB009DDA02 /* Products */;
@@ -167,11 +255,19 @@
 			projectRoot = "";
 			targets = (
 				B8482C5B2CD1F1CB009DDA02 /* SellAR */,
+				B809CCE42CF2050F00038E19 /* SellARVision */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B809CCE32CF2050F00038E19 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B8482C5A2CD1F1CB009DDA02 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -185,6 +281,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B809CCE12CF2050F00038E19 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B8482C582CD1F1CB009DDA02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -195,6 +298,62 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		B809CCF52CF2051100038E19 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SellARVision/Preview Content\"";
+				DEVELOPMENT_TEAM = 6R3M7VGRP2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SellAR.SellARVision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		B809CCF62CF2051100038E19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SellARVision/Preview Content\"";
+				DEVELOPMENT_TEAM = 6R3M7VGRP2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.SellAR.SellARVision;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
 		B8482C682CD1F1CC009DDA02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -383,6 +542,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B809CCF82CF2051100038E19 /* Build configuration list for PBXNativeTarget "SellARVision" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B809CCF52CF2051100038E19 /* Debug */,
+				B809CCF62CF2051100038E19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B8482C572CD1F1CB009DDA02 /* Build configuration list for PBXProject "SellAR" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -420,12 +588,12 @@
 				minimumVersion = 0.2.0;
 			};
 		};
-		B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		B84599F52CF050F800750E4E /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.4.0;
+				minimumVersion = 3.1.3;
 			};
 		};
 		B86F46962CD9E3430076BE39 /* XCRemoteSwiftPackageReference "USDZScanner" */ = {
@@ -434,6 +602,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.2.0;
+			};
+		};
+		B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.5.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -454,34 +630,63 @@
 			package = 04C2C6232CE47E27004EC1FB /* XCRemoteSwiftPackageReference "USDZScanner" */;
 			productName = USDZScanner;
 		};
-		B8482C6F2CD213DC009DDA02 /* FirebaseStorage */ = {
+		B809CCE92CF2050F00038E19 /* RealityKitContent */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseStorage;
+			productName = RealityKitContent;
 		};
-		B8482C712CD213F0009DDA02 /* FirebaseFirestore */ = {
+		B84599F62CF050F800750E4E /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
-		};
-		B86F46942CD884620076BE39 /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
+			package = B84599F52CF050F800750E4E /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 		B86F46972CD9E3430076BE39 /* USDZScanner */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B86F46962CD9E3430076BE39 /* XCRemoteSwiftPackageReference "USDZScanner" */;
 			productName = USDZScanner;
 		};
-		E0053C042CE1D738006B1A9A /* FirebaseAnalytics */ = {
+		B87547E92CF21CBE00316DF4 /* FirebaseDatabase */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
 		};
-		E0053C062CE1D73D006B1A9A /* FirebaseMessaging */ = {
+		B87547EB2CF21CBE00316DF4 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B8482C6D2CD21390009DDA02 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		B87547ED2CF21CBE00316DF4 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		B87547EF2CF21CD200316DF4 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B87547F12CF21CD200316DF4 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		B87547F32CF21CD200316DF4 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		B87547F52CF21CD200316DF4 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		B87547F72CF21CD200316DF4 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		B87547FC2CF222FE00316DF4 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B87547E82CF21C6900316DF4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */

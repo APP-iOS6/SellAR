@@ -9,6 +9,7 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
+import UIKit
 
 class UserDataManager: ObservableObject {
     @Published var currentUser: User?

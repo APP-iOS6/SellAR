@@ -4,6 +4,138 @@
 //
 //  Created by 배문성 on 11/15/24.
 //
+
+import SwiftUI
+import WebKit
+
+struct QAView: View {
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.presentationMode) var presentationMode
+    
+    var body: some View {
+        NavigationView {
+            LoadingWebView(urlString: "https://app-ios4.github.io/sellAR-qa.html")
+                .navigationBarTitle("자주묻는 질문", displayMode: .inline)
+                .navigationBarItems(leading: Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                })
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
+struct WebView: UIViewRepresentable {
+    let urlString: String
+    @Binding var isLoading: Bool
+
+    class Coordinator: NSObject, WKNavigationDelegate, UIScrollViewDelegate {
+        var parent: WebView
+
+        init(parent: WebView) {
+            self.parent = parent
+        }
+        
+        // UIScrollViewDelegate 메서드 추가
+        func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+            return nil // 줌 뷰를 nil로 반환하여 확대/축소 비활성화
+        }
+
+        func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = true
+            }
+        }
+
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = false
+            }
+        }
+
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = false
+            }
+        }
+
+        func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+            DispatchQueue.main.async {
+                self.parent.isLoading = false
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(parent: self)
+    }
+
+    func makeUIView(context: Context) -> WKWebView {
+        let configuration = WKWebViewConfiguration()
+        let preferences = WKPreferences()
+        preferences.javaScriptEnabled = true
+        configuration.preferences = preferences
+        configuration.websiteDataStore = .nonPersistent()
+        
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
+        webView.scrollView.delegate = context.coordinator // ScrollView 델리게이트 설정
+        
+        // 확대/축소 완전 비활성화
+        webView.scrollView.isScrollEnabled = true
+        webView.scrollView.bounces = false
+        webView.scrollView.bouncesZoom = false
+        webView.scrollView.minimumZoomScale = 1.0
+        webView.scrollView.maximumZoomScale = 1.0
+        webView.scrollView.zoomScale = 1.0
+        
+        // 더블탭 제스처 비활성화
+        webView.scrollView.gestureRecognizers?.forEach { gesture in
+            gesture.isEnabled = false
+            if let doubleTapGesture = gesture as? UITapGestureRecognizer,
+               doubleTapGesture.numberOfTapsRequired == 2 {
+                webView.scrollView.removeGestureRecognizer(doubleTapGesture)
+            }
+        }
+        
+        return webView
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        if let url = URL(string: urlString) {
+            if uiView.url != url {
+                let request = URLRequest(url: url)
+                uiView.load(request)
+            }
+        }
+    }
+}
+
+struct LoadingWebView: View {
+    let urlString: String
+    @State private var isLoading = true
+
+    var body: some View {
+        ZStack {
+            WebView(urlString: urlString, isLoading: $isLoading)
+            if isLoading {
+                VStack {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(UIColor.systemBackground))
+            }
+        }
+    }
+}
+
+// 이전코드
+
 //import SwiftUI
 //
 //struct QAView: View {
@@ -11,7 +143,7 @@
 //    @Environment(\.presentationMode) var presentationMode
 //    @State private var selectedCategory: String? = nil
 //    @State private var isLoading = false
-//    
+//
 //// 카테고리 미선택해도 전체 게시물 다 보이는 경우
 //    var filteredQA: [QA] {
 //        if let category = selectedCategory {
@@ -25,7 +157,7 @@
 //        ZStack {
 //            Color(colorScheme == .dark ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
 //            // 다크모드 : 라이트모드 순서 검정:밝은회색
-//            
+//
 //                VStack(spacing:0) {
 //                    Spacer()
 //                        .frame(height: 15)
@@ -40,21 +172,21 @@
 //                        }
 //                        .buttonStyle(PlainButtonStyle())
 //                        .frame(maxWidth: .infinity, alignment: .leading)
-//                        
-//                        
+//
+//
 //                        Text("자주묻는 질문")
 //                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black) // 흰:검
 //                            .font(.system(size: 20))
 //                            .fontWeight(.bold)
 //                            .lineLimit(1)
 //                            .frame(maxWidth: .infinity, alignment: .leading)
-//                        
+//
 //                        Spacer()
 //                            .frame(maxWidth: .infinity, alignment: .trailing)
 //                    }
 //                    .padding(.bottom, 20)
 //                    .padding(.horizontal, 10)
-//                
+//
 //                VStack(alignment: .center, spacing: 20) {
 //                    HStack {
 //                        ForEach(["AR지원", "회원관리", "게시물", "등록"], id: \.self) { category in
@@ -83,7 +215,7 @@
 //                        }
 //                    }
 //                    .padding(.horizontal, 10)
-//                    
+//
 //                    //카테고리 미선택시 게시물 안보이게하는기능 추가시 수정
 //                    if isLoading {
 //                        ProgressView()
@@ -109,13 +241,13 @@
 //        }
 //    }
 //}
-//        
+//
 //struct QAItem: View {
 //    @Environment(\.colorScheme) var colorScheme
-//    
+//
 //    let question: String
 //    let answer: [String]
-//    
+//
 //    var body: some View {
 //        VStack(alignment: .leading) {
 //            Text("Q. \(question)")
@@ -136,84 +268,3 @@
 //        .overlay(Rectangle().stroke(colorScheme == .dark ? Color(red: 91 / 255, green: 91 / 255, blue: 91 / 255) : Color(red: 219 / 255, green: 219 / 255, blue: 219 / 255), lineWidth: (1)))
 //    }
 //}
-import SwiftUI
-import WebKit
-
-struct QAView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.presentationMode) var presentationMode
-    @State private var selectedCategory: String? = nil
-    
-    let categories = ["AR지원", "회원관리", "게시물", "등록"]
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                // 카테고리 버튼
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(categories, id: \.self) { category in
-                            Button(action: {
-                                selectedCategory = (selectedCategory == category) ? nil : category
-                            }) {
-                                Text(category)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 10)
-                                    .background(selectedCategory == category ? Color.blue : Color.gray.opacity(0.2))
-                                    .foregroundColor(selectedCategory == category ? .white : .primary)
-                                    .cornerRadius(20)
-                            }
-                        }
-                    }
-                    .padding()
-                }
-                
-                // 웹뷰
-                WebView(htmlContent: htmlContent, selectedCategory: selectedCategory)
-            }
-            .navigationBarTitle("자주묻는 질문", displayMode: .inline)
-            .navigationBarItems(leading: Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
-            })
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .navigationBarBackButtonHidden(true)
-    }
-    
-    private var htmlContent: String {
-        guard let htmlPath = Bundle.main.path(forResource: "qa_content", ofType: "html"),
-              let htmlContent = try? String(contentsOfFile: htmlPath, encoding: .utf8) else {
-            return "<html><body><h1>Error loading content</h1></body></html>"
-        }
-        return htmlContent
-    }
-}
-
-struct WebView: UIViewRepresentable {
-    let htmlContent: String
-    let selectedCategory: String?
-    
-    func makeUIView(context: Context) -> WKWebView {
-        return WKWebView()
-    }
-    
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        let filteredContent = filterContent(htmlContent, category: selectedCategory)
-        uiView.loadHTMLString(filteredContent, baseURL: nil)
-    }
-    
-    private func filterContent(_ content: String, category: String?) -> String {
-        guard let category = category else { return content }
-        
-        // 여기서 카테고리에 따라 HTML 내용을 필터링합니다.
-        // 실제 구현은 HTML 구조에 따라 달라질 수 있습니다.
-        let lines = content.components(separatedBy: .newlines)
-        let filteredLines = lines.filter { line in
-            line.contains("data-category=\"\(category)\"")
-        }
-        return filteredLines.joined(separator: "\n")
-    }
-}
