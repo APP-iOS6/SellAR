@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>234563783469-2ofv8i01am5jo927lu44mgcstueh8isf.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.234563783469-2ofv8i01am5jo927lu44mgcstueh8isf</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAik74tO20hpgE_fpiURJ7fcXQZ3BEMPoo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>234563783469</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.SellAR.SellARVision</string>
+	<key>PROJECT_ID</key>
+	<string>sellar-4fc83</string>
+	<key>STORAGE_BUCKET</key>
+	<string>sellar-4fc83.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:234563783469:ios:b137273c6c143eb74ea1a4</string>
+</dict>
+</plist>
