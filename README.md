@@ -32,7 +32,9 @@
 - FirebaseStorage - Apache-2.0 license
 - GoogleSignIn - Apache-2.0 license
 - GoogleSignInSwift - Apache-2.0 license
+- USDZScanner - MIT License
 
 # 라이선스
 Licensed under the [Apache License, version 2.0](LICENSE) license.   
+Licensed under the [MIT](LICENSE) license.   
 Images sourced from Freepik
