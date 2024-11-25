@@ -1,86 +1,29 @@
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/73c6e5d9-a891-4e36-a971-3de72af88bdc" alt="Logoround">
-</p>
+# 사진
+![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
+![2](https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a)
+![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
+![4](https://github.com/user-attachments/assets/dcdb4fcb-8e26-46f7-ab86-16b268dc96d4)
+![5](https://github.com/user-attachments/assets/1bc8a5cd-e69f-40fa-b0a4-d5221a73b5f6)
+![6](https://github.com/user-attachments/assets/12ff514f-f5dc-42c9-a4da-78c3528d811f)
+![7](https://github.com/user-attachments/assets/02d5c8ff-26a9-4f8e-8f5d-1406e7fb25c0)
+![8](https://github.com/user-attachments/assets/32d6be0a-27a0-4ccb-ac0a-6b3962b742d0)
+![9](https://github.com/user-attachments/assets/01aac9e1-73a9-49f2-9256-f4ec95124d04)
+![10](https://github.com/user-attachments/assets/45d7c0b9-9ecf-4814-8b94-50c9d240ad4d)
+![11](https://github.com/user-attachments/assets/c59adb9e-e9d3-4fef-8101-bdd0ee76b176)
+![12](https://github.com/user-attachments/assets/bc1c70dc-8f6b-4e17-90dd-4288553c8e06)
+![13](https://github.com/user-attachments/assets/e9266215-6225-4cc2-8640-328734b85a48)
+![14](https://github.com/user-attachments/assets/ec2dc613-593c-4c17-a44b-57b012033bd6)
+![15](https://github.com/user-attachments/assets/3a4a24a8-38ff-4de7-b286-3dd1e982fc8e)
+![16](https://github.com/user-attachments/assets/60ebe5f6-117c-4466-8442-630b1adb8a34)
+![17](https://github.com/user-attachments/assets/82bc522c-5b1a-460d-a749-f4a3d6786c78)
+![18](https://github.com/user-attachments/assets/0f2a9089-4929-4183-8234-bc3428b7b508)
+![19](https://github.com/user-attachments/assets/72003819-3cf8-4217-87d9-dccc4ba7c91a)
+![20](https://github.com/user-attachments/assets/4dd86977-6a5a-4adf-8281-b7a95051574e)
+![21](https://github.com/user-attachments/assets/463241ec-6895-445b-a53b-4955134f1fe2)
+![22](https://github.com/user-attachments/assets/7010fefe-2b7d-40da-9e9d-ef0b8ce56acc)
+![23](https://github.com/user-attachments/assets/3f011d7c-554e-400c-8c92-eb27d575dafc)
 
-# 나의 물건을 3D로 만들어 거래해보세요!
-
-- 앱스쿨 : iOS 6기 최종프로젝트
-- 2024/10/26 - 2024/11/25
-
-# 개발자
-
-- 이주노 - PM, AR, Main 
-- 구영진 - 로그인, 디자인 
-- 박범규 - 채팅, 알림 
-- 배문성 - 마이페이지 
-- 이정민 - 게시글
-
-# ADS
-- 중고 물품 거래를 하는 사용자를 위한 AR 로 물건을 구매자의 환경에 맞추어 볼 수 있는 기능을 가진 중고 거래 앱
-
-# 주요 기능
-#### 나의 물건 3D 생성 시스템 
-- 판매하는 물건을 실제와 똑같은 모습으로 3D 이미지를 만듭니다.
-
-#### 물건을 직접 놓아보는 시스템
-- 판매자가 올린 물건을 실제 사이즈로 집 안에 배치해 볼 수 있습니다.
-
-#### 채팅 및 거래 시스템
-- 판매자가 올린 글로 채팅을 연결하여 서로 대화를 주고받을 수 있습니다.
-
-#### 마이페이지 및 게시물 보기
-- 자신 및 판매자의 마이페이지를 보고 상대방의 게시물 내역이나 자신의 게시물을 관리할 수 있습니다.
-
-#### 알림 및 검색 기능
-- 채팅 및 다양한 알림을 받을 수 있고, 검색으로 게시물을 검색할 수 있습니다.
-
-# 사용자 페르소나
-### 1. 거리가 멀고 사기 걱정이 많은 구매자 - 이정아/ 20대 초반/ 대학생
-#### 상황
-- 멀리서 대학교를 다니고 있는 이정아 씨는, 중고 액자를 구매하려는 상황입니다.
-- 거리가 멀어 직접 만나서 거래하기가 힘들고, 중고 거래 사기를 경험한 적이 있는 상황입니다.
-#### 니즈
-- 중고로 액자를 구매하려고 하는데 방안에 액자가 잘 어울릴지 걱정이 됩니다.
-- 중고 거래를 하는데 사기를 당한 경험이 있어서 물건에 대한 걱정이 됩니다.
-#### SellAR 활용
-- 앱에서 3D 파일을 열어보고 실제 사이즈를 직접 놓아 봅니다.
-- 물건을 돌려보면서 사기에 대한 예방을 합니다.
-- 상대방의 판매 내역을 보면서 사기에 대한 예방을 합니다.
-
-### 2. 큰 물건을 사는데 걱정이 많은 구매자 - 강민수/ 30대 초반 / 회사원
-#### 상황
-- 피아노의 취미가 생긴 강민수 씨는 중고로 구매하려고 하는 상황입니다.
-#### 니즈
-- 피아노의 가로세로 높이를 실제로 계산하기 어려워합니다.
-- 색상 및 디자인을 고려하고 구매하고싶어 합니다.
-#### SellAR 활용
-- 집안에 피아노를 놓아보고, 의자의 위치까지 고려하도록 합니다.
-- 여러 피아노의 색상 및 디자인을 놓아보고 주변 사물과 비교할수 있습니다.
-
-### 3. 아이를 위한 여러 물건을 구매하는 구매자 - 박지영 / 30 대 중반 / 주부
-#### 상황
-- 평소 중고 물건을 잘구매하는 박지영 씨는 아이에게 맞는 장난감, 의류 등을 구매하고 싶은 상황입니다.
-#### 니즈 
-- 과거 중고거래 할때 사이즈가 안맞는 경험이 있어, 아이에게 딱 맞는 구매하고 싶어합니다.
-#### SellAR 활용
-- 아이 옆에 3D옷을 놓고 사이즈를 정확하게 비교하면서 정확하게 비교할수 있습니다.
-- 아이에게 물건을 돌려보게 하면서 좋아하는 장난감인지 확실하게 알 수 있습니다.
-
-### 4. 빈티지샵을 운영하는 판매자 - 김민준/ 20대 후반 / 자영업자
-#### 상황
-- 빈티지샵 가게를 새롭게 오픈한 김민준씨는 중고 의류를 판매하는 상황입니다. 
-- 다른 온라인 중고거래 사이트도 이용중이지만 반품이 잦은 상황입니다.
-#### 니즈 
-- 많은 사람들에게 온라인으로 자신의 물건들을 팔고싶어합니다.
-- 중고거래를 사람들의 반품을 최대한 없게 팔고싶어 합니다
-#### SellAR 활용
-- 3D로 확인하고 구매하고싶어하는 새로운 소비자들에게 판매루트를 제공합니다.
-- 실제 사이즈로 판매하여 반품 횟수를 줄이고, 확실한 정보를 제공할 수 있습니다.
-
-# 작동환경
-- Xcode 18.0
-- iOS 16.0
 
 # Dependency
 - FirebaseAuth - Apache-2.0 license
