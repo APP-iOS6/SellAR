@@ -21,11 +21,9 @@
 ![20](https://github.com/user-attachments/assets/4dd86977-6a5a-4adf-8281-b7a95051574e)
 ![21](https://github.com/user-attachments/assets/463241ec-6895-445b-a53b-4955134f1fe2)
 ![22](https://github.com/user-attachments/assets/7010fefe-2b7d-40da-9e9d-ef0b8ce56acc)
+![25](https://github.com/user-attachments/assets/2677839e-7127-4db6-9c89-81cdf13ba2e7)
+![26](https://github.com/user-attachments/assets/b6e68ec0-f2c0-4849-a2da-02c3d061e46e)
 ![23](https://github.com/user-attachments/assets/3f011d7c-554e-400c-8c92-eb27d575dafc)
-
-# 작동 버전
-- 
-- 
 
 
 # Dependency
