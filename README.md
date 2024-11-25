@@ -34,5 +34,5 @@
 - GoogleSignInSwift - Apache-2.0 license
 
 # 라이선스
-- Licensed under the Apache License, version 2.0 license.
+- Licensed under the MIT license.
 - Images sourced from Freepik
