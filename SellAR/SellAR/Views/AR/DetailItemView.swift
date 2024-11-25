@@ -37,89 +37,80 @@ struct DetailItemView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 
-                if let thumbnailURL = item.thumbnailURL ?? (item.images.first.flatMap { URL(string: $0) }) {
-                    VStack(alignment: .center, spacing: 8) {
-                        if item.images.count <= 1 {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                AsyncImage(url: thumbnailURL) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(maxWidth: UIScreen.main.bounds.width * 0.9, maxHeight: UIScreen.main.bounds.width * 0.9)
-                                            .cornerRadius(8)
-                                            .onTapGesture {
-                                                if let usdzURL = item.usdzURL {
-                                                    viewAR(url: usdzURL)
-                                                }
-                                            }
-                                    case .failure:
-                                        Text("이미지를 불러올 수 없습니다.")
-                                            .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.width * 0.9)
-                                            .background(Color.gray)
-                                            .cornerRadius(8)
-                                    @unknown default:
-                                        EmptyView()
-                                    }
-                                }
-                                Spacer().frame(width: 20)
-                            }
-                            Spacer()
-                        } else {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 10) {
-                                    if let thumbnailURL = item.thumbnailURL {
-                                        AsyncImage(url: thumbnailURL) { phase in
-                                            switch phase {
-                                            case .empty:
-                                                ProgressView()
-                                            case .success(let image):
-                                                image.resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(maxWidth: UIScreen.main.bounds.width * 0.9, maxHeight: UIScreen.main.bounds.width * 0.9)
-                                                    .onTapGesture {
-                                                        if let usdzURL = item.usdzURL {
-                                                            viewAR(url: usdzURL)
-                                                        }
-                                                    }
-                                            case .failure:
-                                                Text("썸네일을 불러올 수 없습니다")
-                                            @unknown default:
-                                                EmptyView()
+                if let thumbnailURL = item.thumbnailURL {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            
+                            AsyncImage(url: thumbnailURL) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                case .success(let image):
+                                    image.resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(maxWidth: UIScreen.main.bounds.width * 0.9, maxHeight: UIScreen.main.bounds.width * 0.9)
+                                        .cornerRadius(8)
+                                        .onTapGesture {
+                                            if let usdzURL = item.usdzURL {
+                                                viewAR(url: usdzURL)
                                             }
                                         }
-                                        .cornerRadius(8)
-                                    }
-                                    ForEach(item.images, id: \.self) { imageURL in
-                                        if let url = URL(string: imageURL) {
-                                            AsyncImage(url: url) { phase in
-                                                switch phase {
-                                                case .empty:
-                                                    ProgressView()
-                                                case .success(let image):
-                                                    image.resizable()
-                                                        .aspectRatio(contentMode: .fit)
-                                                        .frame(maxWidth: UIScreen.main.bounds.width * 0.9, maxHeight: UIScreen.main.bounds.width * 0.9) // 더 크게 조정
-                                                case .failure:
-                                                    Text("이미지를 불러올 수 없습니다")
-                                                @unknown default:
-                                                    EmptyView()
-                                                }
-                                            }
-                                            .cornerRadius(8)
+                                case .failure:
+                                    Text("썸네일을 불러올 수 없습니다")
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
+
+                            
+                            ForEach(item.images, id: \.self) { imageURL in
+                                if let url = URL(string: imageURL) {
+                                    AsyncImage(url: url) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case .success(let image):
+                                            image.resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(maxWidth: UIScreen.main.bounds.width * 0.9, maxHeight: UIScreen.main.bounds.width * 0.9)
+                                                .cornerRadius(8)
+                                        case .failure:
+                                            Text("이미지를 불러올 수 없습니다")
+                                        @unknown default:
+                                            EmptyView()
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    .padding(.vertical, -8)
+                } else {
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(item.images, id: \.self) { imageURL in
+                                if let url = URL(string: imageURL) {
+                                    AsyncImage(url: url) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case .success(let image):
+                                            image.resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(maxWidth: UIScreen.main.bounds.width * 0.9, maxHeight: UIScreen.main.bounds.width * 0.9)
+                                                .cornerRadius(8)
+                                        case .failure:
+                                            Text("이미지를 불러올 수 없습니다")
+                                        @unknown default:
+                                            EmptyView()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+
                 
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
