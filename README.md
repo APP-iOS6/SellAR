@@ -23,6 +23,9 @@
 ![22](https://github.com/user-attachments/assets/7010fefe-2b7d-40da-9e9d-ef0b8ce56acc)
 ![23](https://github.com/user-attachments/assets/3f011d7c-554e-400c-8c92-eb27d575dafc)
 
+# 작동 버전
+- 
+- 
 
 
 # Dependency
