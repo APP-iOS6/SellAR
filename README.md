@@ -1,7 +1,23 @@
 
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
 [![YouTube 동영상](https://github.com/user-attachments/assets/65db73dd-d93b-418c-946e-4979a8fc5fb7)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
-![2](https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a)
+<div style="position: relative; width: 500px; height: auto; display: inline-block;">
+  <img src="https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a" 
+       alt="2번 이미지" style="width: 100%; height: auto;">
+
+  <img src="https://github.com/user-attachments/assets/fa384dfb-7e0b-4caa-b137-e4d5dbf530a5" 
+       alt="ar1" 
+       style="position: absolute; top: 20px; left: 30px; width: 50px; height: 50px;">
+
+  <img src="https://github.com/user-attachments/assets/22b059be-a74d-4897-b92b-3873eed9605c" 
+       alt="ar0" 
+       style="position: absolute; top: 100px; left: 150px; width: 50px; height: 50px;">
+
+  <img src="https://github.com/user-attachments/assets/e25ed23e-7c5e-4a39-a367-212f115eb1a8" 
+       alt="sell" 
+       style="position: absolute; top: 200px; left: 250px; width: 50px; height: 50px;">
+</div>
+
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
 ![4](https://github.com/user-attachments/assets/dcdb4fcb-8e26-46f7-ab86-16b268dc96d4)
 ![5](https://github.com/user-attachments/assets/1bc8a5cd-e69f-40fa-b0a4-d5221a73b5f6)
