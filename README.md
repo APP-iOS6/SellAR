@@ -1,7 +1,7 @@
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
 [![YouTube 동영상](https://github.com/user-attachments/assets/0c19c1bf-22de-4d2b-8abd-062696882078)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
 
-| 주노 | 영진 | 범규 | 문성 | 정민 |
+| 이주노 | 구영진 | 박범규 | 배문성 | 이정민 |
 |:----:|:----:|:----:|:----:|:----:|
 | ![주노-Main](https://github.com/user-attachments/assets/d27f9d67-f921-4d0b-a5c5-4828d2406c2a) | ![영진-로그인](https://github.com/user-attachments/assets/107c1e96-0bfe-4744-8b88-2daa77309198) | ![범규-채팅](https://github.com/user-attachments/assets/087280af-35d3-4995-983f-673260eed59a) | ![문성-마이페이지](https://github.com/user-attachments/assets/50949d86-5f80-4c43-a1f1-272ff1673f4d) | ![정민-글 수정](https://github.com/user-attachments/assets/0eed1282-6d76-4a9d-838a-b1254aa4f121) |
 | 메인 | 로그인 | 채팅 | 마이페이지 | 글 수정 |
