@@ -1,6 +1,6 @@
 
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
-https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo
+[YouTube 동영상 보기](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
 ![2](https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a)
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
 ![4](https://github.com/user-attachments/assets/dcdb4fcb-8e26-46f7-ab86-16b268dc96d4)
