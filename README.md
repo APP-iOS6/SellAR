@@ -7,15 +7,15 @@
 
   <img src="https://github.com/user-attachments/assets/fa384dfb-7e0b-4caa-b137-e4d5dbf530a5" 
        alt="ar1" 
-       style="position: absolute; top: 320px; left: 30px; width: 50px; height: 50px;">
+       style="position: absolute; top: 320px; left: 30px; width: 250px; height: 450px;">
 
   <img src="https://github.com/user-attachments/assets/22b059be-a74d-4897-b92b-3873eed9605c" 
        alt="ar0" 
-       style="position: absolute; top: 400px; left: 150px; width: 50px; height: 50px;">
+       style="position: absolute; top: 400px; left: 150px; width: 250px; height: 450px;">
 
   <img src="https://github.com/user-attachments/assets/e25ed23e-7c5e-4a39-a367-212f115eb1a8" 
        alt="sell" 
-       style="position: absolute; top: 500px; left: 250px; width: 50px; height: 50px;">
+       style="position: absolute; top: 500px; left: 250px; width: 250px; height: 450px;">
 </div>
 
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
