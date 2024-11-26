@@ -2,12 +2,14 @@
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
 [![YouTube 동영상](https://github.com/user-attachments/assets/65db73dd-d93b-418c-946e-4979a8fc5fb7)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
 <div style="position: relative; width: 500px; height: 700px; overflow: hidden; display: inline-block;">
+  <!-- 배경 이미지 -->
   <img src="https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a" 
        alt="2번 이미지" style="width: 100%; height: auto;">
 
+  <!-- 겹쳐진 이미지들 -->
   <img src="https://github.com/user-attachments/assets/fa384dfb-7e0b-4caa-b137-e4d5dbf530a5" 
        alt="ar1" 
-       style="position: absolute; top: 100px; left: 30px; width: 100px; height: 100px;">
+       style="position: absolute; top: 50px; left: 50px; width: 100px; height: 100px;">
 
   <img src="https://github.com/user-attachments/assets/22b059be-a74d-4897-b92b-3873eed9605c" 
        alt="ar0" 
@@ -17,6 +19,7 @@
        alt="sell" 
        style="position: absolute; top: 300px; left: 250px; width: 100px; height: 100px;">
 </div>
+
 
 
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
