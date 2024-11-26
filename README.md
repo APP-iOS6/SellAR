@@ -1,13 +1,9 @@
 
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
 [![YouTube 동영상](https://github.com/user-attachments/assets/65db73dd-d93b-418c-946e-4979a8fc5fb7)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
-<video controls>
-  <source src="https://github.com/user-attachments/assets/b4871182-ae35-4abe-a4a0-7a36b7bdf2d0.mp4" type="video/mp4">
-  <source src="https://github.com/user-attachments/assets/b4871182-ae35-4abe-a4a0-7a36b7bdf2d0.webm" type="video/webm">
-  <source src="https://github.com/user-attachments/assets/b4871182-ae35-4abe-a4a0-7a36b7bdf2d0.ogv" type="video/ogg">
-  Your browser does not support the video tag.
-</video>
 
+![1126 (2)](https://github.com/user-attachments/assets/8a7417ec-9da9-41cf-b08f-c1dd3eaecaae)
+![2](https://github.com/user-attachments/assets/128f61d7-cdaa-43ba-82c9-d0dd5ee134eb)
 
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
 ![4](https://github.com/user-attachments/assets/dcdb4fcb-8e26-46f7-ab86-16b268dc96d4)
