@@ -9,6 +9,7 @@
 | AR | 회원가입 | 알림,나가기 | 로그아웃 | 상태 수정 |
 | ![주노-Sell](https://github.com/user-attachments/assets/b4b67ddf-c1b3-47bc-988e-5af02e79195d) |  |  |  |  |
 | 판매등록 |  |  |  |  |
+
 ![2](https://github.com/user-attachments/assets/1ee049f8-4592-45b3-b1e1-dcb22747a801)
 ![2](https://github.com/user-attachments/assets/09795363-bac1-4d67-90d8-e28de50d3120)
 ![4](https://github.com/user-attachments/assets/2df70660-b89c-4640-831e-bdabd0987084)
