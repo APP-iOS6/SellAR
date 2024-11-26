@@ -5,19 +5,6 @@
   <!-- 배경 이미지 -->
   <img src="https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a" 
        alt="2번 이미지" style="width: 100%; height: auto;">
-
-  <!-- 겹쳐진 이미지들 -->
-  <img src="https://github.com/user-attachments/assets/fa384dfb-7e0b-4caa-b137-e4d5dbf530a5" 
-       alt="ar1" 
-       style="position: absolute; top: 50px; left: 50px; width: 100px; height: 100px;">
-
-  <img src="https://github.com/user-attachments/assets/22b059be-a74d-4897-b92b-3873eed9605c" 
-       alt="ar0" 
-       style="position: absolute; top: 200px; left: 150px; width: 100px; height: 100px;">
-
-  <img src="https://github.com/user-attachments/assets/e25ed23e-7c5e-4a39-a367-212f115eb1a8" 
-       alt="sell" 
-       style="position: absolute; top: 300px; left: 250px; width: 100px; height: 100px;">
 </div>
 
 
