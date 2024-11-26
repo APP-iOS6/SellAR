@@ -1,48 +1,6 @@
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
 [![YouTube 동영상](https://github.com/user-attachments/assets/0c19c1bf-22de-4d2b-8abd-062696882078)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
 
----
-
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/13ebc640-4a65-4180-addf-4de0faa984c7" alt="ar0" style="width: 100%; height: auto;">
-    <p>첫 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/e341f4a3-4db5-4631-a9af-4ac0755700d2" alt="ar1" style="width: 100%; height: auto;">
-    <p>두 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/b1c4e852-d16b-4f82-bd82-f37d661b5fbb" alt="sell" style="width: 100%; height: auto;">
-    <p>세 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed" alt="3번 이미지" style="width: 100%; height: auto;">
-    <p>네 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/dcdb4fcb-8e26-46f7-ab86-16b268dc96d4" alt="4번 이미지" style="width: 100%; height: auto;">
-    <p>다섯 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/1bc8a5cd-e69f-40fa-b0a4-d5221a73b5f6" alt="5번 이미지" style="width: 100%; height: auto;">
-    <p>여섯 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/12ff514f-f5dc-42c9-a4da-78c3528d811f" alt="6번 이미지" style="width: 100%; height: auto;">
-    <p>일곱 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/02d5c8ff-26a9-4f8e-8f5d-1406e7fb25c0" alt="7번 이미지" style="width: 100%; height: auto;">
-    <p>여덟 번째 텍스트</p>
-  </div>
-  <div style="width: 30%; text-align: center;">
-    <img src="https://github.com/user-attachments/assets/32d6be0a-27a0-4ccb-ac0a-6b3962b742d0" alt="8번 이미지" style="width: 100%; height: auto;">
-    <p>아홉 번째 텍스트</p>
-  </div>
-</div>
-
----
 
 ![2](https://github.com/user-attachments/assets/1ee049f8-4592-45b3-b1e1-dcb22747a801)
 ![2](https://github.com/user-attachments/assets/09795363-bac1-4d67-90d8-e28de50d3120)
