@@ -1,13 +1,10 @@
 
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
 [![YouTube 동영상](https://github.com/user-attachments/assets/65db73dd-d93b-418c-946e-4979a8fc5fb7)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
-<div style="position: relative; width: 500px; height: 700px; overflow: hidden; display: inline-block;">
-  <!-- 배경 이미지 -->
-  <img src="https://github.com/user-attachments/assets/14ac7fc9-d5f8-4c5c-9b66-9fccaff2c74a" 
-       alt="2번 이미지" style="width: 100%; height: auto;">
-</div>
-
-
+<video autoplay loop muted>
+  <source src="https://github.com/user-attachments/assets/b4871182-ae35-4abe-a4a0-7a36b7bdf2d0" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
 ![4](https://github.com/user-attachments/assets/dcdb4fcb-8e26-46f7-ab86-16b268dc96d4)
