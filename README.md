@@ -3,7 +3,6 @@
 [![YouTube 동영상](https://github.com/user-attachments/assets/65db73dd-d93b-418c-946e-4979a8fc5fb7)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
 <video autoplay loop muted>
   <source src="https://github.com/user-attachments/assets/b4871182-ae35-4abe-a4a0-7a36b7bdf2d0" type="video/mp4">
-  Your browser does not support the video tag.
 </video>
 
 ![3](https://github.com/user-attachments/assets/48c979d3-58a1-430f-8028-9665a00954ed)
