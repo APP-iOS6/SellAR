@@ -6,9 +6,9 @@
 ---
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/user-attachments/assets/13ebc640-4a65-4180-addf-4de0faa984c7" alt="ar0" style="width: 30%; height: auto;">
-  <img src="https://github.com/user-attachments/assets/e341f4a3-4db5-4631-a9af-4ac0755700d2" alt="ar1" style="width: 30%; height: auto;">
-  <img src="https://github.com/user-attachments/assets/b1c4e852-d16b-4f82-bd82-f37d661b5fbb" alt="sell" style="width: 30%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/13ebc640-4a65-4180-addf-4de0faa984c7" alt="ar0" style="width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/e341f4a3-4db5-4631-a9af-4ac0755700d2" alt="ar1" style="width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/b1c4e852-d16b-4f82-bd82-f37d661b5fbb" alt="sell" style="width: 100%; height: auto;">
 </div>
 
 ---
