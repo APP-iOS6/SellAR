@@ -5,7 +5,7 @@
 |:----:|:----:|:----:|:----:|:----:|
 | ![주노-Main](https://github.com/user-attachments/assets/d27f9d67-f921-4d0b-a5c5-4828d2406c2a) | ![영진-로그인](https://github.com/user-attachments/assets/107c1e96-0bfe-4744-8b88-2daa77309198) | ![범규-채팅](https://github.com/user-attachments/assets/087280af-35d3-4995-983f-673260eed59a) | ![문성-마이페이지](https://github.com/user-attachments/assets/50949d86-5f80-4c43-a1f1-272ff1673f4d) | ![정민-글 수정](https://github.com/user-attachments/assets/0eed1282-6d76-4a9d-838a-b1254aa4f121) |
 | 메인 | 로그인 | 채팅 | 마이페이지 | 글 수정 |
-| ![주노-AR](https://github.com/user-attachments/assets/163a4db1-a225-4282-98da-75462ab302c2) | ![영진-회원가입](https://github.com/user-attachments/assets/b6afc990-3280-4073-b561-8103715c4789) | ![범규-채팅나가기](https://github.com/user-attachments/assets/0236a14a-bcb9-4eaa-bce7-c702dc3aa757) | ![문성-로그아웃](https://github.com/user-attachments/assets/de3f9732-150c-4301-bcab-9fb556277579) | ![정민- 상태수정](https://github.com/user-attachments/assets/8d15031d-737f-489f-8108-3753611fefda)  |
+| ![주노-AR](https://github.com/user-attachments/assets/163a4db1-a225-4282-98da-75462ab302c2) | ![영진-회원가입](https://github.com/user-attachments/assets/b6afc990-3280-4073-b561-8103715c4789) | ![범규-채팅나가기](https://github.com/user-attachments/assets/0236a14a-bcb9-4eaa-bce7-c702dc3aa757) | ![문성-로그아웃](https://github.com/user-attachments/assets/de3f9732-150c-4301-bcab-9fb556277579) |  ![정민- 상태수정](https://github.com/user-attachments/assets/8d15031d-737f-489f-8108-3753611fefda) |
 | AR | 회원가입 | 알림,나가기 | 로그아웃 | 상태 수정 |
 | ![주노-Sell](https://github.com/user-attachments/assets/b4b67ddf-c1b3-47bc-988e-5af02e79195d) |  |  |  |  |
 | 판매등록 |  |  |  |  |
