@@ -1,5 +1,5 @@
 ![1](https://github.com/user-attachments/assets/9edd264e-cb25-4555-ab91-ed9f64d15f2a)
-[![YouTube 동영상](https://github.com/user-attachments/assets/65db73dd-d93b-418c-946e-4979a8fc5fb7)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
+[![YouTube 동영상](https://github.com/user-attachments/assets/0c19c1bf-22de-4d2b-8abd-062696882078)](https://youtu.be/WIcT_SfhWOo?si=7nvebPnKOrxbvVXo)
 ![2](https://github.com/user-attachments/assets/1ee049f8-4592-45b3-b1e1-dcb22747a801)
 ![3](https://github.com/user-attachments/assets/0fa13c5d-07ad-4e64-95a7-8a6bf2028fdf)
 ![4](https://github.com/user-attachments/assets/2df70660-b89c-4640-831e-bdabd0987084)
